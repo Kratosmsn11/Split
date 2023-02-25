@@ -5,6 +5,7 @@ import {
   Dimensions,
   SafeAreaView,
   Image,
+  Alert,
 } from 'react-native';
 import React, {useState} from 'react';
 import {Input} from 'react-native-elements';
@@ -20,6 +21,24 @@ import Logo from '../Assets/Logo.svg';
 const Login = ({navigation}) => {
   const [c, setc] = useState(false);
   const [name, setname] = useState("eye");
+
+  const [email, OnChangeEmail] = useState('');
+  const [password, OnChangePassword] = useState('');
+
+  const PressLogInButton = async () =>{
+        Alert.alert(  
+            'Login',  
+            'You pressed the button with the credentials\n\n'+ "Email: "+ email+"\nPassword: "+ password,  
+            [  
+                {  
+                    text: 'Cancel',  
+                    onPress: () => console.log('Cancel Pressed'),  
+                    style: 'cancel',  
+                },  
+                {text: 'OK', onPress: () => console.log('OK Pressed')},  
+            ]  
+        );  
+  };
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
@@ -69,6 +88,7 @@ const Login = ({navigation}) => {
               marginTop: 30,
             }}>
             <Input
+              onChangeText={OnChangeEmail}
               placeholder="Enter Email"
               inputContainerStyle={{
                 borderWidth: 1,
@@ -99,6 +119,7 @@ const Login = ({navigation}) => {
             <Input
 
             secureTextEntry={name=="eye"?false:true}
+              onChangeText={OnChangePassword}
               placeholder="Password"
               inputContainerStyle={{
                 borderWidth: 1,
@@ -124,9 +145,8 @@ const Login = ({navigation}) => {
        <Text style={{top:30,textAlign:"right",right:20,fontWeight:"bold",marginTop:5}}>Recover Password ?</Text>
 
           <TouchableOpacity
-
           onPress={()=>{
-            navigation.navigate("Signup")
+            PressLogInButton();
           }}
             style={{
               height: '7%',
