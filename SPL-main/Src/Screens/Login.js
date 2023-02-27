@@ -5,6 +5,7 @@ import {
   Dimensions,
   SafeAreaView,
   Image,
+  Alert,
 } from 'react-native';
 import React, {useState} from 'react';
 import {Input} from 'react-native-elements';
@@ -16,10 +17,52 @@ import F from '../Assets/F.svg';
 import G from '../Assets/G.svg';
 import A from '../Assets/A.svg';
 import Logo from '../Assets/Logo.svg';
-
+import axios from "axios"
 const Login = ({navigation}) => {
   const [c, setc] = useState(false);
   const [name, setname] = useState("eye");
+  const baseUrl = 'http://10.0.2.2:3000/';
+  const [email, OnChangeEmail] = useState('');
+  const [password, OnChangePassword] = useState('');
+
+  const PressLogInButton = async () =>{
+    //TODO
+    //Validate if email and password fields are filled
+    axios.post(`${baseUrl}login`, {
+      email: email,
+      password: password
+    })
+    .then(function (response) {
+      //Network connection successful
+      let message=""
+      console.log(response.data);
+      console.log(response.data['user']);
+      let responseMessage = response.data['message'];
+      if(responseMessage =="Success"){
+        navigation.navigate("Test", {
+          username: response.data['user'],
+        });
+      }
+      else{
+        if(responseMessage=="User not found"){
+          message = "Account not found!";
+        }
+        else if(responseMessage =="Incorrect Password"){
+          message = "Incorrect password";
+        }
+        Alert.alert(  
+          "Login",  
+          message,  
+          [  
+              {text: 'OK', onPress: () => console.log('OK Pressed')},  
+          ]  
+        );
+      }
+    })
+    .catch(function (error) {
+        console.log(error);
+    });
+  };
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
@@ -69,6 +112,7 @@ const Login = ({navigation}) => {
               marginTop: 30,
             }}>
             <Input
+              onChangeText={OnChangeEmail}
               placeholder="Enter Email"
               inputContainerStyle={{
                 borderWidth: 1,
@@ -99,6 +143,7 @@ const Login = ({navigation}) => {
             <Input
 
             secureTextEntry={name=="eye"?false:true}
+              onChangeText={OnChangePassword}
               placeholder="Password"
               inputContainerStyle={{
                 borderWidth: 1,
@@ -124,9 +169,8 @@ const Login = ({navigation}) => {
        <Text style={{top:30,textAlign:"right",right:20,fontWeight:"bold",marginTop:5}}>Recover Password ?</Text>
 
           <TouchableOpacity
-
           onPress={()=>{
-            navigation.navigate("Signup")
+            PressLogInButton();
           }}
             style={{
               height: '7%',

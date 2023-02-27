@@ -12,6 +12,11 @@
   "dependencies": {
     "@react-navigation/native": "^6.1.4",
     "@react-navigation/native-stack": "^6.9.10",
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "metro-config": "^0.75.1",
+    "mongodb": "^5.1.0",
+    "mongoose": "^6.10.0",
     "react": "18.1.0",
     "react-native": "0.70.2",
     "react-native-elements": "^3.4.3",
