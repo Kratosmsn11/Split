@@ -17,27 +17,48 @@ import F from '../Assets/F.svg';
 import G from '../Assets/G.svg';
 import A from '../Assets/A.svg';
 import Logo from '../Assets/Logo.svg';
-
+import axios from "axios"
 const Login = ({navigation}) => {
   const [c, setc] = useState(false);
   const [name, setname] = useState("eye");
-
+  const baseUrl = 'http://10.0.2.2:3000/';
   const [email, OnChangeEmail] = useState('');
   const [password, OnChangePassword] = useState('');
 
   const PressLogInButton = async () =>{
-        Alert.alert(  
-            'Login',  
-            'You pressed the button with the credentials\n\n'+ "Email: "+ email+"\nPassword: "+ password,  
-            [  
-                {  
-                    text: 'Cancel',  
-                    onPress: () => console.log('Cancel Pressed'),  
-                    style: 'cancel',  
-                },  
-                {text: 'OK', onPress: () => console.log('OK Pressed')},  
-            ]  
-        );  
+    axios.post(`${baseUrl}login`, {
+      email: email,
+      password: password
+    })
+    .then(function (response) {
+      //Network connection successful
+      let message=""
+      console.log(response);
+      if(response.data=="User not found"){
+        message = "Account not found!";
+      }
+      else if(response.data =="Success"){
+        message = "Account found. Logging in";
+      }
+      else if(response.data =="Incorrect password"){
+        message = "Incorrect password";
+      }
+      Alert.alert(  
+        "Login",  
+        message,  
+        [  
+            {  
+                text: 'Cancel',  
+                onPress: () => console.log('Cancel Pressed'),  
+                style: 'cancel',  
+            },  
+            {text: 'OK', onPress: () => console.log('OK Pressed')},  
+        ]  
+    );
+    })
+    .catch(function (error) {
+        console.log(error);
+    });
   };
 
   return (

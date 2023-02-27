@@ -31,7 +31,8 @@ app.post('/insertTest', async (req, res) => {
     }
 
     const result = await userCollection.insertOne(user);
-    res.send(`A user was inserted with the _id: ${result.insertedId}`)
+    res.send(user);
+    //res.render({information}`A user was inserted with the _id: ${result.insertedId}`)
 })
 
 //Deleting
@@ -90,20 +91,15 @@ app.listen(3000, () => {
 })
 
 
-app.post('/loginTest', async (req, res) => {
-  const d = await userCollection.find().toArray();
-  console.log(d);
-
+app.post('/login', async (req, res) => {
   let data = req.body;
-
-  let userName = data['username']
-
-  const query = { name: userName };
+  let email = data['email']
+  const query = { email: email };
   const user = await userCollection.findOne(query);
-  if(user!=null){
-    userPassword = user['password'];
-    if(data['password']===userPassword){
-      res.send("Password matched. log in");
+  if(user != null){
+    let password = user['password'];
+    if(data['password'] === password){
+      res.send("Success");
     }
     else{
       res.send("Incorrect password");
