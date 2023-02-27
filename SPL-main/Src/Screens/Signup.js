@@ -5,6 +5,7 @@ import {
   Dimensions,
   SafeAreaView,
   Image,
+  Alert,
 } from 'react-native';
 import React, {useState} from 'react';
 import {Input} from 'react-native-elements';
@@ -16,10 +17,58 @@ import F from '../Assets/F.svg';
 import G from '../Assets/G.svg';
 import A from '../Assets/A.svg';
 import Logo from '../Assets/Logo.svg';
+import axios from "axios"
 
 const Signup = ({navigation}) => {
   const [c, setc] = useState(false);
   const [name, setname] = useState('eye');
+  const baseUrl = 'http://10.0.2.2:3000/';
+  const [email, OnChangeEmail] = useState('');
+  const [password, OnChangePassword] = useState('');
+  const [passwordConfirm, OnChangeConfirm] = useState('');
+  const [phone, OnChangePhone] = useState('');
+  const [user, OnChangeUser] = useState('');
+
+
+  const PressSignInButton = async () =>{
+    //TODO
+    //Validate if all fields are filled, character limits
+    //check if passwords match, check if phone is valid format
+    axios.post(`${baseUrl}signup`, {
+      email: email,
+      password: password,
+      name : user,
+      phone: phone,
+    })
+    .then(function (response) {
+      //Network connection successful
+      let message=""
+      console.log(response.data);
+      console.log(response.data['user']);
+      let responseMessage = response.data['message'];
+      if(responseMessage =="Success"){
+        navigation.navigate("Test", {
+          username: response.data['user'],
+        });
+      }
+      else{
+        if(responseMessage=="Failure"){
+          message = "Email in use";
+        }
+        Alert.alert(  
+          "Signup",  
+          message,  
+          [  
+              {text: 'OK', onPress: () => console.log('OK Pressed')},  
+          ]  
+        );
+      }
+    })
+    .catch(function (error) {
+        console.log(error);
+    });
+  };
+
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
@@ -65,6 +114,7 @@ const Signup = ({navigation}) => {
               marginTop:30,
             }}>
             <Input
+              onChangeText={OnChangeEmail}
               placeholder="Enter Email"
               inputContainerStyle={{
                 borderWidth: 1,
@@ -100,6 +150,7 @@ const Signup = ({navigation}) => {
               marginTop:40,
             }}>
             <Input
+              onChangeText={OnChangeUser}
               placeholder="Enter Name"
               inputContainerStyle={{
                 borderWidth: 1,
@@ -135,6 +186,7 @@ const Signup = ({navigation}) => {
               marginTop: 40,
             }}>
             <Input
+              onChangeText={OnChangePhone}
               placeholder="Phone"
               inputContainerStyle={{
                 borderWidth: 1,
@@ -168,6 +220,7 @@ const Signup = ({navigation}) => {
               marginTop: 40,
             }}>
             <Input
+              onChangeText={OnChangePassword}
               secureTextEntry={name == 'eye' ? false : true}
               placeholder="Password"
               inputContainerStyle={{
@@ -208,6 +261,7 @@ const Signup = ({navigation}) => {
               marginTop: 40,
             }}>
             <Input
+              onChangeText={OnChangeConfirm}
               secureTextEntry={name == 'eye' ? false : true}
               placeholder="Confirm Password "
               inputContainerStyle={{
@@ -240,7 +294,7 @@ const Signup = ({navigation}) => {
 
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('Signup');
+              PressSignInButton();
             }}
             style={{
               height: '7%',
@@ -259,7 +313,7 @@ const Signup = ({navigation}) => {
                 fontWeight: 'bold',
                 fontSize: 16,
               }}>
-              Login
+              Sign Up
             </Text>
           </TouchableOpacity>
          

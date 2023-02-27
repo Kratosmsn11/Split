@@ -99,14 +99,38 @@ app.post('/login', async (req, res) => {
   if(user != null){
     let password = user['password'];
     if(data['password'] === password){
-      res.send("Success");
+      res.json({message:"Success",user:user['name']});
     }
     else{
-      res.send("Incorrect password");
+      res.json({message:"Incorrect Password"});
     }
   }
   else{
-    res.send("User not found");
+    res.json({message:"User not found"});
+  }
+})
+
+
+app.post('/signup', async (req, res) => {
+  let data = req.body;
+  let email = data['email']
+  let name = data['name']
+  let password = data['password']
+  let phone = data['phone']
+  const query = { email: email };
+  const user = await userCollection.findOne(query);
+  if(user == null){
+    const user = {
+      name: name,
+      password: password,
+      phone: phone,
+      email: email,
+    }
+    const result = await userCollection.insertOne(user);
+    res.json({message:"Success",user:name});
+  }
+  else{
+    res.json({message:"Failure"});
   }
 })
 

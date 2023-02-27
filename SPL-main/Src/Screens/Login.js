@@ -26,6 +26,8 @@ const Login = ({navigation}) => {
   const [password, OnChangePassword] = useState('');
 
   const PressLogInButton = async () =>{
+    //TODO
+    //Validate if email and password fields are filled
     axios.post(`${baseUrl}login`, {
       email: email,
       password: password
@@ -33,28 +35,29 @@ const Login = ({navigation}) => {
     .then(function (response) {
       //Network connection successful
       let message=""
-      console.log(response);
-      if(response.data=="User not found"){
-        message = "Account not found!";
+      console.log(response.data);
+      console.log(response.data['user']);
+      let responseMessage = response.data['message'];
+      if(responseMessage =="Success"){
+        navigation.navigate("Test", {
+          username: response.data['user'],
+        });
       }
-      else if(response.data =="Success"){
-        message = "Account found. Logging in";
+      else{
+        if(responseMessage=="User not found"){
+          message = "Account not found!";
+        }
+        else if(responseMessage =="Incorrect Password"){
+          message = "Incorrect password";
+        }
+        Alert.alert(  
+          "Login",  
+          message,  
+          [  
+              {text: 'OK', onPress: () => console.log('OK Pressed')},  
+          ]  
+        );
       }
-      else if(response.data =="Incorrect password"){
-        message = "Incorrect password";
-      }
-      Alert.alert(  
-        "Login",  
-        message,  
-        [  
-            {  
-                text: 'Cancel',  
-                onPress: () => console.log('Cancel Pressed'),  
-                style: 'cancel',  
-            },  
-            {text: 'OK', onPress: () => console.log('OK Pressed')},  
-        ]  
-    );
     })
     .catch(function (error) {
         console.log(error);
