@@ -3,10 +3,11 @@ import {Text, TouchableOpacity, View,FlatList,StyleSheet,Modal,Pressable} from '
 import { useNavigation } from '@react-navigation/native';
 import {GetGroupData, GetGroupTransactions,GetGroupDebts} from '../backendFiles/firebaseFunctions';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {getGroupId,getGroupInfo,setGroupId} from '../AppData';
+import {getGroupId,getGroupInfo,setGroupId,getUserInfo} from '../AppData';
 const Transaction = () => {
   const navigation = useNavigation();
   const [groupName,setGroupName] = useState("");
+  const [userName,setUserName] = useState("");
   const [groupTotal,setGroupTotal] = useState("");
   const [groupTransactions,setGroupTransactions] = useState("");
   const [groupDebts,setGroupDebts] = useState("");
@@ -26,11 +27,13 @@ const Transaction = () => {
     setGroupId(groupId);
     setGroupTransactions(await GetGroupTransactions(groupId));
     setGroupDebts(await GetGroupDebts(groupId));
+    setUserName(getUserInfo()['name']);
   }
   return (
     <SafeAreaView style = {styles.align}>
     <View style = {styles.align}>
     <TouchableOpacity style = {styles.buttonNormal} onPress={()=>[navigation.navigate("Groups")] }><View><Text>Home</Text></View></TouchableOpacity>
+    <Text>User: {userName}</Text>
     <Text>{"\n\n"}</Text>
       <View style = {styles.contentBoxes}>
       <Text style = {styles.heading}>{groupName}</Text> 

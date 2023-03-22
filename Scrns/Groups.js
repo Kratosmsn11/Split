@@ -1,7 +1,7 @@
 import React, {useEffect,useState} from 'react';
 import {Text, TouchableOpacity, View,StyleSheet,FlatList} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import {setGroupId,setGroups,getGroupsData,setUserId,setGroupsData, getGroupData,setGroupInfo, getGroupInfo, setUsers, getUsers,setUsersIds,getGroupId} from '../AppData';
+import {setGroupId,setGroups,getGroupsData,setUserId,setGroupsData, getGroupData,setGroupInfo, getGroupInfo, setUsers, getUsers,setUsersIds,getGroupId,setUserInfo} from '../AppData';
 import { getGroups, getGroupUsers} from '../backendFiles/firebaseFunctions';
 import { SafeAreaView } from 'react-native-safe-area-context';
 const TransactionOption = () => {
@@ -27,6 +27,7 @@ const TransactionOption = () => {
     setUsers(await getGroupUsers(getGroupInfo()['id']));
     setGroupId(getGroupInfo()['id']);
     setUsersIds(getUsers());
+    setUserInfo();
     navigation.navigate("Transaction");
   }
   

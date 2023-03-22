@@ -4,7 +4,7 @@ import React, {useState, useEffect} from 'react';
 import {Camera, CameraType} from 'expo-camera';
 import { useNavigation } from '@react-navigation/native';
 import { createTransaction } from '../backendFiles/firebaseFunctions';
-import {getUsers,getGroupId,getReceiptData,getGroupInfo, getUsersIds} from '../AppData';
+import {getUsers,getGroupId,getReceiptData,getGroupInfo, getUsersIds,getUserInfo} from '../AppData';
 import {calculateDebts} from '../backendFiles/SplittingAlgorithm';
 
 const CreateTransaction = () => {
@@ -43,7 +43,18 @@ const CreateTransaction = () => {
     for(var x = 1; x < userData.length;x++){
       paying[x] = 0;
     }
-    var debts = calculateDebts(spending,paying,getUsersIds());
+    var ids = getUsersIds();
+    console.log(ids);
+
+    //move the users id to the front, in the simple case
+    //person creating transaction will pay this correlates to current user id
+    const userId = getUserInfo()['id'];
+    console.log(userId);
+    const foundIndex = ids.findIndex(el => el == userId);
+    ids.splice(foundIndex, 1);
+    ids.unshift(userId);
+
+    var debts = calculateDebts(spending,paying,ids);
     console.log(debts);
     
     console.log(getGroupId());

@@ -75,55 +75,71 @@ export async function GetGroupData(groupId){
     console.log(debts);
     //Debts are added
     const q = query(debtCollection, where("groupId", "==", groupId));
-    const allDebts = await getDocs(q);
+   const allDebts = await getDocs(q);
 
-    //Debts adding up not working
-    await Promise.all(debts.map(async (element) => {
+
+   await Promise.all(debts.map(async (element) => {
+     //no debts yet, just add the debt
+     var found = false;
+     if(allDebts.size<=0){
+       console.log('Added debt');
+       const debt = await addDoc(debtCollection, element);
+       found = true;   
+     }
+     for(var x = 0;x<allDebts.size;x++){
+       //matches current so the ower will need to owe more
+       //take the current debt and add the extra debt
+       console.log(allDebts.docs[x].data());
+       if(allDebts.docs[x].data()['lenderId'] == element['lenderId'] && allDebts.docs[x].data()['owerId'] == element['owerId']){
+         found = true;
+         var newDebt = parseFloat(allDebts.docs[x].data()['total']) + parseFloat(element['total']);
+         var newData = {
+           total:newDebt,
+         }
+         const debtRef = doc(debtCollection,allDebts.docs[x].id);
+         updateDoc(debtRef,newData);
+         break;
+       }
+       //reversed so the ower will owe less, may pay off or need to be owed now
+       else if(allDebts.docs[x].data()['owerId'] == element['lenderId'] && allDebts.docs[x].data()['lenderId'] == element['owerId']){
+        found = true;
+         var newDebt = (parseFloat(allDebts.docs[x].data()['total']) + (parseFloat(element['total'])*-1)).toFixed(2);
+         //delete the debt
+         if(newDebt==0.0){
+           const debtRef = await doc(debtCollection,allDebts.docs[x].id);
+           await deleteDoc(debtRef);
+         }
+         //reverse the debt
+         else if(newDebt<0.0){
+           //change debt to positive
+           newDebt*=-1;
+           //swith lender and owerId
+           var newData = {
+             owerId:allDebts.docs[x].data()['lenderId'],
+             lenderId:allDebts.docs[x].data()['owerId'],
+             total:newDebt,
+           }
+           //update the doc with the new data
+           const debtRef = await doc(debtCollection,allDebts.docs[x].id);
+           await updateDoc(debtRef,newData);
+         }
+         else{
+           var newData = {
+             total:newDebt,
+           }
+           //only update the total
+           const debtRef = await doc(debtCollection,allDebts.docs[x].id);
+           await updateDoc(debtRef,newData);
+         }
+         break;
+       }
+     }
+     if(!found){
+      //no doc matching add debt
+      console.log('Added debt');
       const debt = await addDoc(debtCollection, element);
-      for(var x = 0;x<allDebts.size;x++){
-        //matches current so the ower will need to owe more
-        //take the current debt and add the extra debt
-        if(allDebts.docs[x].data()['lenderId'] == element['lenderId'] && allDebts.docs[x].data()['owerId'] == element['owerId']){
-          var newDebt = parseFloat(allDebts.docs[x].data()['total']) + parseFloat(transactionTotal);
-          var newData = {
-            total:newDebt,
-          }
-          const debtRef = doc(debtCollection,allDebts.docs[x].id);
-          updateDoc(debtRef,newData);
-        }
-        //reversed so the ower will owe less, may pay off or need to be owed now
-        else if(allDebts.docs[x].data()['owerId'] == element['lenderId'] && allDebts.docs[x].data()['lenderId'] == element['owerId']){
-          var newDebt = parseFloat(allDebts.docs[x].data()['total']) + parseFloat(transactionTotal);
-          //delete the debt
-          if(newDebt==0.0){
-            const debtRef = await doc(debtCollection,allDebts.docs[x].id);
-            await deleteDoc(debtRef);
-          }
-          //reverse the debt
-          else if(newDebt<0.0){
-            //change debt to positive
-            newDebt*=-1;
-            //swith lender and owerId
-            var newData = {
-              owerId:allDebts.docs[x].data()['lenderId'],
-              lenderId:allDebts.docs[x].data()['owerId'],
-              total:newDebt,
-            }
-            //update the doc with the new data
-            const debtRef = await doc(debtCollection,allDebts.docs[x].id);
-            await updateDoc(debtRef,newData);
-          }
-          else{
-            var newData = {
-              total:newDebt,
-            }
-            //only update the total
-            const debtRef = await doc(debtCollection,allDebts.docs[x].id);
-            await updateDoc(debtRef,newData);
-          }
-        }
-      }
-    }));
+     }
+   }));
   }
 
 

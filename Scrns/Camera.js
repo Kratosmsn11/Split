@@ -8,13 +8,12 @@ import { manipulateAsync } from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system';
 import { extractData} from '../backendFiles/TextParser';
 import {getStorage,ref,uploadBytes,getDownloadURL} from 'firebase/storage';
-import { setReceiptData } from '../AppData';
+import { getReceiptURL, setReceiptData, setReceiptURL} from '../AppData';
 import {getReceiptInfo} from '../backendFiles/GoogleVision';
 import uuid from "uuid";
 const CameraScreen = () => {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [camera, setCamera] = useState(null);
-  const [image, setImage] = useState(null);
   const [detectionText, setDetectionText] = useState("");
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [imageURL, setImageURL] = useState(null);
@@ -26,25 +25,27 @@ const CameraScreen = () => {
   });
 
   const takePicture = async () => {
-    if(camera){
-      const data = await camera.takePictureAsync();
-      const manipResult = await manipulateAsync(
-      data.uri,
-      [{ resize: { width: 450, height: 600 } }],
-      { format: 'jpeg', base64:true }
-    );
-      setImage(manipResult.uri);
-      const firebaseUrl = await uploadImageAsync(image);
-      var imageData = await getReceiptInfo(firebaseUrl);
+    // if(camera){
+    //   const data = await camera.takePictureAsync();
+    //   const manipResult = await manipulateAsync(
+    //   data.uri,
+    //   [{ resize: { width: 450, height: 600 } }],
+    //   { format: 'jpeg', base64:true }
+    // );
+      // const firebaseURL = await uploadImageAsync(manipResult.uri);
+      const firebaseURL = "https://firebasestorage.googleapis.com/v0/b/split-cst499.appspot.com/o/344f9a6d-cb75-4e30-893b-a1c7ee67053e?alt=media&token=597ec30d-b2fa-4035-a3f9-17aa324aefeb";
+      setReceiptURL(firebaseURL);
+      console.log(getReceiptURL());
+      var imageData = await getReceiptInfo(firebaseURL);
       console.log(imageData);
       var extractedData = await extractData(imageData);
       console.log(extractedData);
       setReceiptData(extractedData);
       navigation.navigate("CreateTransaction");
-    }
-    if(hasCameraPermission===false){
-      return<Text>No camera access</Text>
-    }
+    // }
+    // if(hasCameraPermission===false){
+    //   return<Text>No camera access</Text>
+    // }
   }
 
   // From: https://github.com/expo/examples/blob/master/with-firebase-storage-upload/App.js

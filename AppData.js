@@ -2,9 +2,11 @@ var userId;
 var groudId;
 var receiptData = {};
 var users = {};
+var userInfo = {};
 var userIds = {};
 var groups = {};
 var groupInfo = {};
+var receiptURL;
 export function setUserId(id){
     this.userId = id
 }
@@ -57,10 +59,28 @@ export function getUsers(){
     return this.users;
 }
 
+export function setUserInfo(){
+    var result = getUsers().find(user=>user.id==getUserId());
+    this.userInfo = result;
+}
+
+export function getUserInfo(){
+    return this.userInfo;
+}
+
+
 export function setUsersIds(users){
     this.userIds = users.map(a => a.id);
 }
 
 export function getUsersIds(){
     return this.userIds;
+}
+
+export function setReceiptURL(url){
+    this.receiptURL = url
+}
+
+export function getReceiptURL(){
+    return this.receiptURL;
 }
