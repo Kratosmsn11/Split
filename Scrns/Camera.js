@@ -25,28 +25,30 @@ const CameraScreen = () => {
   });
 
   const takePicture = async () => {
-    // if(camera){
-    //   const data = await camera.takePictureAsync();
-    //   const manipResult = await manipulateAsync(
-    //   data.uri,
-    //   [{ resize: { width: 450, height: 600 } }],
-    //   { format: 'jpeg', base64:true }
-    // );
-      // const firebaseURL = await uploadImageAsync(manipResult.uri);
-      const firebaseURL = "https://firebasestorage.googleapis.com/v0/b/split-cst499.appspot.com/o/344f9a6d-cb75-4e30-893b-a1c7ee67053e?alt=media&token=597ec30d-b2fa-4035-a3f9-17aa324aefeb";
-      setReceiptURL(firebaseURL);
-      console.log(getReceiptURL());
-      var imageData = await getReceiptInfo(firebaseURL);
-      console.log(imageData);
-      var extractedData = await extractData(imageData);
-      console.log(extractedData);
-      setReceiptData(extractedData);
-      navigation.navigate("CreateTransaction");
-    // }
-    // if(hasCameraPermission===false){
-    //   return<Text>No camera access</Text>
-    // }
-  }
+    if(camera){
+      const data = await camera.takePictureAsync();
+      const manipResult = await manipulateAsync(
+      data.uri,
+      [{ resize: { width: 450, height: 600 } }],
+      { format: 'jpeg', base64:true }
+    );
+      // const firebaseURL = "https://firebasestorage.googleapis.com/v0/b/split-cst499.appspot.com/o/344f9a6d-cb75-4e30-893b-a1c7ee67053e?alt=media&token=597ec30d-b2fa-4035-a3f9-17aa324aefeb";
+      if(manipResult.uri!=undefined){
+        const firebaseURL = await uploadImageAsync(manipResult.uri);
+        setReceiptURL(firebaseURL);
+        console.log(getReceiptURL());
+        var imageData = await getReceiptInfo(firebaseURL);
+        console.log(imageData);
+        var extractedData = await extractData(imageData);
+        console.log(extractedData);
+        setReceiptData(extractedData);
+        navigation.navigate("CreateTransaction");
+      }
+    }
+    if(hasCameraPermission===false){
+      return<Text>No camera access</Text>
+    }
+}
 
   // From: https://github.com/expo/examples/blob/master/with-firebase-storage-upload/App.js
   async function uploadImageAsync(uri) {

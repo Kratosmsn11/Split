@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import {GetGroupData, GetGroupTransactions,GetGroupDebts} from '../backendFiles/firebaseFunctions';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {getGroupId,getGroupInfo,setGroupId,getUserInfo} from '../AppData';
+import { useFocusEffect } from '@react-navigation/native';
 const Transaction = () => {
   const navigation = useNavigation();
   const [groupName,setGroupName] = useState("");
@@ -15,9 +16,15 @@ const Transaction = () => {
   const [settleDebtsModel, setSettleDebtsModalVisible] = useState(false);
   const itemCount = 3;
 
-  useEffect(() => {
-    getData();
-  }, [])
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      getData();
+    });
+    return unsubscribe;
+  }, []);
+  // useEffect(() => {
+  //   getData();
+  // }, [])
 
   const getData = async () =>{
     const groupId = getGroupId();
@@ -29,6 +36,9 @@ const Transaction = () => {
     setGroupDebts(await GetGroupDebts(groupId));
     setUserName(getUserInfo()['name']);
   }
+
+
+  
   return (
     <SafeAreaView style = {styles.align}>
     <View style = {styles.align}>

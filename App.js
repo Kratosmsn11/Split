@@ -7,6 +7,7 @@ import Transaction from "./Scrns/Transaction";
 import Camera from "./Scrns/Camera"
 import CreateTransaction from './Scrns/CreateTransaction';
 import Groups from './Scrns/Groups';
+import Login from './Scrns/Login';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -14,9 +15,10 @@ export default function App() {
   <StatusBar barStyle={"dark-content"} backgroundColor="white"/>
     <View style={{height:Dimensions.get("window").height}}>
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Groups"
+      <Stack.Navigator initialRouteName="Login"
         screenOptions={{
           headerShown: false,}}>
+        <Stack.Screen name="Login" component={Login}/>
         <Stack.Screen name="Groups" component={Groups}/>
         <Stack.Screen name="TransactionOption" component={TransactionOption}/>
         <Stack.Screen name="Transaction" component={Transaction}/>

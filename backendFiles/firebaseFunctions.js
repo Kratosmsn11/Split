@@ -142,6 +142,13 @@ export async function GetGroupData(groupId){
    }));
   }
 
+  export async function getUserId(authId){
+    console.log(authId);
+    const q = query(userCollection, where("uid", "==", authId));
+    const user= await getDocs(q);
+    return user.docs[0].id;
+  }
+
 
   export async function getGroups(userId) {
     var groupData = [];

@@ -32,7 +32,7 @@ const CreateTransaction = () => {
       Alert.alert("Need at least one item");
     }
     else{
-      Alert.alert("Transaction created");
+      // Alert.alert("Transaction created");
     }
     var spending = [];
     for(var x = 0; x < userData.length;x++){
@@ -73,6 +73,7 @@ const CreateTransaction = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.center}>
+      <TextInput placeholder='Enter name' style={styles.input} onChangeText={setTransactionName}></TextInput>
         <Text style={styles.headers}>Expenses</Text>
       <FlatList
       style={styles.FlatList}
@@ -86,7 +87,6 @@ const CreateTransaction = () => {
       <Text>{"\n\n\n\n\n\n\n\n"}</Text>
       
       <View style={styles.centerButton}>
-        <TextInput placeholder='Enter name' style={styles.input} onChangeText={setTransactionName}></TextInput>
         <TouchableOpacity style={styles.button}  onPress={()=> submitTransaction()}>
           <Text style={styles.text}>Finish</Text>
         </TouchableOpacity>

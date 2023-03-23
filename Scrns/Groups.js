@@ -2,18 +2,18 @@ import React, {useEffect,useState} from 'react';
 import {Text, TouchableOpacity, View,StyleSheet,FlatList} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import {setGroupId,setGroups,getGroupsData,setUserId,setGroupsData, getGroupData,setGroupInfo, getGroupInfo, setUsers, getUsers,setUsersIds,getGroupId,setUserInfo} from '../AppData';
-import { getGroups, getGroupUsers} from '../backendFiles/firebaseFunctions';
+import { getGroups, getGroupUsers, getUserId} from '../backendFiles/firebaseFunctions';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import firebase from 'firebase/compat';
 const TransactionOption = () => {
   const navigation = useNavigation();
-
-  const userId = "8dr7N2gI1k3Xk1oYXFGy";
-  const itemCount = 3;
   const [groups,groupData] = useState("");
 
   useEffect(() => {
     async function setData() {
+      const userId = await getUserId(firebase.auth().currentUser.uid);
       setUserId(userId);
+      console.log(userId);
       const data = await (getGroups(userId));
       console.log(data);
       setGroupsData(data);
@@ -30,6 +30,10 @@ const TransactionOption = () => {
     setUserInfo();
     navigation.navigate("Transaction");
   }
+
+  function goHome(){
+    navigation.navigate("Login");
+  }
   
 
   const Group = ({name,id}) => (
@@ -38,6 +42,7 @@ const TransactionOption = () => {
   return (
     <SafeAreaView>
       <View>
+        <TouchableOpacity style={styles.button} onPress={()=>goHome()}><Text>Logout</Text></TouchableOpacity>
         <Text style={styles.heading}>Groups</Text>
 
         <FlatList
