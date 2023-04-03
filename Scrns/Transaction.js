@@ -3,7 +3,7 @@ import {Text, TouchableOpacity, View,FlatList,StyleSheet,Modal,Pressable} from '
 import { useNavigation } from '@react-navigation/native';
 import {GetGroupData, GetGroupTransactions,GetGroupDebts} from '../backendFiles/firebaseFunctions';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {getGroupId,getGroupInfo,setGroupId,getUserInfo} from '../AppData';
+import {getGroupId,getGroupInfo,setGroupId,getUserInfo, setGroupDebtsAll} from '../AppData';
 import { useFocusEffect } from '@react-navigation/native';
 const Transaction = () => {
   const navigation = useNavigation();
@@ -34,6 +34,7 @@ const Transaction = () => {
     setGroupId(groupId);
     setGroupTransactions(await GetGroupTransactions(groupId));
     setGroupDebts(await GetGroupDebts(groupId));
+    setGroupDebtsAll(groupDebts);
     setUserName(getUserInfo()['name']);
   }
 
@@ -61,7 +62,7 @@ const Transaction = () => {
       
       <View style = {styles.contentBoxes}>
       <Text style = {styles.subheadings}>Settle Debts</Text>
-      <TouchableOpacity onPress={()=>setSettleDebtsModalVisible(true)}>
+      <TouchableOpacity onPress={()=>navigation.navigate("AllDebts")}>
       <FlatList
         style = {styles.list}
         data={groupDebts.slice(0,itemCount)}

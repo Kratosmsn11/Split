@@ -6,6 +6,7 @@ var userInfo = {};
 var userIds = {};
 var groups = {};
 var groupInfo = {};
+var groupDebts = {};
 var receiptURL;
 export function setUserId(id){
     this.userId = id
@@ -83,4 +84,13 @@ export function setReceiptURL(url){
 
 export function getReceiptURL(){
     return this.receiptURL;
+}
+
+
+export function setGroupDebtsAll(debts){
+    this.groupDebts = debts;
+}
+
+export function GetGroupDebtsAll(){
+    return this.groupDebts;
 }
