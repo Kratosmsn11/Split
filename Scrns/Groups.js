@@ -2,19 +2,20 @@ import React, {useEffect,useState} from 'react';
 import {Text, TouchableOpacity, View,StyleSheet,FlatList} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import {setGroupId,setGroups,getGroupsData,setUserId,setGroupsData, getGroupData,setGroupInfo, getGroupInfo, setUsers, getUsers,setUsersIds,getGroupId,setUserInfo} from '../AppData';
-import { getGroups, getGroupUsers, getUserId} from '../backendFiles/firebaseFunctions';
+import { getGroups, getGroupUsers, getUser, getUserId} from '../backendFiles/firebaseFunctions';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import firebase from 'firebase/compat';
 const TransactionOption = () => {
   const navigation = useNavigation();
   const [groups,groupData] = useState("");
+  const uid = "8Z02wZ8mVHnoCFIFbQm4";
 
   useEffect(() => {
     async function setData() {
-      const userId = await getUserId(firebase.auth().currentUser.uid);
-      setUserId(userId);
-      console.log(userId);
-      const data = await (getGroups(userId));
+      // const userId = await getUserId(uid);
+      setUserId(uid);
+      console.log(uid);
+      const data = await getGroups(uid);
       console.log(data);
       setGroupsData(data);
       groupData(getGroupData());

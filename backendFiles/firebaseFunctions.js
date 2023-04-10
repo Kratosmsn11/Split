@@ -4,8 +4,9 @@ import {getUsers} from'../AppData'
 const transactionCollection = collection(db,'transaction');
 const groupCollection = collection(db,'group');
 const debtCollection = collection(db,'debt');
-const userCollection = collection(db,'userprofiles');
+const userCollection = collection(db,'user');
 
+const passcodeLength = 5;
 //How to add extra fields to a map: Example
 //debtList.push({...doc.data(), lenderName: lenderName,owerName:owerName});
 
@@ -342,7 +343,7 @@ export async function GetGroupData(groupId){
     return false;
   }
   //Resource:https://www.geeksforgeeks.org/how-to-generate-a-random-password-using-javascript/
-  function generateRandomPasscode(){
+  export function generateRandomPasscode(){
       var passcode = '';
       var string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
               'abcdefghijklmnopqrstuvwxyz0123456789@#$';

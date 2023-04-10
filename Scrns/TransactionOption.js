@@ -10,7 +10,7 @@ const TransactionOption = () => {
         justifyContent: 'center',
         alignItems: 'center',
       }}>
-      <TouchableOpacity style = {styles.button}><Text>Empty transaction</Text></TouchableOpacity>
+      <TouchableOpacity onPress={()=>navigation.navigate("Create")} style = {styles.button}><Text>Empty transaction</Text></TouchableOpacity>
       <Text>{"\n\n\n\n"}OR{"\n\n\n\n"}</Text>
       <TouchableOpacity onPress={()=>navigation.navigate("Camera")} style = {styles.button}><Text>Scan receipt</Text></TouchableOpacity>
     </View>

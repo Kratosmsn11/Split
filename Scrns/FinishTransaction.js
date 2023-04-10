@@ -1,77 +1,81 @@
 import * as React from 'react';
 import { Text, View, StyleSheet,FlatList,TextInput,TouchableOpacity,Alert,SafeAreaView,Image} from 'react-native';
 import {useState,useEffect} from 'react';
+import { getUsers } from '../AppData';
 
 
 export default function App() {
   const payment = 42.34;
   const users = 3;
+  //the list that will contain each user's input
   const [inputs, setInputs] = useState([]);
   const [total, setTotal] = useState(0.00);
-  var userPaying = Array(users).fill(0);
+  //this
+  var defaultPaying = Array(users).fill(undefined);
   const [valid, setValid] = useState(false);
+  const [userData, setUserData] = useState(0.00);
 
-
-  var userData = [
-    { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg', name: 'Jane', id: 20055 },
-    { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-2.jpg', name: 'Chloe', id: 20056 },
-    { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-8.jpg', name: 'Bob', id: 20057 },
-  ];
+  // var userData = [
+  //   { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg', name: 'Jane', id: 20055 },
+  //   { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-2.jpg', name: 'Chloe', id: 20056 },
+  //   { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-8.jpg', name: 'Bob', id: 20057 },
+  // ];
 
 
   useEffect(() => {
-    setInputs(userPaying);
+    setUserData(getUsers())
+    setInputs(defaultPaying);
   }, [])
 
 
-  function displayTextInput(){
-    var con = "";
-    for(var x = 0; x < userPaying.length;x++){
-      if(inputs[x]==undefined){
+  function submitPayments(){
+    //fix input to be float values
+    for(var x = 0; x < inputs.length;x++){
+      if(inputs[x]==undefined || inputs[x]==null){
         inputs[x]=0.0;
       }
-      con+="This is person" + x +"'s payment:" + inputs[x] +"\n";
+      else{
+        inputs[x]=parseFloat(inputs[x]);
+      }
     }
+    //calculate the sum
     var sum = inputs.reduce(function(a, b) { return parseFloat(a) + parseFloat(b); }, 0);
-    con +="\n" +"The sum is:" + sum;
+    sum = sum.toFixed(2);
 
+    //checks if the users payment is equal 
     if(sum==payment){
-        Alert.alert("Finish!");
+        console.log("Finish!");
     }
     else{
-        Alert.alert("Payment must equal total!");
+        console.log("Payment must equal total!");
     }
     console.log(inputs);
-    // Alert.alert(con);
   }
 
+  //reseting to the original values
   function resetPayments(){
     for(var x = 0; x < inputs.length;x++){
-      
-      inputs[x]=0.00;
+      inputs[x] = 0.00;
     }
     setTotal(0);
-    setInputs(Array(users).fill(undefined))
+    setInputs(defaultPaying)
   }
 
-
+  //called anytime an input box is changed sums to get the total and changes state to display
   function changeTotal(newInput){
     var sum = 0;
-    for(var x = 0; x < userPaying.length;x++){
-      if(isNaN(newInput[x])){
+    for(var x = 0; x < inputs.length;x++){
+      let pay = newInput[x];
+      if(isNaN(parseFloat(pay))){
         sum+=0;
       }
       else{
         sum += parseFloat(newInput[x]);
       }
     }
-    if(isNaN(sum)){
-        sum = 0;
+    if(sum == payment){
+      setValid(true)
     }
-    // console.log(sum);
-    // if(sum == payment){
-    //   setValid(true)
-    // }
     setTotal(sum);
   }
   
@@ -81,7 +85,7 @@ export default function App() {
     <View style={styles.bg}>
     <Text style={styles.title}>Payments</Text>
       <FlatList
-        data={userPaying}
+        data={defaultPaying}
         renderItem={({ item, index }) => {
           return (
             <View
@@ -97,6 +101,12 @@ export default function App() {
                 keyboardType = 'numeric'
                 placeholder="0.00"
                 onChangeText={text => {
+                  if(text.length>0){
+                    text = text.replace(/[^0-9.]/g, '');
+                    if(isNaN(text)){
+                      return;
+                    }
+                  }
                   const newInputs = [...inputs];
                   newInputs[index] = text;
                   setInputs(newInputs);
@@ -112,8 +122,8 @@ export default function App() {
       <Text style={styles.functionality}>Total ${payment}</Text>
       <Text style={[styles.invalid, (valid ? styles.valid : null)]}>${total.toFixed(2)}</Text>
 
-      <TouchableOpacity onPress={()=>displayTextInput()} style={styles.button}><Text style={styles.functionality}>Submit</Text></TouchableOpacity>
-      <Text></Text>
+      <TouchableOpacity onPress={()=>submitPayments()} style={styles.button}><Text style={styles.functionality}>Submit</Text></TouchableOpacity>
+      <Text>{"\n"}</Text>
       <TouchableOpacity onPress={()=>resetPayments()} style={styles.button}><Text style={styles.functionality}>Reset</Text></TouchableOpacity>
       </View>
     </View>

@@ -2,16 +2,30 @@ import * as React from 'react';
 import {useState,useEffect} from 'react';
 import {Text,View,StyleSheet,SafeAreaView,TouchableOpacity,FlatList,TextInput,Alert,Modal,Pressable,Image} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import {getReceiptData, getUsers} from '../AppData';
 
 export default function App() {
-  const navigation = useNavigation();
 
-    var data = [
-        {name: 'Soda', price: 2.19, id: 20055, users: []},
-        { name: 'Burger', price: 3.17, id: 20056, users: []},
-        { name: 'Chicken', price: 5.55, id: 20057, users: [] },
-        { name: 'Fries', price: 5.55, id: 20058, users: [] },
-    ];
+    // var data = [
+    //     {name: 'Soda', price: 2.19, id: 20055, users: []},
+    //     { name: 'Burger', price: 3.17, id: 20056, users: []},
+    //     { name: 'Chicken', price: 5.55, id: 20057, users: [] },
+    //     { name: 'Fries', price: 5.55, id: 20058, users: [] },
+    // ];
+
+    useEffect(() => {
+      if(getReceiptData() != undefined){
+        setItemData(getReceiptData()['items']);
+      }
+      setUserData(getUsers());
+
+      setItemCount(itemData.length)
+
+      if(itemData.length>0){
+        let total = itemData.map(item => item.price).reduce((prev, next) => prev + next);
+        setTotal(total);
+      }
+    }, [])
     
     //function is called whenever user clicks on a user profile image to assign an item, either the user is
     //assigned or removed from the items user list
@@ -57,6 +71,9 @@ export default function App() {
       setItemData(itemData);
       // the item count is also set using the new length of the data
       setItemCount(itemData.length);
+
+      // let total = itemData.map(item => item.price).reduce((prev, next) => parseFloat(prev) + parseFloat(next));
+      // setTotal(total.toFixed(2));
     }
     
     function AddAllUsers(itemId) {
@@ -124,12 +141,32 @@ export default function App() {
           console.log(userData[z].name + " spent: $" + userSpending[z]);
         }
 
-        navigation.navigate("FinishTransaction");
+        // navigation.navigate("FinishTransaction");
     }
 
     function EditItem(item){
         setCurrentItem(item);
+        setName(item.name);
+        setPrice(item.price);
         setTransactionModalVisible(true);
+    }
+
+    function AddItem(){
+      let item = {name:"",price:0,id:itemData.length,users:[]};
+      itemData[itemData.length] = item;
+      setItemData(itemData);
+      setCurrentItem(item);
+      setTransactionModalVisible(true);
+    }
+
+    function MakeItemChanges(){
+      let i = itemData.findIndex(data=>data.id==currentItem.id);
+      itemData[i].name = newName;
+      itemData[i].price = newPrice;
+      setTransactionModalVisible(false);
+
+      let total = itemData.map(item => item.price).reduce((prev, next) => parseFloat(prev) + parseFloat(next));
+      setTotal(total);
     }
     
     const Item = ({ item }) => (
@@ -145,33 +182,38 @@ export default function App() {
             />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => DeleteItem(item.id)}>
+        <TouchableOpacity style={styles.button} onPress={() => DeleteItem(item.id)}>
           <Text>X</Text>
         </TouchableOpacity>
       </View>
     );
 
     const [itemData,setItemData] = useState([]);
+    const [userData,setUserData] = useState([]);
+    const [newName,setName] = useState([]);
+    const [newPrice,setPrice] = useState([]);
+    const [total,setTotal] = useState([]);
     const [itemCount,setItemCount] = useState("");
     const [transactionModal,setTransactionModalVisible] = useState("");
     const [currentItem,setCurrentItem] = useState("");
-    var userData = [
-    { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg', name: 'Jane', id: 20055 },
-    { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-2.jpg', name: 'Chloe', id: 20056 },
-    { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-8.jpg', name: 'Bob', id: 20057 },
-    ];
-
-    useEffect(() => {
-        setItemData(data);
-        setItemCount(data.length)
-    }, [])
+    // var userData = [
+    // { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg', name: 'Jane', id: 20055 },
+    // { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-2.jpg', name: 'Chloe', id: 20056 },
+    // { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-8.jpg', name: 'Bob', id: 20057 },
+    // ];
 
   return (
     <SafeAreaView>
       <View>
-        <Text style={styles.title}>Create transaction</Text>
+        <Text style={styles.title}>Transaction</Text>
         <FlatList data={itemData} extraData ={itemData}renderItem={({ item }) => <Item item={item} />} />
         <Text style={styles.title}>Item count: {itemCount}</Text>
+        <Text style={styles.title}>Subtotal: {total}</Text>
+
+        <TouchableOpacity onPress={() => AddItem()} style = {styles.addButton}>
+        <Text>Add item</Text>
+        </TouchableOpacity>
+        
         <TouchableOpacity onPress={() => CalculateUserExpense()}>
           <Text>Finish</Text>
         </TouchableOpacity>
@@ -179,7 +221,7 @@ export default function App() {
 
 
       <Modal
-        animationType="fade"
+        animationType="slide"
         transparent={true}
         visible={transactionModal}
         onRequestClose={() => {
@@ -192,16 +234,27 @@ export default function App() {
             <View style = {styles.modalContent}>
             <FlatList
               data={currentItem.users}
-              renderItem={({item}) => <View style ={styles.pictures}><Image style = {styles.smallImage} source={{uri: item.uri}}/></View>}
+              renderItem={({item}) => <View><View style ={styles.pictures}><Image style = {styles.smallImage} source={{uri: item.uri}}/></View></View>}
             />
-            <TextInput defaultValue={currentItem.name} style ={styles.input}></TextInput>
-            <TextInput defaultValue={currentItem.price+""} style ={styles.input}></TextInput>
+            <TextInput placeholder ="Name" defaultValue={currentItem.name} style ={styles.input} onChangeText={newText => setName(newText)}></TextInput>
+            <TextInput placeholder = "0.00" defaultValue={currentItem.price+""} style ={styles.input} onChangeText={newText => setPrice(newText)}></TextInput>
             <Text style ={styles.subheading}>Group Members</Text>
             <TouchableOpacity onPress={() => AddAllUsers(currentItem.id)}><Text>Add all</Text></TouchableOpacity>
             <TouchableOpacity onPress={() => RemoveAllUsers(currentItem.id)}><Text>Remove all</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => MakeItemChanges()}><Text>Finish</Text></TouchableOpacity>
             <FlatList
               data={userData}
-              renderItem={({item}) => <TouchableOpacity onPress={()=>UserClick(currentItem.id,item.id)}><View><Image style = {styles.image} source={{uri: item.uri}}/><Text>{item.name}{"\n\n"}</Text></View></TouchableOpacity>}
+              renderItem={({item}) => <View style={{
+                alignSelf: 'center',
+                flex:1,
+                flexDirection:'row'
+              }}><View style={{
+                alignSelf: 'center',
+                flex:1,
+                flexDirection:'row'
+              }}><TouchableOpacity onPress={()=>UserClick(currentItem.id,item.id)}><View><Image style = {styles.image} source={{uri: item.uri}}/><Text style={{
+                alignSelf: 'center',
+              }}>{item.name}{"\n\n"}</Text></View></TouchableOpacity></View></View>}
             />
             </View>
             <Pressable
@@ -226,8 +279,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   item: {
-    justifyContent: 'center',
-    flexDirection: 'row',
+    flex:1,
+    flexDirection:'column',
+    alignSelf:'center',
+    alignItems:'center',
+    backgroundColor:'#CBCBCB',
+    height:60,
+    width:300
   },
   imageContainer: {
     justifyContent: 'center',
@@ -240,8 +298,9 @@ const styles = StyleSheet.create({
     marginTop: 22,
   },
   pictures: {
-    flex: 1,
-    flexDirection:'columns'
+        alignSelf: 'center',
+        flex:1,
+        flexDirection:'row'
   },
   modalText: {
     marginBottom: 15,
@@ -251,8 +310,8 @@ const styles = StyleSheet.create({
     left:30,
   },
   modalView: {
-    width:300,
-    height:400,
+    width:500,
+    height:700,
     margin: 20,
     backgroundColor: 'white',
     borderRadius: 20,
@@ -289,5 +348,23 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 15,
     fontWeight: 'bold',
+  },
+  button: {
+    alignItems: 'center',
+    flex:1,
+    justifyContent:'center',
+    backgroundColor: '#DDDDDD',
+    width:30,
+    padding: 10,
+  },
+
+  addButton: {
+    alignItems: 'center',
+    flex:1,
+    justifyContent:'center',
+    backgroundColor: '#DDDDDD',
+    width:30,
+    height:50,
+    padding: 10,
   },
 });
