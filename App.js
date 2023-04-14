@@ -13,6 +13,7 @@ import AllDebts from './Scrns/AllDebts';
 import Create from './Scrns/Create';
 import FinishTransaction from './Scrns/FinishTransaction'
 import CreateGroup from './Scrns/CreateGroup';
+import Home from './Scrns/Home';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -20,10 +21,11 @@ export default function App() {
   <StatusBar barStyle={"dark-content"} backgroundColor="white"/>
     <View style={{height:Dimensions.get("window").height}}>
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="CreateGroup"
+      <Stack.Navigator initialRouteName="TransactionOption"
         screenOptions={{
           headerShown: false,}}>
         <Stack.Screen name="Create" component={Create}/>
+        <Stack.Screen name="Home" component={Home}/>
         <Stack.Screen name="CreateGroup" component={CreateGroup}/>
         <Stack.Screen name="FinishTransaction" component={FinishTransaction}/>
         <Stack.Screen name="AllDebts" component={AllDebts}/>
