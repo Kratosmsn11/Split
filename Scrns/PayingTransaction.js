@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Text, View, StyleSheet,FlatList,TextInput,TouchableOpacity,Alert,SafeAreaView,Image} from 'react-native';
 import {useState,useEffect} from 'react';
-import { Logo,BottomBar,BottomLayer,ContinueButton} from '../components/Svgs';
+import { Logo,BottomBar,BottomLayer,ContinueButton,LeftArrow} from '../components/Svgs';
 import { useNavigation } from '@react-navigation/native';
 
 
@@ -15,9 +15,6 @@ export default function App() {
 
     var userData = [
     { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg', name: 'Jane', id: 20055 },
-    { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-2.jpg', name: 'Chloe', id: 20056 },
-    { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-8.jpg', name: 'Bob', id: 20057 },
-        { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg', name: 'Jane', id: 20055 },
     { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-2.jpg', name: 'Chloe', id: 20056 },
     { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-8.jpg', name: 'Bob', id: 20057 },
   ];
@@ -85,6 +82,8 @@ export default function App() {
     <Logo/>
     <BottomLayer/>
         <BottomBar/>
+
+    <View><LeftArrow/></View>
 
         <TouchableOpacity onPress={() => navigation.navigate("GroupPage")}>
             <ContinueButton/>

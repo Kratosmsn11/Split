@@ -16,16 +16,15 @@ const Login = ({ navigation }) => {
   const [password, setpassword] = useState("");
 
   const onLogin = () => { 
-    navigation.navigate("Home");
-    // if (email == "" || password == "") {
-    //   Alert.alert("Error!", "Please make sure you have filled all fields!");
-    // } else {
-    //   signInWithEmailAndPassword(getAuth(app), email, password).then(
-    //     (response) => {
-    //       navigation.navigate("Home");
-    //     }
-    //   );
-    // }
+    if (email == "" || password == "") {
+      Alert.alert("Error!", "Please make sure you have filled all fields!");
+    } else {
+      signInWithEmailAndPassword(getAuth(app), email, password).then(
+        (response) => {
+          navigation.navigate("Home");
+        }
+      );
+    }
   };
 
   return (

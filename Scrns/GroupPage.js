@@ -2,6 +2,7 @@ import {SafeAreaView,StyleSheet,View,Dimensions,Text,TouchableOpacity,ScrollView
 import React, { useEffect, useState } from "react";
 import {Logo,BottomLayer,LeftArrow,ProfileImage,User,OrderLight,CameraIcon, HomeIcon, AddButton, BottomBar} from '../components/Svgs';
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
+import { GetGroupDebts, GetGroupTransactions } from "../backendFiles/firebaseFunctions";
   
   const GroupDetail = ({ navigation, route }) => {
     const [isShow, setisShow] = useState(false);
@@ -12,6 +13,7 @@ import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
     const [total, setTotal] = useState("");
     const [debts, setDebts] = useState("");
     const [transactions, setTransactions] = useState("");
+    const groupId = "8Z02wZ8mVHnoCFIFbQm4";
     //hte max number of transactions and debts that will be shown
     const itemCount = 3;
     // const db = getFirestore(app);
@@ -28,32 +30,42 @@ import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
     ]
 
     const getDebts = async () => {
-
+      const debtData = await GetGroupDebts(groupId);
+      console.log(debtData);
+      setDebts(debtData);
     };
 
     const getTransactions = async () => {
-
+      const transactionData = await GetGroupTransactions(groupId);
+      console.log(transactionData);
+      setTransactions(transactionData);
     };
+
+    function getData(){
+      getDebts();
+      getTransactions();
+    }
   
-    const getItem = async () => {
+    // const getItem = async () => {
     //   const docRef = doc(db, "Item", route?.params?.GrouName);
     //   const docSnap = await getDoc(docRef);
     //   return docSnap.data();
-    };
+    // };
   
-    const getMember = async () => {
+    // const getMember = async () => {
     //   const docRef = doc(db, "Permission", route?.params?.GrouName);
     //   const docSnap = await getDoc(docRef);
     //   return docSnap.data();
-    };
+    // };
   
     useEffect(() => {
-      getItem().then((res) => {
-        setitem(res);
-      });
-      getMember().then((res) => {
-        setmember(res?.users);
-      });
+      getData();
+      // getItem().then((res) => {
+      //   setitem(res);
+      // });
+      // getMember().then((res) => {
+      //   setmember(res?.users);
+      // });
     }, []);
   
     let permember=0
@@ -117,7 +129,7 @@ import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
             >
                 <FlatList
                     style = {styles.list}
-                    data={dummyTransactions.slice(0,itemCount)}
+                    data={transactions.slice(0,itemCount)}
                     renderItem={({item}) => <Transaction transaction={item}/>}
                 /> 
             </View>
@@ -139,7 +151,7 @@ import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 
             <FlatList
                 style = {styles.list}
-                data={dummyDebts.slice(0,itemCount)}
+                data={debts.slice(0,itemCount)}
                 renderItem={({item}) => <Debt debt={item}/>}
             />
 

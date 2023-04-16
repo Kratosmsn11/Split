@@ -3,9 +3,19 @@ import Svg, { Path } from "react-native-svg"
 import React, { useEffect, useState } from "react";
 import { useNavigation } from '@react-navigation/native';
 import {Logo,BottomLayer,LeftArrow,BottomBar} from "../components/Svgs";
-
+import PermissionPop from '../components/AlertModal';
 const AddExpense = () => {
   const navigation = useNavigation();
+  const [isShow,setIsShow] = useState(false);
+
+  function onCamera(){
+    setIsShow(false);
+    navigation.navigate("Camera");
+  }
+
+  function onGallary(){
+    setIsShow(false);
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -46,9 +56,7 @@ const AddExpense = () => {
             OR
           </Text>
           <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("Camera");
-            }}
+            onPress={() => {setIsShow(true);}}
             style={{
               height: 50,
               width: "90%",
@@ -103,6 +111,14 @@ const AddExpense = () => {
         >
         </TouchableOpacity>
       </View>
+      <PermissionPop
+        isOpen={isShow}
+        onCamera={() => onCamera()}
+        onGallary={() => onGallary()}
+        onClose={() => {
+          setIsShow(false);
+        }}
+      />
     </SafeAreaView>
   );
 };

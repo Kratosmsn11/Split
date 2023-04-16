@@ -8,18 +8,20 @@ import {
     SafeAreaView,
   } from 'react-native';
   import React from 'react';
-  import { Logo } from '../components/Svgs';
+  import { Logo,BottomLayer,BottomBar,CheckmarkIcon } from '../components/Svgs';
+import { useNavigation } from '@react-navigation/native';
   const height = Dimensions.get('window').height;
   const width = Dimensions.get('window').width;
   
   const Profile = () => {
+    const navigation = useNavigation();
     return (
       <SafeAreaView>
         <Logo/>
         <BottomLayer/>
         <BottomBar/>
         <View style={{height: height, width: width}}>
-
+            <CheckmarkIcon/>
           <Image
             source={{
               uri: 'https://us04web.zoom.us/postattendee?mn=8mhNTNE2T1gQ7W_iLoVcSpj8WWFlFEwCKupt.RzXJh3FAs_idJXvK',

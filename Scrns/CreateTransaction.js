@@ -1,151 +1,7 @@
-// import { StatusBar } from 'expo-status-bar';
-// import { StyleSheet, Text, View,Button,Image,Alert,TouchableOpacity,ScrollView,SafeAreaView,FlatList,Modal,Pressable,TextInput} from 'react-native';
-// import React, {useState, useEffect} from 'react';
-// import {Camera, CameraType} from 'expo-camera';
-// import { useNavigation } from '@react-navigation/native';
-// import { createTransaction } from '../backendFiles/firebaseFunctions';
-// import {getUsers,getGroupId,getReceiptData,getGroupInfo, getUsersIds,getUserInfo} from '../AppData';
-// import {calculateDebts} from '../backendFiles/SplittingAlgorithm';
-
-// const CreateTransaction = () => {
-//   const navigation = useNavigation();
-//   const [users,setUsers] = useState("");
-//   const [groupId,setGroupId] = useState("");
-//   const [itemData,setItemData] = useState("");
-//   const [userData,setUserData] = useState("");
-//   const [total,setTotal] = useState("");
-//   const [userSpending,setUserSpending] = useState("");
-//   const [userPaying,setUserPaying] = useState("");
-//   const [transactionName,setTransactionName] = useState("");
-//   useEffect(() => {
-//     setUserData(getUsers());
-//     const data = getReceiptData();
-//     setTotal(data['total']);
-//     setItemData(data['items']);
-//     console.log(getUsersIds());
-//   }, [])
-
-
-//   function submitTransaction(){
-//     const userBill = total/userData.length;
-//     if(itemData.length<=0){
-//       Alert.alert("Need at least one item");
-//     }
-//     else{
-//       // Alert.alert("Transaction created");
-//     }
-//     var spending = [];
-//     for(var x = 0; x < userData.length;x++){
-//       spending[x] = userBill;
-//     }
-//     var paying = [];
-//     paying[0] = parseFloat(total);
-//     for(var x = 1; x < userData.length;x++){
-//       paying[x] = 0;
-//     }
-//     var ids = getUsersIds();
-//     console.log(ids);
-
-//     //move the users id to the front, in the simple case
-//     //person creating transaction will pay this correlates to current user id
-//     const userId = getUserInfo()['id'];
-//     console.log(userId);
-//     const foundIndex = ids.findIndex(el => el == userId);
-//     ids.splice(foundIndex, 1);
-//     ids.unshift(userId);
-
-//     var debts = calculateDebts(spending,paying,ids);
-//     console.log(debts);
-    
-//     console.log(getGroupId());
-
-//     var currentTotal = getGroupInfo()['total'];
-//     console.log("Current total:" + currentTotal);
-
-//     createTransaction(transactionName,total,getGroupId(),debts,currentTotal)
-//     navigation.navigate("Transaction");
-//   }
-
-//   const Item = ({name,price}) => (
-//     <TouchableOpacity><View style={styles.item}><Text>{name}</Text><Text>${price}</Text></View></TouchableOpacity>
-//   );
-
-//   return (
-//     <SafeAreaView style={styles.container}>
-//       <View style={styles.center}>
-//       <TextInput placeholder='Enter name' style={styles.input} onChangeText={setTransactionName}></TextInput>
-//         <Text style={styles.headers}>Expenses</Text>
-//       <FlatList
-//       style={styles.FlatList}
-//         data={itemData}
-//         renderItem={({item}) =><Item name={item.name} price ={item.price}  />}
-//       />
-//       <View>
-//       <Text style={styles.headers}>Total:{total}</Text>
-//       </View>
-//       <View style={styles.center}>
-//       <Text>{"\n\n\n\n\n\n\n\n"}</Text>
-      
-//       <View style={styles.centerButton}>
-//         <TouchableOpacity style={styles.button}  onPress={()=> submitTransaction()}>
-//           <Text style={styles.text}>Finish</Text>
-//         </TouchableOpacity>
-//       </View>
-//       </View>
-//       </View>
-//   </SafeAreaView>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   button: {
-//     width:100,
-//     alignItems: 'center',
-//     backgroundColor: '#00bfff',
-//     padding: 10,
-//   },
-//   item: {
-//     backgroundColor: '#D9D9D9',
-//     padding: 20,
-//     marginVertical: 6,
-//     marginHorizontal: 20,
-//   },
-//   text:{
-//     fontSize:20,
-//     textAlign:'center'
-//   },
-//   center:{
-//     justifyContent:'center',
-//     alignContent:'center',
-//     position: 'relative',
-//   },
-//   centerButton:{
-//     justifyContent:'center',
-//     alignContent:'center',
-//     position: 'relative',
-//   },
-//   headers:{
-//     textAlign:'center',
-//     fontSize:20,
-//     fontWeight:'bold'
-//   },
-//   input: {
-//     height: 40,
-//     margin: 12,
-//     borderWidth: 1,
-//     padding: 10,
-//   },
-//   FlatList:{
-//     height:300,
-//   }
-// });
-
-// export default CreateTransaction;
-
 import * as React from 'react';
 import {useState,useEffect} from 'react';
-import {Text,View,StyleSheet,SafeAreaView,TouchableOpacity,FlatList,TextInput,Alert,Modal,Pressable,Image} from 'react-native';
-
+import {Text,View,StyleSheet,SafeAreaView,TouchableOpacity,FlatList,TextInput,Alert,Modal,Pressable,Image,TouchableWithoutFeedback} from 'react-native';
+import { BottomSheet } from 'react-native-btr';
 import { useNavigation } from '@react-navigation/native';
 import { AddButton, BottomBar, BottomLayer, Logo,ContinueButton } from '../components/Svgs';
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
@@ -163,16 +19,15 @@ const Create = () => {
     const [canContinue,setCanContinue] = useState(false);
     
     var udata = [
-    { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg', name: 'Jane', id: 20055},
-    { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-2.jpg', name: 'Chloe', id: 20056},
-    { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-8.jpg', name: 'Bob', id: 20057},
-    { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg', name: 'Jane', id: 20058},
-    { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-2.jpg', name: 'Chloe', id: 20059},
-    { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-8.jpg', name: 'Bob', id: 20060},
+      { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg', name: 'Jane', id: 20055},
+      { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-2.jpg', name: 'Chloe', id: 20056},
+      { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-8.jpg', name: 'Bob', id: 20057},
     ];
     //function is called whenever user clicks on a user profile image to assign an item, either the user is
     //assigned or removed from the items user list
     function UserClick(itemId, userId) {
+      console.log(itemId);
+      console.log(userId);
       //the items id is passed in and is used to find the item
       var item = itemData.find(data=>data.id==itemId);
       //save the items user list
@@ -208,6 +63,9 @@ const Create = () => {
         setCurrentItem(item);
         SetRefresh(!refesh);
       }
+      console.log(itemData[itemIndex].users);
+      updateData();
+      SetRefresh(!refesh);
     }
     
     //used when removing an item from a transaction, uses id passed to locate and remove item from list of items
@@ -221,12 +79,13 @@ const Create = () => {
       itemData.splice(itemIndex,1);
       // the item count is also set using the new length of the data
       setItemCount(itemData.length);
-      if(itemData.length>1){
+      if(itemData.length>0){
         let total = itemData.map(item => item.price).reduce((prev, next) => parseFloat(prev) + parseFloat(next));
         setTotal(total.toFixed(2));
       }
       //the state is changed for items, this will update the flatlist
       setItemData(itemData);
+      updateData();
     }
     
     function AddAllUsers(itemId) {
@@ -259,7 +118,6 @@ const Create = () => {
         return true;
       }
       else{
-        Alert.alert("All item's must be assigned a user!");
         return false;
       }
     }
@@ -293,12 +151,12 @@ const Create = () => {
     function EditItem(item){
         setCurrentItem(item);
         setName(item.name);
-        setPrice(item.price);
+        setPrice(item.price.toString());
         setTransactionModalVisible(true);
     }
 
     function AddItem(){
-      let item = {name:"",price:null,id:itemData.length,users:[]};
+      let item = {name:"",price:undefined,id:itemData.length,users:[]};
       itemData[itemData.length] = item;
       setItemData(itemData);
       setCurrentItem(item);
@@ -306,24 +164,30 @@ const Create = () => {
     }
 
     function MakeItemChanges(){
-      // let i = itemData.findIndex(data=>data.id==currentItem.id);
-      // itemData[i].name = newName;
-      // itemData[i].price = newPrice;
+      let i = itemData.findIndex(data=>data.id==currentItem.id);
+      itemData[i].name = newName;
+      itemData[i].price = newPrice;
       setTransactionModalVisible(false);
-      // setItemData(itemData);
-      // if(itemData.length == 0){
-      //   setTotal(newPrice.toFixed(2));
-      //   setItemCount(1);
-      // }
-      // else{
-      //   updateData();
-      // }
+      setItemData(itemData);
+      if(itemData.length == 0){
+        setTotal(newPrice.toFixed(2));
+        setItemCount(1);
+      }
+      else{
+        updateData();
+      }
     }
 
     function updateData(){
-      let total = itemData.map(item => item.price).reduce((prev, next) => parseFloat(prev) + parseFloat(next));
-      setTotal(total.toFixed(2));
-      setItemCount(itemData.length);
+      if(itemData.length>0){
+        let total = itemData.map(item => item.price).reduce((prev, next) => parseFloat(prev) + parseFloat(next));
+        setTotal(total.toFixed(2));
+        setItemCount(itemData.length);
+      }
+      else{
+        setTotal(0);
+        setItemCount(0);
+      }
 
       if(ValidFinish()){
         setCanContinue(true);
@@ -341,18 +205,19 @@ const Create = () => {
       return udata;
     }
     
+    function ClickAway(){
+      if(currentItem.name=="" || currentItem.price ==undefined){
+        itemData.pop();
+        setItemData(itemData);
+        SetRefresh(!refesh);
+      }
+      setTransactionModalVisible(false);
+    }
+    
     const Item = ({ item }) => (
       <View style={{flexDirection:"row"}}>
-
-
         <TouchableOpacity onPress={() => EditItem(item)}>
-
-          {/* <View style={styles.item}>
-            <Text style={{alignSelf:'flex-start', justifyContent:'center',fontSize:20,flex:1}}>{item.name}</Text>
-            <Text style={{alignSelf:'flex-end',justifyContent:'center',fontSize:20,flex:1}}>${item.price}</Text> */}
-
             <View style={styles.wrapper}>
-  
                 <View style={{flexDirection:"row"}}>
                     <View style={{flex:1}}>
                         <Text style={styles.itemName}>{item.name}</Text>
@@ -361,11 +226,11 @@ const Create = () => {
                         <Text style={styles.itemPrice}>${item.price}</Text>
                     </View>
                 </View>
-
         </View>
     
             {/* <FlatList
               data={item.users}
+              extraData={refesh}
               renderItem={({ item }) => <View><Image style = {styles.smallImage} source={{uri: item.uri}}/></View>}
               contentContainerStyle={{
                 flexDirection:'row',
@@ -402,6 +267,8 @@ const Create = () => {
         }
         setTotal(total);
         setUserData(AddIndex());
+        SetRefresh(!refesh);
+        console.log(userData);
     }, [])
 
   return (
@@ -425,7 +292,7 @@ const Create = () => {
       <View style = {styles.centeredView}>  
         {itemData.length == 0 ? (
             <View style={styles.wrapper}>
-                <View style={{flex:1}}>
+                <View style={{flex:1,justifyContent:'center'}}>
                     <Text style={styles.itemName}>No items yet</Text>
                 </View>
               </View>
@@ -441,72 +308,80 @@ const Create = () => {
 
       </View>
 
-
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={transactionModal}
         onRequestClose={() => {
           Alert.alert('Modal has been closed.');
           setTransactionModalVisible(false);
         }}>
+
+        <TouchableWithoutFeedback onPress={() => ClickAway()}>
+          <View style={styles.modalOverlay} />
+        </TouchableWithoutFeedback>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             {/* <Text style={styles.modalText}>Edit Item</Text> */}
             <View style = {styles.modalContent}>
-              <View style={{width:100,height:100}}>
-                  <FlatList
-                    contentContainerStyle={{
-                      flexDirection:'row',
-                    }}
-                    data={currentItem.users}
-                    extraData ={refesh}
-                    renderItem={({item}) => <View style={{flexDirection:"row"}}><View style ={styles.pictures}><Image style = {styles.smallImage} source={{uri: item.uri}}/></View></View>}
-                  />
+
+            <View style={{flexDirection:"row",justifyContent:'center',alignContent:'flex-start',alignSelf:'flex-start',alignItems:'flex-start',right:30}}>
+              <View style={{marginHorizontal:10}}>
+                <TouchableOpacity onPress={() => AddAllUsers(currentItem.id)}>          
+                    <FontAwesome5
+                      name={"user-plus"}
+                      color={"#9E9E9E"}
+                      size={30}
+                    />
+                </TouchableOpacity>
               </View>
-
-
-              <View style={{justifyContent:'center'}}> 
-                <TextInput placeholder ="Name" defaultValue={currentItem.name} style ={styles.input} onChangeText={newText => setName(newText)}></TextInput>
-                <TextInput placeholder = "0.00" defaultValue={currentItem.price} style ={styles.input} onChangeText={newText => setPrice(newText)}></TextInput>
+              <View style={{marginHorizontal:10}}>
+                <TouchableOpacity onPress={() => RemoveAllUsers(currentItem.id)}>          
+                    <FontAwesome5
+                      name={"user-minus"}
+                      color={"#9E9E9E"}
+                      size={30}
+                    />
+                </TouchableOpacity>
               </View>
-
-            <View style={{flexDirection:"row",justifyContent:'center'}}>
-              <TouchableOpacity onPress={() => AddAllUsers(currentItem.id)}>          
-                  <FontAwesome5
-                    name={"user-plus"}
-                    color={"#9E9E9E"}
-                    size={30}
-                  />
-            </TouchableOpacity>
-              <TouchableOpacity onPress={() => RemoveAllUsers(currentItem.id)}>
-                  <FontAwesome5
-                    name={"user-minus"}
-                    color={"#9E9E9E"}
-                    size={30}
-                  />
-              </TouchableOpacity>
             </View>
+              <View style={{width:130,height:40,alignContent:'flex-end',alignSelf:'flex-end',alignItems:'flex-end',bottom:30}}>                  
+                  <FlatList
+                    data={currentItem.users}
+                    extraData={refesh}
+                    renderItem={({ item }) => <View style = {{marginHorizontal:5}}><Image style = {styles.smallImage} source={{uri: item.uri}}/></View>}
+                    contentContainerStyle={{
+                    flexDirection:'row',
+                    }}
+                  />
+              </View>
 
-            <View style={{flexDirection:"row",width:250,}}>
+
+              <View style={{justifyContent:'center',bottom:5}}> 
+                <TextInput placeholder ="Name"  placeholderTextColor='#9E9E9E' color='#4F555A' defaultValue={currentItem.name} style ={styles.input} onChangeText={newText => setName(newText)}></TextInput>
+                <TextInput placeholder = "0.00" placeholderTextColor='#9E9E9E' defaultValue={currentItem.price} style ={styles.input} onChangeText={newText => setPrice(newText)}></TextInput>
+              </View>
+
+              <View style={{justifyContent:'center',alignContent:'center',alignItems:'center'}}><TouchableOpacity style={styles.itemButton} onPress={()=>MakeItemChanges()}><Text style = {{color:'white'}}>Finish</Text></TouchableOpacity></View>
+
+
+            <View style={{flexDirection:"row",width:250,top:30}}>
             <FlatList
               contentContainerStyle={{
                 flexDirection:'row',
               }}
               data={userData}
-              extraData ={userData}
-              renderItem={({item}) => <View><View><TouchableOpacity onPress={()=>UserClick(currentItem.id,item.id)}><View><Image style = {styles.image} source={{uri: item.uri}}/><Text style={{
+              extraData={refesh}
+              renderItem={({user,index}) => <View><View><TouchableOpacity onPress={()=>UserClick(currentItem.id,userData[index].id)}><View><Image style = {styles.image} source={{uri: userData[index].uri}}/><Text style={{
                 alignSelf: 'center',
-              }}>{item.name}{"\n\n"}</Text></View></TouchableOpacity></View></View>}
+              }}>{userData[index].name}</Text></View></TouchableOpacity></View></View>}
             />
             </View>
             </View>
-
-            <TouchableOpacity onPress={() => MakeItemChanges()}><Text>Finish</Text></TouchableOpacity>
-
           </View>
         </View>
       </Modal>
+
 
     </SafeAreaView>
   );
@@ -573,14 +448,13 @@ const styles = StyleSheet.create({
     alignContent:'center',
   },
   modalView: {
-    top:300,
+    top:20,
     justifyContent:'center',
     alignSelf:'center',
     width:500,
-    height:500,
+    height:410,
     backgroundColor: 'white',
     borderRadius: 20,
-    padding: 35,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -596,7 +470,10 @@ const styles = StyleSheet.create({
     height: 40,
     width:200,
     margin: 12,
-    borderWidth: 1,
+    borderRadius:8,
+    borderWidth:5,
+    borderColor:'#EAF0F7',
+    backgroundColor:'#EAF0F7'
   },
   image:{
     width:80,
@@ -646,6 +523,26 @@ const styles = StyleSheet.create({
     alignSelf:'center',
     marginTop: 550,
     position:'absolute',
+  },
+  modalOverlay: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)'
+  },
+  itemButton:{
+    borderRadius:8,
+    width:100,
+    borderWidth:6,
+    justifyContent:'center',
+    alignContent:'center',
+    alignItems:'center',
+    textAlign:'center',
+    borderColor:'#4461F2',
+    backgroundColor:'#4461F2',
+    color:'#4461F2'
   }
 
 });

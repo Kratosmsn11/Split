@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from "react";
 import { SvgXml } from "react-native-svg";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
+import { getGroups } from "../backendFiles/firebaseFunctions";
 import {Logo,BottomBar,BottomLayer, AddButton} from "../components/Svgs";
   const Home = () => {
     const navigation = useNavigation();
@@ -33,12 +34,17 @@ import {Logo,BottomBar,BottomLayer, AddButton} from "../components/Svgs";
       {"GrouName":"Golf"},
       {"GrouName":"Split499"}
     ]
+
+    async function getGroupData(){
+      const groups = await getGroups("8Z02wZ8mVHnoCFIFbQm4");
+      setallGroups(groups);
+    }
  
    
   
     useEffect(() => {
-      setallGroups(groups);
-    }, []);
+      getGroupData();
+    }, [])
   
 
    const onGroupPress=(item)=>{
@@ -70,7 +76,7 @@ import {Logo,BottomBar,BottomLayer, AddButton} from "../components/Svgs";
                 const randomIndex = Math.floor(Math.random() * colors.length);
                 const randomColor = colors[randomIndex];
                 const randomImage = images[randomIndex];
-                console.log(item?.GrouName);
+                console.log(item?.name);
                 return (
                   <TouchableOpacity
   
@@ -106,7 +112,7 @@ import {Logo,BottomBar,BottomLayer, AddButton} from "../components/Svgs";
                         color: randomColor.textColor,
                       }}
                     >
-                      {item?.GrouName}
+                      {item?.name}
                     </Text>
                   </TouchableOpacity>
                 );

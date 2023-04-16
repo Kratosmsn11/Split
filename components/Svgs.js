@@ -231,6 +231,16 @@ export function BottomBar(){
 
 }
 
+export function CheckmarkIcon() {
+    return(
+        <View style={styles.bottomButton}>
+            <FontAwesome5Icon name="check" size={35} color={"#4461F2"} />
+        </View>
+
+    )
+}
+
+
 const styles = StyleSheet.create({
     Logo: {
       height:15,

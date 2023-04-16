@@ -36,8 +36,6 @@ import {
     const db = getFirestore(app);
   
     const onSignUp = async() => {
-      navigation.navigate("Home");
-      return;
       if (
         userName == "" ||
         email == "" ||
