@@ -1,39 +1,33 @@
 import { StyleSheet, Text, View, Dimensions, SafeAreaView } from "react-native";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "react-native-elements";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { TouchableOpacity } from "react-native";
-import G from "../assets/G.svg";
-import A from "../assets/A.svg";
-import Logo from "../assets/Logo.svg";
+// import G from "../Assets/G.svg";
+// import A from "../Assets/A.svg";
+import {Logo,G,A} from "../components/Svgs";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { Alert } from "react-native";
 import app from "..//Firebase";
-import { Camera } from 'expo-camera';
-import { Audio } from 'expo-av';
-import * as ImageManipulator from 'expo-image-manipulator';
-import * as Permissions from 'expo-permissions';
-import Constants from 'expo-constants';
-import * as FileSystem from 'expo-file-system';
-import { useNavigation } from "@react-navigation/native";
-import firebase from "firebase/compat";
-const Login = () => {
+
+const Login = ({ navigation }) => {
   const [name, setname] = useState("eye");
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
-  const navigation = useNavigation();
 
-  const Login = () => {
-    
-    firebase.auth().signInWithEmailAndPassword(email, password)
-    .then(() => {
-     navigation.navigate('Groups');
-    })
-    .catch(() => {
-     Alert.alert("Incorrect credentials");
-    });
-
+  const onLogin = () => { 
+    navigation.navigate("Home");
+    // if (email == "" || password == "") {
+    //   Alert.alert("Error!", "Please make sure you have filled all fields!");
+    // } else {
+    //   signInWithEmailAndPassword(getAuth(app), email, password).then(
+    //     (response) => {
+    //       navigation.navigate("Home");
+    //     }
+    //   );
+    // }
   };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <View
@@ -54,6 +48,7 @@ const Login = () => {
               marginTop: 30,
             }}
           >
+            <Logo />
           </View>
           <Text style={styles.Label}>Sign In</Text>
           <View
@@ -151,7 +146,7 @@ const Login = () => {
 
           <TouchableOpacity
             onPress={() => {
-              Login();
+              onLogin();
             }}
             style={styles.LoginButton}
           >
@@ -174,7 +169,7 @@ const Login = () => {
               marginTop: 20,
             }}
           >
-            Don't have an account?
+            Don’t have an account?
             <Text
               onPress={() => {
                 navigation.navigate("Signup");
@@ -211,9 +206,11 @@ const Login = () => {
 
           <View style={styles.socialButtonContainer}>
             <TouchableOpacity style={styles.socialButton}>
+             <G/>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.socialButton}>
+              <A/>
             </TouchableOpacity>
           </View>
         </View>

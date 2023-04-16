@@ -1,66 +1,30 @@
-// import React, {useEffect} from 'react';
-// import {Text, TouchableOpacity, View,StyleSheet} from 'react-native';
-// import { useNavigation } from '@react-navigation/native';
-// const TransactionOption = () => {
-//   const navigation = useNavigation();
-//   return (
-//     <View
-//       style={{
-//         flex: 1,
-//         justifyContent: 'center',
-//         alignItems: 'center',
-//       }}>
-//       <TouchableOpacity onPress={()=>navigation.navigate("Create")} style = {styles.button}><Text>Empty transaction</Text></TouchableOpacity>
-//       <Text>{"\n\n\n\n"}OR{"\n\n\n\n"}</Text>
-//       <TouchableOpacity onPress={()=>navigation.navigate("Camera")} style = {styles.button}><Text>Scan receipt</Text></TouchableOpacity>
-//     </View>
-//   );
-// };
-// const styles = StyleSheet.create({
-//   button: {
-//     width:100,
-//     alignItems: 'center',
-//     backgroundColor: '#00bfff',
-//     padding: 10,
-//   },
-
-// });
-
-// export default TransactionOption;
-
-
-import {
-  SafeAreaView,
-  StyleSheet,
-  View,
-  Dimensions,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  Image,
-} from "react-native";
+import {SafeAreaView,StyleSheet,View,Dimensions,Text,TouchableOpacity,ScrollView,Image} from "react-native";
+import Svg, { Path } from "react-native-svg"
 import React, { useEffect, useState } from "react";
 import { useNavigation } from '@react-navigation/native';
+import {Logo,BottomLayer,LeftArrow,BottomBar} from "../components/Svgs";
 
 const AddExpense = () => {
   const navigation = useNavigation();
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <BottomLayer/>
+      <BottomBar/>
       <View
         style={{
           height: Dimensions.get("window").height,
           width: Dimensions.get("window").width,
         }}
+        
       >
-        <View style={styles.Logo}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-          </TouchableOpacity>
-        </View>
+        <LeftArrow/>
+        <Logo/>
         <Text style={styles.myGroup}>Add Expense</Text>
         <View style={styles.MyGroupSpace}>
           <TouchableOpacity
             onPress={() => {
+              navigation.navigate("CreateTransaction");
             }}
             style={{
               height: 50,
@@ -83,6 +47,7 @@ const AddExpense = () => {
           </Text>
           <TouchableOpacity
             onPress={() => {
+              navigation.navigate("Camera");
             }}
             style={{
               height: 50,
@@ -101,7 +66,7 @@ const AddExpense = () => {
         </View>
 
         <View style={styles.bottomLayerConaner}>
-
+          <BottomLayer />
         </View>
       </View>
       <View
@@ -153,7 +118,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     flexDirection: "row",
   },
-  myGroup: { color: "black", fontWeight: "bold", left: 25, fontSize: 25 },
+  myGroup: { color: "black", fontWeight: "bold", left: 25, fontSize: 25, top:60,},
   PlusButton: {
     height: 60,
     width: 60,
@@ -173,7 +138,7 @@ const styles = StyleSheet.create({
     height: "68%",
     backgroundColor: "#EAF0F7",
     width: "90%",
-    marginTop: 15,
+    top:70,
     borderRadius: 20,
     alignSelf: "center",
     justifyContent: "space-around",

@@ -14,6 +14,10 @@ import Create from './Scrns/Create';
 import FinishTransaction from './Scrns/FinishTransaction'
 import CreateGroup from './Scrns/CreateGroup';
 import Home from './Scrns/Home';
+import Signup from './Scrns/Signup';
+import GroupPage from './Scrns/GroupPage';
+import Profile from './Scrns/Profile';
+import PayingTransaction from './Scrns/PayingTransaction';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -21,20 +25,26 @@ export default function App() {
   <StatusBar barStyle={"dark-content"} backgroundColor="white"/>
     <View style={{height:Dimensions.get("window").height}}>
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="TransactionOption"
+      <Stack.Navigator initialRouteName="Signup"
         screenOptions={{
-          headerShown: false,}}>
-        <Stack.Screen name="Create" component={Create}/>
+          headerShown: false,}}
+          >
+            
+        <Stack.Screen name="Signup" component={Signup}/>
+        <Stack.Screen name="Login" component={Login}/>
         <Stack.Screen name="Home" component={Home}/>
+        <Stack.Screen name="Create" component={Create}/>
+        <Stack.Screen name="GroupPage" component={GroupPage}/>
         <Stack.Screen name="CreateGroup" component={CreateGroup}/>
         <Stack.Screen name="FinishTransaction" component={FinishTransaction}/>
         <Stack.Screen name="AllDebts" component={AllDebts}/>
-        <Stack.Screen name="Login" component={Login}/>
+        <Stack.Screen name="Profile" component={Profile}/>
         <Stack.Screen name="Groups" component={Groups}/>
         <Stack.Screen name="TransactionOption" component={TransactionOption}/>
         <Stack.Screen name="Transaction" component={Transaction}/>
         <Stack.Screen name="Camera" component={Camera}/>
         <Stack.Screen name="CreateTransaction" component={CreateTransaction}/>
+        <Stack.Screen name="PayingTransaction" component={PayingTransaction}/>
       </Stack.Navigator>
     </NavigationContainer>
     </View>
