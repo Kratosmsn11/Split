@@ -323,14 +323,12 @@ export default function App() {
   
   const [searchIndex,setSearchIndex] = useState(-1);
   var currentUser = [{username:"Add friend", name:"Add friend ",uri:"https://th.bing.com/th/id/R.6b0022312d41080436c52da571d5c697?rik=ejx13G9ZroRrcg&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fuser-png-icon-young-user-icon-2400.png&ehk=NNF6zZUBr0n5i%2fx0Bh3AMRDRDrzslPXB0ANabkkPyv0%3d&risl=&pid=ImgRaw&r=0",id:-1}];
-  const DATA = [{}]
-    useEffect(() => {
-    setUserData(dummyData);
-    setSearchData(dummyData);
-    setPasscode(generateRandomPasscode())
-    setUsers(currentUser);
-    fetchUsers();
+
+
     async function fetchUsers(){
+      setPasscode(generateRandomPasscode())
+      setUsers(currentUser);
+      fetchUsers();
       var usersInApp = await getAllUsers();
 
       var newUsers = usersInApp.filter(function (user) {
@@ -338,7 +336,14 @@ export default function App() {
        });
       setUserData(newUsers);
     }
-  }, [])
+
+    useEffect(() => {
+      navigation.addListener('focus', async () =>{
+        fetchUsers();
+      })
+      
+    }, [])
+
 
   //user is added to list, actual user data not assigned yet
   function addUser(index){

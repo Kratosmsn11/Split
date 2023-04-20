@@ -1,5 +1,5 @@
 import {SafeAreaView,StyleSheet,View,Dimensions,Text,TouchableOpacity,ScrollView,Image,FlatList,Alert,} from "react-native";
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from "react";
 import { SvgXml } from "react-native-svg";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
@@ -9,16 +9,12 @@ import { setGroupId, setGroupInfo, setGroupsData, setUserId } from "../AppData";
 import {firebase} from "../config/firebase";
   const Home = () => {
     const navigation = useNavigation();
+    const isFocused = useIsFocused();
     const [isShow, setisShow] = useState(false);
     const [isLoading, setisLoading] = useState(false);
     const [allGroups, setallGroups] = useState([]);
     const [image, setimage] = useState(null);
     const [TextReaded, setTextReaded] = useState("");
-
-    // const userId = firebase.auth().currentUser.uid;
-    const userId = "No3n3K6b7EhzHhQIxU81I2Mibvg1";
-    console.log(userId)
-  
     const colors = [
       { bg: "red", textColor: "white" },
       { bg: "green", textColor: "white" },
@@ -35,14 +31,13 @@ import {firebase} from "../config/firebase";
     ];
   
     async function getGroupData(){
+      const userId = firebase.auth().currentUser.uid;
+      setUserId(userId);
       const groups = await getGroups(userId);
       setGroupsData(groups);
       setallGroups(groups);
     }
-    useEffect(() => {
-      setUserId(userId);
-      getGroupData();
-    }, [])
+    useEffect(() => {isFocused && getGroupData() },[isFocused]);
   
 
    const onGroupPress=(item)=>{
@@ -120,8 +115,6 @@ import {firebase} from "../config/firebase";
           </View>
 
         </View>
-
-      
       </SafeAreaView>
     );
   };

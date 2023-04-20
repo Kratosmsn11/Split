@@ -5,8 +5,10 @@ import * as Clipboard from 'expo-clipboard';
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import { GetGroupDebts, GetGroupTransactions, getGroupUsers } from "../backendFiles/firebaseFunctions";
 import { getGroupInfo, setGroupInfo, getGroupId,setUsers } from "../AppData";
+import { useNavigation } from "@react-navigation/native";
   
-  const GroupDetail = ({ navigation, route }) => {
+  const GroupDetail = () => {
+    const navigation = useNavigation();
     const [isShow, setisShow] = useState(false);
     const [isLoading, setisLoading] = useState(false);
     const [items, setitem] = useState(undefined);
@@ -69,14 +71,17 @@ import { getGroupInfo, setGroupInfo, getGroupId,setUsers } from "../AppData";
     };
 
     function getData(){
+      navigation.Add
       getGroupMembers();
       getDebts();
       getTransactions();
       getGroupData();
     }  
     useEffect(() => {
-      getData();
-    }, []);
+      navigation.addListener('focus', async () =>{
+        getData();
+      })
+    })
 
     const Transaction = ({transaction}) => (
         <View style = {styles.flexContainer}>
@@ -237,8 +242,24 @@ import { getGroupInfo, setGroupInfo, getGroupId,setUsers } from "../AppData";
               <View style = {{top:30}}>
               
               <TouchableOpacity style={{flex:1, flexDirection: 'row',paddingVertical:10,}}>
-                <View style={{justifyContent:'center',}}>
-                  <Image style={styles.smallImage} source={{uri: item.picture}}/>
+                {/* <View style={{justifyContent:'center',}}> */}
+                  {/* <Image style={styles.smallImage} source={{uri: item.picture}}/> */}
+            <View style={{
+              width:20,
+              height:20,
+              borderRadius:20,
+              marginHorizontal:10,
+              backgroundColor:'red',
+              alignContent:'center',
+              justifyContent:'center',
+            }}>
+
+            <Text style={{
+              fontSize:10,
+              color:'white',
+              textAlign:'center'
+            }}>{item.name[0].toUpperCase()}</Text>
+            {/* </View> */}
                 </View>
                 <View style={styles.userContainer}>
                   <Text style={styles.text}>{item.name}</Text>
@@ -251,7 +272,9 @@ import { getGroupInfo, setGroupInfo, getGroupId,setUsers } from "../AppData";
           }}
         />
         </View>
+        <TouchableOpacity onPress ={()=>setModalVisible(!modalVisible)}><Text>Close</Text></TouchableOpacity>
           </View>
+          
           </TouchableWithoutFeedback>
         </View>
       </Modal>
