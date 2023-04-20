@@ -45,7 +45,8 @@ export function extractData(data){
                             itemTotalPrice+=price;
                             var item = {
                                 "name": itemName,
-                                "price": price
+                                "price": price,
+                                "users": []
                             }
                             receiptData.items.push(item);
                         }

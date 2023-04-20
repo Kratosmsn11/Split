@@ -1,6 +1,6 @@
 import { db } from "../config/firebase";
 import {getFirestore,doc,addDoc,collection,deleteDoc,setDoc,query,getDocs,getDoc,orderBy,limit,get,where, updateDoc} from 'firebase/firestore';
-import {getUsers} from'../AppData'
+import {getGroupInfo, getReceiptURL, getUsers} from'../AppData'
 const transactionCollection = collection(db,'transaction');
 const groupCollection = collection(db,'group');
 const debtCollection = collection(db,'debt');
@@ -20,8 +20,10 @@ export async function GetGroupDebts(groupId){
         //have the users data stored, can find their name based on the id retrieved
         var owerName = getUsers().find(user => user.id === doc.data()['owerId']).name;
         var lenderName = getUsers().find(user => user.id === doc.data()['lenderId']).name;
-
-        debtList.push({...doc.data(),id:doc.id, owerName:owerName, lenderName:lenderName});
+        var owerPicture = getUsers().find(user => user.id === doc.data()['owerId']).picture;
+        var lenderPicture = getUsers().find(user => user.id === doc.data()['lenderId']).picture;
+        
+        debtList.push({...doc.data(),id:doc.id, owerName:owerName, lenderName:lenderName, owerPicture:owerPicture,lenderPicture:lenderPicture});
     });
     return debtList;
 }
@@ -51,24 +53,37 @@ export async function GetGroupData(groupId){
     // console.log(querySnapshot);
     querySnapshot.forEach((doc) => {
         console.log(doc.id, " => ", doc.data());
-        transactionList.push(doc.data());
+        var highestPayerPicture = getUsers().find(user => user.id === doc.data()['highestPayer']).picture;
+        var highestPayerName = getUsers().find(user => user.id === doc.data()['highestPayer']).name;
+        transactionList.push({...doc.data(), highestPayerPicture:highestPayerPicture, highestPayerName:highestPayerName});
     });
     return transactionList;
   }
-  export async function createTransaction(transactionName,transactionTotal,groupId,debts,currentGroupTotal){
+  export async function createTransaction(transactionName,transactionTotal,groupId,debts,highestPayer){
     //Update the total expense in the group document
     const groupRef = doc(groupCollection,groupId);
+    var currentGroupTotal = getGroupInfo()['total'];
     var newTotal = (parseFloat(currentGroupTotal) + parseFloat(transactionTotal)).toFixed(2);
     var updatedGroupData = {
         total:parseFloat(newTotal)
+    }
+    var receiptURL;
+
+    if(getReceiptURL()==null|| getReceiptURL()==undefined){
+      receiptURL = "Manual transaction";
+    }
+    else{
+      receiptURL = getReceiptURL();
     }
 
     await updateDoc(groupRef,updatedGroupData);
 
     var data = {
       name:transactionName,
-      total:transactionTotal,
+      total:newTotal,
       groupId:groupId,
+      receipt:receiptURL,
+      highestPayer: highestPayer,
     }
 
     const transaction = await addDoc(transactionCollection, data);
@@ -186,7 +201,7 @@ export async function GetGroupData(groupId){
     }
     return userData;
   }
-  export async function createGroup(addedUsers,userId,groupName) {
+  export async function createGroup(addedUsers,userId,groupName,passcode) {
     var users = {};
     var groupId;
     //adding self to group as well
@@ -194,7 +209,7 @@ export async function GetGroupData(groupId){
     const startingData ={
       name:groupName,
       total:0.00,
-      passcode: generateRandomPasscode(),
+      passcode: passcode,
     }
     const r = await addDoc(groupCollection, startingData)
     .then(docRef => {
@@ -300,6 +315,7 @@ export async function GetGroupData(groupId){
     //no documents
     } else {
       console.log("No group found!");
+      return 2;
     }
   }
   //finds all users in the database

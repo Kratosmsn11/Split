@@ -5,15 +5,16 @@ import { BottomSheet } from 'react-native-btr';
 import { useNavigation } from '@react-navigation/native';
 import { AddButton, BottomBar, BottomLayer, Logo,ContinueButton } from '../components/Svgs';
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import { getReceiptData, getTransactionTotal, getUserSpending, setTransactionTotal, setUserSpending, getUsers } from '../AppData';
 const Create = () => {
     const navigation = useNavigation();
 
-    var data = [
-        {name: 'Soda', price: 2.19, id: 20055, users: []},
-        { name: 'Coffee', price: 3.17, id: 20056, users: []},
-        { name: 'Water', price: 5.50, id: 20057, users: [] },
-        { name: 'Tea', price: 5.55, id: 20058, users: [] },
-    ];
+    // var data = [
+    //     {name: 'Soda', price: 2.19, id: 20055, users: []},
+    //     // { name: 'Coffee', price: 3.17, id: 20056, users: []},
+    //     // { name: 'Water', price: 5.50, id: 20057, users: [] },
+    //     // { name: 'Tea', price: 5.55, id: 20058, users: [] },
+    // ];
 
     const [userData,setUserData] = useState("");
     const [canContinue,setCanContinue] = useState(false);
@@ -145,6 +146,10 @@ const Create = () => {
           console.log(userData[z].name + " spent: $" + userSpending[z].toFixed(2));
         }
 
+        setUserSpending(userSpending);
+        console.log(getUserSpending());
+        setTransactionTotal(total);
+        console.log(getTransactionTotal());
         navigation.navigate("PayingTransaction");
     }
 
@@ -166,7 +171,7 @@ const Create = () => {
     function MakeItemChanges(){
       let i = itemData.findIndex(data=>data.id==currentItem.id);
       itemData[i].name = newName;
-      itemData[i].price = newPrice;
+      itemData[i].price = parseFloat(newPrice);
       setTransactionModalVisible(false);
       setItemData(itemData);
       if(itemData.length == 0){
@@ -180,14 +185,17 @@ const Create = () => {
 
     function updateData(){
       if(itemData.length>0){
-        let total = itemData.map(item => item.price).reduce((prev, next) => parseFloat(prev) + parseFloat(next));
-        setTotal(total.toFixed(2));
+        // calculateTotal(itemData);
+        console.log(itemData);
+        let total = itemData.map(item => item.price).reduce((prev, next) => prev + next);
+        setTotal(total);
         setItemCount(itemData.length);
       }
       else{
         setTotal(0);
         setItemCount(0);
       }
+ 
 
       if(ValidFinish()){
         setCanContinue(true);
@@ -199,10 +207,11 @@ const Create = () => {
 
 
     function AddIndex(){
-      for(var x = 0;x<udata.length;x++){
-        udata[x].index = x;
+      var usersInGroup = getUsers();
+      for(var x = 0;x<usersInGroup.length;x++){
+        usersInGroup[x].index = x;
       }
-      return udata;
+      return usersInGroup;
     }
     
     function ClickAway(){
@@ -259,16 +268,27 @@ const Create = () => {
     const [refesh,SetRefresh] = useState("");
 
     useEffect(() => {
-        setItemData(data);
-        setItemCount(data.length)
-        let total = 0;
-        if(data.length>0){
-          total = data.map(item => item.price).reduce((prev, next) => prev + next);
-        }
-        setTotal(total);
+      let data = getReceiptData();
+      if(data==undefined){
+        data = [];
+        data.items =[];
+        setItemData(data.items);
+        setItemCount(data.items.length)
+        setTotal(0);
         setUserData(AddIndex());
         SetRefresh(!refesh);
-        console.log(userData);
+        return;
+      }
+      setItemData(data.items);
+      setItemCount(data.items.length)
+      let total = 0;
+      if(data.items.length>0){
+        total = data.items.map(item => item.price).reduce((prev, next) => prev + next);
+      }
+      setTotal(total);
+      setUserData(AddIndex());
+      SetRefresh(!refesh);
+      console.log(userData);
     }, [])
 
   return (
@@ -327,7 +347,7 @@ const Create = () => {
 
             <View style={{flexDirection:"row",justifyContent:'center',alignContent:'flex-start',alignSelf:'flex-start',alignItems:'flex-start',right:30}}>
               <View style={{marginHorizontal:10}}>
-                <TouchableOpacity onPress={() => AddAllUsers(currentItem.id)}>          
+                {/* <TouchableOpacity onPress={() => AddAllUsers(currentItem.id)}>          
                     <FontAwesome5
                       name={"user-plus"}
                       color={"#9E9E9E"}
@@ -342,14 +362,14 @@ const Create = () => {
                       color={"#9E9E9E"}
                       size={30}
                     />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
             </View>
               <View style={{width:130,height:40,alignContent:'flex-end',alignSelf:'flex-end',alignItems:'flex-end',bottom:30}}>                  
                   <FlatList
                     data={currentItem.users}
                     extraData={refesh}
-                    renderItem={({ item }) => <View style = {{marginHorizontal:5}}><Image style = {styles.smallImage} source={{uri: item.uri}}/></View>}
+                    renderItem={({ item }) => <View style = {{marginHorizontal:5}}><Image style = {styles.smallImage} source={{uri: item.picture}}/></View>}
                     contentContainerStyle={{
                     flexDirection:'row',
                     }}
@@ -359,7 +379,7 @@ const Create = () => {
 
               <View style={{justifyContent:'center',bottom:5}}> 
                 <TextInput placeholder ="Name"  placeholderTextColor='#9E9E9E' color='#4F555A' defaultValue={currentItem.name} style ={styles.input} onChangeText={newText => setName(newText)}></TextInput>
-                <TextInput placeholder = "0.00" placeholderTextColor='#9E9E9E' defaultValue={currentItem.price} style ={styles.input} onChangeText={newText => setPrice(newText)}></TextInput>
+                <TextInput placeholder = "0.00" placeholderTextColor='#9E9E9E' color='#4F555A' style ={styles.input} defaultValue={currentItem.name} onChangeText={newText => setPrice(newText)}></TextInput>
               </View>
 
               <View style={{justifyContent:'center',alignContent:'center',alignItems:'center'}}><TouchableOpacity style={styles.itemButton} onPress={()=>MakeItemChanges()}><Text style = {{color:'white'}}>Finish</Text></TouchableOpacity></View>
@@ -372,8 +392,10 @@ const Create = () => {
               }}
               data={userData}
               extraData={refesh}
-              renderItem={({user,index}) => <View><View><TouchableOpacity onPress={()=>UserClick(currentItem.id,userData[index].id)}><View><Image style = {styles.image} source={{uri: userData[index].uri}}/><Text style={{
+              renderItem={({user,index}) => <View><View><TouchableOpacity onPress={()=>UserClick(currentItem.id,userData[index].id)}><View><Image style = {styles.image} source={{uri: userData[index].picture}}/><Text style={{
                 alignSelf: 'center',
+                color:'#4F555A',
+                fontWeight:'bold'
               }}>{userData[index].name}</Text></View></TouchableOpacity></View></View>}
             />
             </View>
@@ -451,7 +473,7 @@ const styles = StyleSheet.create({
     top:20,
     justifyContent:'center',
     alignSelf:'center',
-    width:500,
+    width:330,
     height:410,
     backgroundColor: 'white',
     borderRadius: 20,

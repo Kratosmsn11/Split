@@ -8,6 +8,8 @@ var groups = {};
 var groupInfo = {};
 var groupDebts = {};
 var receiptURL;
+var userSpending = [];
+var total;
 export function setUserId(id){
     this.userId = id
 }
@@ -53,6 +55,7 @@ export function getReceiptData(){
 
 export function setUsers(users){
     console.log(users);
+    setUsersIds(users);
     this.users = users;
 }
 
@@ -93,4 +96,19 @@ export function setGroupDebtsAll(debts){
 
 export function GetGroupDebtsAll(){
     return this.groupDebts;
+}
+
+export function setUserSpending(userSpending){
+    this.userSpending = userSpending;
+}
+export function getUserSpending(){
+    return this.userSpending;
+}
+
+export function setTransactionTotal(total){
+    this.total = total;
+}
+
+export function getTransactionTotal(){
+    return this.total;
 }

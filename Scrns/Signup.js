@@ -34,6 +34,7 @@ import {
   
     const [cpassword, setcpassword] = useState("");
     const db = getFirestore(app);
+    const defaultProfileImage = "https://www.pngkey.com/png/detail/230-2301779_best-classified-apps-default-user-profile.png";
   
     const onSignUp = async() => {
       if (
@@ -52,12 +53,14 @@ import {
             console.log(res?.user?.uid, "......");
             if (res?.user?.uid) {
               // const userref = collection(db, "userprofiles");
-               setDoc(doc(db, "userprofiles",res?.user?.uid), {
+               setDoc(doc(db, "user",res?.user?.uid), {
                 name: userName,
                 email: email,
                 phone: phone,
                 password: password,
                 uid: res?.user?.uid,
+                picture: defaultProfileImage,
+                groups: {}
               })
                 .then((docRef) => {
                   navigation.navigate("Home");

@@ -3,26 +3,36 @@ import { Text, View, StyleSheet,FlatList,TextInput,TouchableOpacity,Alert,SafeAr
 import {useState,useEffect} from 'react';
 import { Logo,BottomBar,BottomLayer,ContinueButton,LeftArrow} from '../components/Svgs';
 import { useNavigation } from '@react-navigation/native';
-
-
+import { createTransaction } from '../backendFiles/firebaseFunctions';
+import { calculateDebts } from '../backendFiles/SplittingAlgorithm';
+import { getTransactionTotal, getUserSpending, getUsers, getUsersIds,getGroupId} from '../AppData';
 export default function App() {
   const navigation = useNavigation();
-  const payment = 42.34;
   //the list that will contain each user's input
   const [inputs, setInputs] = useState([]);
   const [total, setTotal] = useState(0.00);
   const [refresh, setRefresh] = useState("");
+  const [groupTotal,setGroupTotal] = useState(0.00);
+  const [spending, setUserSpending] = useState([]);
+  var payment = parseFloat(getTransactionTotal());
 
-    var userData = [
-    { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg', name: 'Jane', id: 20055 },
-    { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-2.jpg', name: 'Chloe', id: 20056 },
-    { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-8.jpg', name: 'Bob', id: 20057 },
-  ];
+  //   var userData = [
+  //   { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg', name: 'Jane', id: 20055 },
+  //   { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-2.jpg', name: 'Chloe', id: 20056 },
+  //   { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-8.jpg', name: 'Bob', id: 20057 },
+  // ];
+  var userData = getUsers();
+  var usersIds = getUsersIds();
   var defaultPaying = Array(userData.length).fill(undefined);
   const [valid, setValid] = useState(false);
 
   useEffect(() => {
     setInputs(defaultPaying);
+    
+    // console.log(getTransactionTotal());
+    // setGroupTotal(getTransactionTotal());
+    setUserSpending(getUserSpending());
+    // console.log(spending);
   }, [])
 
 
@@ -35,14 +45,18 @@ export default function App() {
         inputs[x]=parseFloat(inputs[x]);
       }
     }
-    if(valid){
-      Alert.alert("Finish");
-      console.log("Finish!");
-    }
-    else{
-        console.log("Payment must equal total!");
-    }
+    // if(!valid){
+    //   Alert.alert("Payment must equal total!");
+    //   return;
+    // }
     console.log(inputs);
+    console.log(spending);
+    console.log(usersIds);
+    var highestPayer = usersIds[spending.indexOf(Math.max(...spending))];
+    const debts = calculateDebts(spending,inputs,usersIds);
+    console.log(debts);
+    var transactionName = "Default name";
+    createTransaction(transactionName,groupTotal,getGroupId(),debts,highestPayer);
   }
 
   //reseting to the original values
@@ -85,7 +99,7 @@ export default function App() {
 
     <View><LeftArrow/></View>
 
-        <TouchableOpacity onPress={() => navigation.navigate("GroupPage")}>
+        <TouchableOpacity onPress={() => submitPayments()}>
             <ContinueButton/>
         </TouchableOpacity>
     <Text style={styles.title}>Payments</Text>
@@ -104,7 +118,7 @@ export default function App() {
               }}
             >
               <View>
-                <Image style = {styles.smallImage} source={{uri: userData[index].uri}}></Image>
+                <Image style = {styles.smallImage} source={{uri: userData[index].picture}}></Image>
               </View>
               <View style = {styles.textView}>
               <TextInput

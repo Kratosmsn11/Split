@@ -67,8 +67,6 @@ export function calculateDebts(userSpending,userPaying,userNames){
                         debt = userNet[x]/debt;
                         debt = userNet[i]*debt;
                         debt = Math.abs(debt);
-                        console.log(userNames[i]+" owes "+userNames[x] + " " + debt);
-
                         //the debt data is created, using the groupId that is currently in use
                         var data = {
                             owerId: userNames[i],
@@ -76,13 +74,16 @@ export function calculateDebts(userSpending,userPaying,userNames){
                             groupId: getGroupId(),
                             total: debt.toFixed(2),
                         }
-                        debtList.debts.push(data)
+                        if(debt.toFixed(2)>0){
+                            // console.log(userNames[i]+" owes "+userNames[x] + " " + debt);
+                            debtList.debts.push(data)
+                        }
                     }
                 }
             }
         }
     }
-    console.log(debtList.debts);
+    // console.log(debtList.debts);
     return debtList.debts;
 }
 

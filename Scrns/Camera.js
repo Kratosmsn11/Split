@@ -180,6 +180,7 @@ import uuid from "uuid";
 import { getReceiptInfo } from "../backendFiles/GoogleVision";
 import { extractData } from "../backendFiles/TextParser";
 import { useNavigation } from "@react-navigation/native";
+import { getReceiptData, setReceiptData, setReceiptURL } from '../AppData';
 
 
 
@@ -211,27 +212,29 @@ const ScannedSlip = () => {
         );
         setCapturedImage(manipResult.uri);
         takingPicture = false;
-        // if (manipResult.uri != undefined) {
-        //   const firebaseURL = await uploadImageAsync(manipResult.uri);
-        //   console.log(firebaseURL);
-        //   var imageData = await getReceiptInfo(firebaseURL);
-        //   console.log(imageData, "/////");
-        //   var extractedData = await extractData(imageData);
-        //   console.log(imageData[0],'/....');
-        //   if (extractedData) {
-        //     // navigation?.navigate("Calculatingsummary", {
-        //     //   item: route?.params,
-        //     //   ScannedText: extractedData,
-        //     //   title:imageData[0]
-        //     // });
-        //   }
-        // }
       }
     }
-
-
-
   };
+
+  const submitPicture = async () => {
+    if (capturedImage != undefined) {
+      console.log("Image exists");
+      const firebaseURL = await uploadImageAsync(capturedImage);
+      setReceiptURL(firebaseURL);
+      console.log(firebaseURL);
+      var imageData = await getReceiptInfo(firebaseURL);
+      console.log(imageData);
+      var extractedData = await extractData(imageData);
+      console.log(extractedData);
+      if (extractedData) {
+        setReceiptData(extractedData);
+        console.log(getReceiptData());
+        navigation.navigate("CreateTransaction");
+      }
+    }
+  };
+
+
 
   async function uploadImageAsync(uri) {
     const blob = await new Promise((resolve, reject) => {
@@ -257,10 +260,6 @@ const ScannedSlip = () => {
     setCapturedImage(undefined);
   };
 
-  const finishReceipt = async () => {
-    navigation.navigate("CreateTransaction");
-  };
-
   return (
     <SafeAreaView style ={{height:1000,}}>
       <Logo/>
@@ -271,7 +270,7 @@ const ScannedSlip = () => {
         <BottomBar/>
 
         {capturedImage!=undefined ? (
-            <TouchableOpacity onPress={() => finishReceipt()}>
+            <TouchableOpacity onPress={() => submitPicture()}>
               <ContinueButton/>
             </TouchableOpacity>
         ) : (

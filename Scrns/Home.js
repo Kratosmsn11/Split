@@ -5,6 +5,8 @@ import { SvgXml } from "react-native-svg";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import { getGroups } from "../backendFiles/firebaseFunctions";
 import {Logo,BottomBar,BottomLayer, AddButton} from "../components/Svgs";
+import { setGroupId, setGroupInfo, setGroupsData, setUserId } from "../AppData";
+import {firebase} from "../config/firebase";
   const Home = () => {
     const navigation = useNavigation();
     const [isShow, setisShow] = useState(false);
@@ -12,6 +14,10 @@ import {Logo,BottomBar,BottomLayer, AddButton} from "../components/Svgs";
     const [allGroups, setallGroups] = useState([]);
     const [image, setimage] = useState(null);
     const [TextReaded, setTextReaded] = useState("");
+
+    // const userId = firebase.auth().currentUser.uid;
+    const userId = "No3n3K6b7EhzHhQIxU81I2Mibvg1";
+    console.log(userId)
   
     const colors = [
       { bg: "red", textColor: "white" },
@@ -28,27 +34,20 @@ import {Logo,BottomBar,BottomLayer, AddButton} from "../components/Svgs";
       "https://th.bing.com/th/id/R.8ecb8e1845f04b543161e388bef36334?rik=tXj9313wlJX5Tw&pid=ImgRaw&r=0",
     ];
   
-    const groups = [
-      {"GrouName":"Split4991"},
-      {"GrouName":"Work "},
-      {"GrouName":"Golf"},
-      {"GrouName":"Split499"}
-    ]
-
     async function getGroupData(){
-      const groups = await getGroups("8Z02wZ8mVHnoCFIFbQm4");
+      const groups = await getGroups(userId);
+      setGroupsData(groups);
       setallGroups(groups);
     }
- 
-   
-  
     useEffect(() => {
+      setUserId(userId);
       getGroupData();
     }, [])
   
 
    const onGroupPress=(item)=>{
-        console.log(item);
+        setGroupInfo(item.id);
+        setGroupId(item.id);
         navigation.navigate("GroupPage");
    }
   
@@ -58,7 +57,7 @@ import {Logo,BottomBar,BottomLayer, AddButton} from "../components/Svgs";
             <BottomLayer/>
             
             <TouchableOpacity
-            onPress={() => navigation.navigate("CreateGroup")}>
+            onPress={() => navigation.navigate("GroupOption")}>
                 <AddButton/>
             </TouchableOpacity>
             <BottomBar/>

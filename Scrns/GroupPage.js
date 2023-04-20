@@ -1,8 +1,10 @@
-import {SafeAreaView,StyleSheet,View,Dimensions,Text,TouchableOpacity,ScrollView,Image,FlatList} from "react-native";
+import {SafeAreaView,StyleSheet,View,Dimensions,Text,TouchableOpacity,ScrollView,Image,FlatList,TouchableWithoutFeedback,Modal,Alert} from "react-native";
 import React, { useEffect, useState } from "react";
 import {Logo,BottomLayer,LeftArrow,ProfileImage,User,OrderLight,CameraIcon, HomeIcon, AddButton, BottomBar} from '../components/Svgs';
+import * as Clipboard from 'expo-clipboard';
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
-import { GetGroupDebts, GetGroupTransactions } from "../backendFiles/firebaseFunctions";
+import { GetGroupDebts, GetGroupTransactions, getGroupUsers } from "../backendFiles/firebaseFunctions";
+import { getGroupInfo, setGroupInfo, getGroupId,setUsers } from "../AppData";
   
   const GroupDetail = ({ navigation, route }) => {
     const [isShow, setisShow] = useState(false);
@@ -13,7 +15,6 @@ import { GetGroupDebts, GetGroupTransactions } from "../backendFiles/firebaseFun
     const [total, setTotal] = useState("");
     const [debts, setDebts] = useState("");
     const [transactions, setTransactions] = useState("");
-    const groupId = "8Z02wZ8mVHnoCFIFbQm4";
     //hte max number of transactions and debts that will be shown
     const itemCount = 3;
     // const db = getFirestore(app);
@@ -29,74 +30,97 @@ import { GetGroupDebts, GetGroupTransactions } from "../backendFiles/firebaseFun
         {highestPayerName:"Frank", amount:33.97, highestPayerURI:"https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-8.jpg",name:"Coffee at Starbucks"}
     ]
 
+    const dummyData = [{username:"Joseph123", name:"Joseph Arredondo",uri:"https://th.bing.com/th/id/R.6b0022312d41080436c52da571d5c697?rik=ejx13G9ZroRrcg&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fuser-png-icon-young-user-icon-2400.png&ehk=NNF6zZUBr0n5i%2fx0Bh3AMRDRDrzslPXB0ANabkkPyv0%3d&risl=&pid=ImgRaw&r=0"},{username:"Jos56", name:"John Sean",uri:"https://th.bing.com/th/id/R.6b0022312d41080436c52da571d5c697?rik=ejx13G9ZroRrcg&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fuser-png-icon-young-user-icon-2400.png&ehk=NNF6zZUBr0n5i%2fx0Bh3AMRDRDrzslPXB0ANabkkPyv0%3d&risl=&pid=ImgRaw&r=0",id:2},{username:"Bob123", name:"Joseph Arredondo",uri:"https://th.bing.com/th/id/R.6b0022312d41080436c52da571d5c697?rik=ejx13G9ZroRrcg&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fuser-png-icon-young-user-icon-2400.png&ehk=NNF6zZUBr0n5i%2fx0Bh3AMRDRDrzslPXB0ANabkkPyv0%3d&risl=&pid=ImgRaw&r=0"},{username:"Jos56", name:"John Sean",uri:"https://th.bing.com/th/id/R.6b0022312d41080436c52da571d5c697?rik=ejx13G9ZroRrcg&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fuser-png-icon-young-user-icon-2400.png&ehk=NNF6zZUBr0n5i%2fx0Bh3AMRDRDrzslPXB0ANabkkPyv0%3d&risl=&pid=ImgRaw&r=0",id:3},{username:"Jake123", name:"Joseph Arredondo",uri:"https://th.bing.com/th/id/R.6b0022312d41080436c52da571d5c697?rik=ejx13G9ZroRrcg&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fuser-png-icon-young-user-icon-2400.png&ehk=NNF6zZUBr0n5i%2fx0Bh3AMRDRDrzslPXB0ANabkkPyv0%3d&risl=&pid=ImgRaw&r=0"},{username:"Jos56", name:"John Sean",uri:"https://th.bing.com/th/id/R.6b0022312d41080436c52da571d5c697?rik=ejx13G9ZroRrcg&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fuser-png-icon-young-user-icon-2400.png&ehk=NNF6zZUBr0n5i%2fx0Bh3AMRDRDrzslPXB0ANabkkPyv0%3d&risl=&pid=ImgRaw&r=0",id:4}];
+    const [modalVisible, setModalVisible] = useState(false);
+    const [gData,setgData] = useState("");
+    const [groupMembers,setGroupMembers] = useState("");
+    var groupId = getGroupInfo().id;
+    // const [groupInfo,setGroupInfo] = useState("");
+
     const getDebts = async () => {
       const debtData = await GetGroupDebts(groupId);
       console.log(debtData);
       setDebts(debtData);
+      // setDebts(dummyDebts);
     };
 
     const getTransactions = async () => {
       const transactionData = await GetGroupTransactions(groupId);
       console.log(transactionData);
       setTransactions(transactionData);
+      // setTransactions(dummyTransactions);
+    };
+
+    const getGroupData = async () => {
+      const group = getGroupInfo();
+      console.log(group);
+      setgData(group);
+      setTotal(group.total);
+      // console.log("Group" + group);
+
+    };
+
+    const getGroupMembers = async () => {
+      console.log(getGroupId());
+      const users = await getGroupUsers(getGroupId());
+      setUsers(users);
+      setGroupMembers(users);
+
     };
 
     function getData(){
+      getGroupMembers();
       getDebts();
       getTransactions();
-    }
-  
-    // const getItem = async () => {
-    //   const docRef = doc(db, "Item", route?.params?.GrouName);
-    //   const docSnap = await getDoc(docRef);
-    //   return docSnap.data();
-    // };
-  
-    // const getMember = async () => {
-    //   const docRef = doc(db, "Permission", route?.params?.GrouName);
-    //   const docSnap = await getDoc(docRef);
-    //   return docSnap.data();
-    // };
-  
+      getGroupData();
+    }  
     useEffect(() => {
       getData();
-      // getItem().then((res) => {
-      //   setitem(res);
-      // });
-      // getMember().then((res) => {
-      //   setmember(res?.users);
-      // });
     }, []);
-  
-    let permember=0
-     if(items==undefined){
-  permember=0
-    }else{
-      permember=items?.price / member?.length;
-    } 
 
     const Transaction = ({transaction}) => (
         <View style = {styles.flexContainer}>
-            <Image source={{uri: transaction.highestPayerURI}} style={styles.image}></Image>
+            <Image source={{uri: transaction.highestPayerPicture}} style={styles.image}></Image>
             <Text style={{color:'#4F555A'}}>{transaction.name}</Text>
             <View style={{flex: 1}}>
-                <Text style={{textAlign: 'right',right:30,color:'#4F555A'}}>${transaction.amount}</Text>
+                <Text style={{textAlign: 'right',right:30,color:'#4F555A'}}>${transaction.total}</Text>
             </View>
         </View>
     );
   
     const Debt = ({debt}) => (
         <View style = {styles.flexContainer}>
-            <Image source={{uri: debt.owerURI}} style={styles.image}></Image>
-            <Text>{debt.owerName}</Text>
-            <Text>{"----->"}</Text>
-            <Image source={{uri: debt.lenderURI}} style={styles.image}></Image>
-            <Text style={{color:'#4F555A'}}>{debt.lenderName}</Text>
+            <Image source={{uri: debt.owerPicture}} style={styles.image}></Image>
+            <Text>  {debt.owerName}    </Text>
+            <FontAwesome5Icon
+                  name={"arrow-right"}
+                  color={"#9E9E9E"}
+                  size={18}
+            />
+            <Text>  </Text>
+            <Image source={{uri: debt.lenderPicture}} style={styles.image}></Image>
+            <Text style={{color:'#4F555A'}}>  {debt.lenderName}</Text>
             <View style={{flex: 1}}>
-                <Text style={{textAlign: 'right',right:30,color:'#4F555A'}}>${debt.amount}</Text>
+                <Text style={{textAlign: 'right',right:30,color:'#4F555A'}}>${debt.total}</Text>
             </View>
         </View>
     );
+
+    const copyToClipboard = async () => {
+      console.log("copied");
+      await Clipboard.setStringAsync(gData.passcode);
+    };
+
+    const startTransaction = () => {
+      const members = Object.keys(gData.users).length;
+      console.log(members);
+      if(members<=1){
+        Alert.alert("You must add at least one member to create a transaction!");
+      }
+      else{
+        navigation.navigate("TransactionOption");
+      }
+    };
 
     return (
       <SafeAreaView>
@@ -105,7 +129,7 @@ import { GetGroupDebts, GetGroupTransactions } from "../backendFiles/firebaseFun
         <BottomLayer/>
         <BottomBar/>
 
-        <TouchableOpacity onPress={() => navigation.navigate("TransactionOption")}>
+        <TouchableOpacity onPress={() => startTransaction()}>
             <AddButton/>
         </TouchableOpacity>
 
@@ -113,7 +137,9 @@ import { GetGroupDebts, GetGroupTransactions } from "../backendFiles/firebaseFun
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <LeftArrow style={{ right: 100 }} />
             </TouchableOpacity>
-          <Text style={styles.heading}>Split - CST499</Text>
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
+            <Text style={styles.heading}>{gData.name}</Text>
+          </TouchableOpacity>
           <View style={styles.MyGroupSpace}>
             <Text style={{ ...styles.myGroup, fontSize: 22,left:0}}>Transactions</Text>
             <View
@@ -127,11 +153,15 @@ import { GetGroupDebts, GetGroupTransactions } from "../backendFiles/firebaseFun
                 marginBottom:10,
               }}
             >
+                {transactions.length == 0 &&
+                  <Text style ={styles.emptyData}>Your group has no transactions.</Text>
+                }
                 <FlatList
                     style = {styles.list}
-                    data={transactions.slice(0,itemCount)}
+                    data={transactions.slice(0,20)}
                     renderItem={({item}) => <Transaction transaction={item}/>}
                 /> 
+
             </View>
   
             <Text style={{ ...styles.myGroup, fontSize: 22,left:0, marginTop: 0 }}>
@@ -148,10 +178,13 @@ import { GetGroupDebts, GetGroupTransactions } from "../backendFiles/firebaseFun
                 marginBottom:10,
               }}
             >
+                {debts.length == 0 &&
+                  <Text style ={styles.emptyData}>Your group has no debts.</Text>
+                }
 
             <FlatList
                 style = {styles.list}
-                data={debts.slice(0,itemCount)}
+                data={debts.slice(0,20)}
                 renderItem={({item}) => <Debt debt={item}/>}
             />
 
@@ -171,10 +204,58 @@ import { GetGroupDebts, GetGroupTransactions } from "../backendFiles/firebaseFun
               }}
             >
               <Text style={{ left: 20 }}>
-                {"$100"}
+                ${total}
               </Text>
             </View>
           </View>
+
+          <TouchableWithoutFeedback  onPress ={()=>setModalVisible(false)}>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalVisible(!modalVisible);
+        }}>
+
+        <View style={styles.centeredView}>
+          <TouchableWithoutFeedback>
+          <View style={styles.modalView}>
+          
+          <Text style = {styles.passcodeHeader}>Passcode</Text>
+          <TouchableOpacity onPress ={()=>copyToClipboard()}>
+            <Text style = {styles.passcodeText}>{gData.passcode}</Text>
+          </TouchableOpacity>
+
+          <View style={{justifyContent:'left',right:30,height:300}}>
+
+         <FlatList
+          data={groupMembers}
+          renderItem={({ item, index }) => {
+            return (
+              <View style = {{top:30}}>
+              
+              <TouchableOpacity style={{flex:1, flexDirection: 'row',paddingVertical:10,}}>
+                <View style={{justifyContent:'center',}}>
+                  <Image style={styles.smallImage} source={{uri: item.picture}}/>
+                </View>
+                <View style={styles.userContainer}>
+                  <Text style={styles.text}>{item.name}</Text>
+                  <Text style={styles.secondaryText}>{item.email}</Text>
+                </View>
+              </TouchableOpacity>
+              <View style = {styles.lineSeperator}></View>
+              </View>
+            );
+          }}
+        />
+        </View>
+          </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </Modal>
+      </TouchableWithoutFeedback>
 
       </SafeAreaView>
     );
@@ -214,6 +295,76 @@ import { GetGroupDebts, GetGroupTransactions } from "../backendFiles/firebaseFun
         flex:1,
         marginVertical:0,
         flexDirection: "row",
+    },
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      backgroundColor: '#ecf0f1',
+      padding: 8,
+    },
+    smallImage:{
+      alignSelf:'center',
+      justifyContent:'center',
+      width:30,
+      height:30,
+      borderRadius:30,
+    },
+    centeredView: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 22,
+    },
+    modalView: {
+      width:300,
+      margin: 20,
+      backgroundColor: 'white',
+      borderRadius: 10,
+      padding: 35,
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5,
+    },
+    button: {
+      borderRadius: 20,
+      padding: 10,
+      elevation: 2,
+    },
+    buttonOpen: {
+      backgroundColor: '#F194FF',
+    },
+    textStyle: {
+      color: 'white',
+      fontWeight: 'bold',
+      textAlign: 'center',
+    },
+    text:{
+      fontSize:13,
+      fontWeight:'bold',
+    },
+    secondaryText:{
+      fontSize:13,
+      color:'#4F555A',
+    },
+    passcodeHeader:{
+      fontSize:13,
+      fontWeight:'bold',
+    },
+    passcodeText:{
+      fontSize:25,
+      color:'#4F555A',
+    },
+    emptyData:{
+      top:20,
+      left:10,
+      fontSize:15,
+      color:'#4F555A',
     }
   });
   
