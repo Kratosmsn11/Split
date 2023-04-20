@@ -20,10 +20,10 @@ export async function GetGroupDebts(groupId){
         //have the users data stored, can find their name based on the id retrieved
         var owerName = getUsers().find(user => user.id === doc.data()['owerId']).name;
         var lenderName = getUsers().find(user => user.id === doc.data()['lenderId']).name;
-        var owerPicture = getUsers().find(user => user.id === doc.data()['owerId']).picture;
-        var lenderPicture = getUsers().find(user => user.id === doc.data()['lenderId']).picture;
+        var owerColor= getUsers().find(user => user.id === doc.data()['owerId']).color;
+        var lenderColor = getUsers().find(user => user.id === doc.data()['lenderId']).color;
         
-        debtList.push({...doc.data(),id:doc.id, owerName:owerName, lenderName:lenderName, owerPicture:owerPicture,lenderPicture:lenderPicture});
+        debtList.push({...doc.data(),id:doc.id, owerName:owerName, lenderName:lenderName, owerColor:owerColor,lenderColor:lenderColor});
     });
     return debtList;
 }
@@ -53,9 +53,9 @@ export async function GetGroupData(groupId){
     // console.log(querySnapshot);
     querySnapshot.forEach((doc) => {
         console.log(doc.id, " => ", doc.data());
-        var highestPayerPicture = getUsers().find(user => user.id === doc.data()['highestPayer']).picture;
+        var highestPayerColor = getUsers().find(user => user.id === doc.data()['highestPayer']).color;
         var highestPayerName = getUsers().find(user => user.id === doc.data()['highestPayer']).name;
-        transactionList.push({...doc.data(), highestPayerPicture:highestPayerPicture, highestPayerName:highestPayerName});
+        transactionList.push({...doc.data(), highestPayerName:highestPayerName, highestPayerColor:highestPayerColor});
     });
     return transactionList;
   }
@@ -370,3 +370,11 @@ export async function GetGroupData(groupId){
       }
       return passcode;
   }
+
+  export function randomNumber() {
+    const generateRandomColor = Math.floor(Math.random() * 16777215)
+        .toString(16)
+        .padStart(6, '0');
+    return `#${generateRandomColor}`;
+  }
+

@@ -369,7 +369,27 @@ const Create = () => {
                   <FlatList
                     data={currentItem.users}
                     extraData={refesh}
-                    renderItem={({ item }) => <View style = {{marginHorizontal:5}}><Image style = {styles.smallImage} source={{uri: item.picture}}/></View>}
+                    renderItem={({ item }) => <View style = {{marginHorizontal:5}}>
+                      
+                      {/* <Image style = {styles.smallImage} source={{uri: item.picture}}/> */}
+                    <View style={{
+                        width:25,
+                        height:25,
+                        borderRadius:25,
+                        marginHorizontal:10,
+                        backgroundColor:item.color,
+                        alignContent:'center',
+                        justifyContent:'center',
+                      }}>
+
+                      <Text style={{
+                        fontSize:10,
+                        color:'white',
+                        textAlign:'center'
+                      }}>{item.name[0].toUpperCase()}</Text>
+                    </View>
+                    
+                    </View>}
                     contentContainerStyle={{
                     flexDirection:'row',
                     }}
@@ -385,14 +405,38 @@ const Create = () => {
               <View style={{justifyContent:'center',alignContent:'center',alignItems:'center'}}><TouchableOpacity style={styles.itemButton} onPress={()=>MakeItemChanges()}><Text style = {{color:'white'}}>Finish</Text></TouchableOpacity></View>
 
 
-            <View style={{flexDirection:"row",width:250,top:30}}>
+            <View style={{flexDirection:"row",width:250,top:30,}}>
             <FlatList
               contentContainerStyle={{
                 flexDirection:'row',
+                alignSelf:'center'
               }}
               data={userData}
               extraData={refesh}
-              renderItem={({user,index}) => <View><View><TouchableOpacity onPress={()=>UserClick(currentItem.id,userData[index].id)}><View><Image style = {styles.image} source={{uri: userData[index].picture}}/><Text style={{
+              renderItem={({user,index}) => <View><View><TouchableOpacity onPress={()=>UserClick(currentItem.id,userData[index].id)}><View>
+                
+                
+                {/* <Image style = {styles.image} source={{uri: userData[index].picture}}/> */}
+                <View style={{
+                  width:50,
+                  height:50,
+                  borderRadius:50,
+                  marginHorizontal:10,
+                  backgroundColor:userData[index].color,
+                  alignContent:'center',
+                  justifyContent:'center',
+                }}>
+
+                <Text style={{
+                  fontSize:17,
+                  color:'white',
+                  textAlign:'center'
+                }}>{userData[index].name[0].toUpperCase()}</Text>
+                </View>
+                
+                
+                
+                <Text style={{
                 alignSelf: 'center',
                 color:'#4F555A',
                 fontWeight:'bold'

@@ -30,7 +30,7 @@
     "react-native-elements": "^3.4.3",
     "react-native-indicators": "^0.17.0",
     "react-native-modal": "^13.0.1",
-    "react-native-svg": "13.4.0"
+    "react-native-svg": "^13.9.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

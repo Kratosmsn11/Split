@@ -328,7 +328,6 @@ export default function App() {
     async function fetchUsers(){
       setPasscode(generateRandomPasscode())
       setUsers(currentUser);
-      fetchUsers();
       var usersInApp = await getAllUsers();
 
       var newUsers = usersInApp.filter(function (user) {
@@ -435,7 +434,7 @@ export default function App() {
      return el.name.toLowerCase().includes(text.toLowerCase());
     });
     if(newArray.length<=0){
-      newArray=[{username:"No results found",id:-1}];
+      newArray=[];
     }
     console.log(newArray);
     setSearchData(newArray);
@@ -484,7 +483,23 @@ export default function App() {
               
               <TouchableOpacity style={{flex:1, flexDirection: 'row',paddingVertical:10,}} onPress ={()=>assignUserData(item)}>
                 <View style={{justifyContent:'center',}}>
-                  <Image style={styles.smallImage} source={{uri: item.picture}}/>
+                  {/* <Image style={styles.smallImage} source={{uri: item.picture}}/> */}
+                  <View style={{
+                    width:60,
+                    height:60,
+                    borderRadius:60,
+                    marginHorizontal:10,
+                    backgroundColor:item.color,
+                    alignContent:'center',
+                    justifyContent:'center',
+                  }}>
+
+                  <Text style={{
+                    fontSize:20,
+                    color:'white',
+                    textAlign:'center'
+                  }}>{item.name[0].toUpperCase()}</Text>
+                </View>
                 </View>
                 <View style={styles.userContainer}>
                   <Text style={styles.text}>{item.name}</Text>

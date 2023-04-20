@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import {Logo,BottomLayer,LeftArrow,ProfileImage,User,OrderLight,CameraIcon, HomeIcon, AddButton, BottomBar} from '../components/Svgs';
 import * as Clipboard from 'expo-clipboard';
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
-import { GetGroupDebts, GetGroupTransactions, getGroupUsers } from "../backendFiles/firebaseFunctions";
+import { GetGroupDebts, GetGroupTransactions, getGroupUsers, randomNumber } from "../backendFiles/firebaseFunctions";
 import { getGroupInfo, setGroupInfo, getGroupId,setUsers } from "../AppData";
 import { useNavigation } from "@react-navigation/native";
   
@@ -85,7 +85,23 @@ import { useNavigation } from "@react-navigation/native";
 
     const Transaction = ({transaction}) => (
         <View style = {styles.flexContainer}>
-            <Image source={{uri: transaction.highestPayerPicture}} style={styles.image}></Image>
+            {/* <Image source={{uri: transaction.highestPayerPicture}} style={styles.image}></Image> */}
+            <View style={{
+                        width:25,
+                        height:25,
+                        borderRadius:25,
+                        marginHorizontal:10,
+                        backgroundColor:transaction.highestPayerColor,
+                        alignContent:'center',
+                        justifyContent:'center',
+                      }}>
+
+                      <Text style={{
+                        fontSize:10,
+                        color:'white',
+                        textAlign:'center'
+                      }}>{transaction.highestPayerName[0].toUpperCase()}</Text>
+            </View>
             <Text style={{color:'#4F555A'}}>{transaction.name}</Text>
             <View style={{flex: 1}}>
                 <Text style={{textAlign: 'right',right:30,color:'#4F555A'}}>${transaction.total}</Text>
@@ -95,7 +111,26 @@ import { useNavigation } from "@react-navigation/native";
   
     const Debt = ({debt}) => (
         <View style = {styles.flexContainer}>
-            <Image source={{uri: debt.owerPicture}} style={styles.image}></Image>
+            {/* <Image source={{uri: debt.owerPicture}} style={styles.image}></Image> */}
+
+            <View style={{
+                        width:25,
+                        height:25,
+                        borderRadius:25,
+                        marginHorizontal:10,
+                        backgroundColor:debt.owerColor,
+                        alignContent:'center',
+                        justifyContent:'center',
+                      }}>
+
+                      <Text style={{
+                        fontSize:10,
+                        color:'white',
+                        textAlign:'center'
+                      }}>{debt.owerName[0].toUpperCase()}</Text>
+            </View>
+
+
             <Text>  {debt.owerName}    </Text>
             <FontAwesome5Icon
                   name={"arrow-right"}
@@ -103,7 +138,25 @@ import { useNavigation } from "@react-navigation/native";
                   size={18}
             />
             <Text>  </Text>
-            <Image source={{uri: debt.lenderPicture}} style={styles.image}></Image>
+            {/* <Image source={{uri: debt.lenderPicture}} style={styles.image}></Image> */}
+
+            <View style={{
+                        width:25,
+                        height:25,
+                        borderRadius:25,
+                        marginHorizontal:10,
+                        backgroundColor:debt.lenderColor,
+                        alignContent:'center',
+                        justifyContent:'center',
+                      }}>
+
+                      <Text style={{
+                        fontSize:10,
+                        color:'white',
+                        textAlign:'center'
+                      }}>{debt.lenderName[0].toUpperCase()}</Text>
+            </View>
+
             <Text style={{color:'#4F555A'}}>  {debt.lenderName}</Text>
             <View style={{flex: 1}}>
                 <Text style={{textAlign: 'right',right:30,color:'#4F555A'}}>${debt.total}</Text>
@@ -245,11 +298,11 @@ import { useNavigation } from "@react-navigation/native";
                 {/* <View style={{justifyContent:'center',}}> */}
                   {/* <Image style={styles.smallImage} source={{uri: item.picture}}/> */}
             <View style={{
-              width:20,
-              height:20,
-              borderRadius:20,
+              width:25,
+              height:25,
+              borderRadius:25,
               marginHorizontal:10,
-              backgroundColor:'red',
+              backgroundColor:item.color,
               alignContent:'center',
               justifyContent:'center',
             }}>
@@ -259,7 +312,6 @@ import { useNavigation } from "@react-navigation/native";
               color:'white',
               textAlign:'center'
             }}>{item.name[0].toUpperCase()}</Text>
-            {/* </View> */}
                 </View>
                 <View style={styles.userContainer}>
                   <Text style={styles.text}>{item.name}</Text>

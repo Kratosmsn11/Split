@@ -25,6 +25,7 @@ import {
   import { Alert } from "react-native";
   import app from "..//Firebase";
   import { Database, ref } from "firebase/database";
+import { randomNumber } from "../backendFiles/firebaseFunctions";
   const Signup = ({ navigation }) => {
     const [name, setname] = useState("eye");
     const [userName, setuserName] = useState("");
@@ -60,6 +61,7 @@ import {
                 password: password,
                 uid: res?.user?.uid,
                 picture: defaultProfileImage,
+                color:randomNumber(),
                 groups: {}
               })
                 .then((docRef) => {

@@ -56,7 +56,8 @@ export default function App() {
     const debts = calculateDebts(spending,inputs,usersIds);
     console.log(debts);
     var transactionName = "Default name";
-    createTransaction(transactionName,groupTotal,getGroupId(),debts,highestPayer);
+    createTransaction(transactionName,payment,getGroupId(),debts,highestPayer);
+    navigation.navigate("GroupPage");
   }
 
   //reseting to the original values
@@ -118,7 +119,23 @@ export default function App() {
               }}
             >
               <View>
-                <Image style = {styles.smallImage} source={{uri: userData[index].picture}}></Image>
+                {/* <Image style = {styles.smallImage} source={{uri: userData[index].picture}}></Image> */}
+                <View style={{
+                    width:50,
+                    height:50,
+                    borderRadius:50,
+                    marginHorizontal:10,
+                    backgroundColor:userData[index].color,
+                    alignContent:'center',
+                    justifyContent:'center',
+                  }}>
+
+                  <Text style={{
+                    fontSize:18,
+                    color:'white',
+                    textAlign:'center'
+                  }}>{userData[index].name[0].toUpperCase()}</Text>
+                </View>
               </View>
               <View style = {styles.textView}>
               <TextInput
