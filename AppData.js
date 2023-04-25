@@ -3,6 +3,7 @@ var groudId;
 var receiptData = {};
 var users = {};
 var userInfo = {};
+var userData = {};
 var userIds = {};
 var groups = {};
 var groupInfo = {};
@@ -71,6 +72,16 @@ export function setUserInfo(){
 export function getUserInfo(){
     return this.userInfo;
 }
+
+
+export function setUserData(data){
+    this.userData= data;
+}
+
+export function getUserData(){
+    return this.userData;
+}
+
 
 
 export function setUsersIds(users){

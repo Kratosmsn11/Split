@@ -121,6 +121,17 @@ export function Logo() {
     )
 }
 
+export function BigLogo() {
+    const navigation = useNavigation();
+    return(
+        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+            <View style={styles.BigLogo}>
+            <SvgXml xml = {logo} width='800%' height = '800%'/>
+            </View>
+        </TouchableOpacity>
+    )
+}
+
 export function BottomLayer() {
     return(
         <View style={styles.BottomLayer}>
@@ -221,7 +232,7 @@ export function BottomBar(){
                 </TouchableOpacity>
             </View>
             <View>
-                <TouchableOpacity onPress={()=>navigation.navigate("Profile")}>
+                <TouchableOpacity onPress={()=>navigation.navigate("UserProfile")}>
                     <SvgXml xml = {profile} width='50' height = '50'/>
                     <Text style = {styles.iconText}>Account</Text>
                 </TouchableOpacity>
@@ -250,6 +261,15 @@ const styles = StyleSheet.create({
       justifyContent: "center",
       position:'absolute',
       flexDirection: "row",
+    },
+    BigLogo: {
+        height:15,
+        bottom:-170,
+        alignSelf: "center",
+        alignItems: "center",
+        justifyContent: "center",
+        position:'absolute',
+        flexDirection: "row",
     },
     Arrow: {
         height:15,

@@ -17,6 +17,8 @@ import Profile from './Scrns/Profile';
 import PayingTransaction from './Scrns/PayingTransaction';
 import JoinGroup from './Scrns/JoinGroup';
 import GroupOption from './Scrns/GroupOption';
+import UserProfile  from './Scrns/UserProfile';
+import About from './Scrns/About';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -24,7 +26,7 @@ export default function App() {
   <StatusBar barStyle={"dark-content"} backgroundColor="white"/>
     <View style={{height:Dimensions.get("window").height}}>
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home"
+      <Stack.Navigator initialRouteName="About"
         screenOptions={{
           headerShown: false,}}
           >
@@ -43,6 +45,8 @@ export default function App() {
         <Stack.Screen name="PayingTransaction" component={PayingTransaction}/>
         <Stack.Screen name="JoinGroup" component={JoinGroup}/>
         <Stack.Screen name="GroupOption" component={GroupOption}/>
+        <Stack.Screen name="UserProfile" component={UserProfile}/>
+        <Stack.Screen name="About" component={About}/>
       </Stack.Navigator>
     </NavigationContainer>
     </View>

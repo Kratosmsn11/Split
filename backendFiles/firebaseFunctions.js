@@ -1,12 +1,18 @@
 import { db } from "../config/firebase";
 import {getFirestore,doc,addDoc,collection,deleteDoc,setDoc,query,getDocs,getDoc,orderBy,limit,get,where, updateDoc} from 'firebase/firestore';
 import {getGroupInfo, getReceiptURL, getUsers} from'../AppData'
+import { updatePassword,updateEmail,getAuth} from "firebase/auth";
+import {firebase} from '../config/firebase';
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import uuid from "uuid";
 const transactionCollection = collection(db,'transaction');
 const groupCollection = collection(db,'group');
 const debtCollection = collection(db,'debt');
 const userCollection = collection(db,'user');
 
 const passcodeLength = 5;
+
+const auth = getAuth();
 //How to add extra fields to a map: Example
 //debtList.push({...doc.data(), lenderName: lenderName,owerName:owerName});
 
@@ -163,6 +169,13 @@ export async function GetGroupData(groupId){
     const q = query(userCollection, where("uid", "==", authId));
     const user= await getDocs(q);
     return user.docs[0].id;
+  }
+
+  export async function getUserData(authId){
+    console.log(authId);
+    const q = (doc(db, "user", authId));
+    const user= await getDoc(q);
+    return user.data();
   }
 
 
@@ -345,6 +358,55 @@ export async function GetGroupData(groupId){
       return 0;
     }
   }
+
+    //returns 0 if error, 1 if success
+    export async function updateUserProfile(data){
+      var name = data.name;
+      // var userId =  firebase.auth().currentUser.uid;
+      var userId = "No3n3K6b7EhzHhQIxU81I2Mibvg1";
+      var email = data.email;
+      var password = data.password;
+      var picture = data.picture;
+      var phone = data.phone;
+      phone = "123-123-67"
+
+      // console.log(data);
+
+      const userRef = doc(userCollection,userId);
+      const docSnap = await getDoc(userRef);
+
+      if(picture != "none"){
+        picture = await uploadImageAsync(picture);
+        console.log("Picture" + picture);
+      }
+
+      if(docSnap.data().password != password){
+        updatePassword(auth.currentUser, password).then(() => {
+
+        }).catch((error) => {
+            console.log("error");
+        });
+      }
+
+      if(docSnap.data().email != email){
+        updateEmail(auth.currentUser, email).then(() => {
+        }).catch((error) => {
+            console.log("error");
+        });
+      }
+
+      var newData = {
+        name:name,
+        uid:userId,
+        email:email,
+        password:password,
+        picture:picture,
+        phone:phone,
+      }
+      
+      await updateDoc(userRef,newData);
+    }
+
   function isInGroup(users,userId){
     //gives only the ids
     let userIds = Object.keys(users);
@@ -378,3 +440,23 @@ export async function GetGroupData(groupId){
     return `#${generateRandomColor}`;
   }
 
+
+  async function uploadImageAsync(uri) {
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function (e) {
+        console.log(e);
+        reject(new TypeError("Network request failed"));
+      };
+      xhr.responseType = "blob";
+      xhr.open("GET", uri, true);
+      xhr.send(null);
+    });
+    const fileRef = ref(getStorage(), uuid.v4());
+    const result = await uploadBytes(fileRef, blob);
+    blob.close();
+    return await getDownloadURL(fileRef);
+  }

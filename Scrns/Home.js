@@ -1,17 +1,17 @@
-import {SafeAreaView,StyleSheet,View,Dimensions,Text,TouchableOpacity,ScrollView,Image,FlatList,Alert,} from "react-native";
+import {SafeAreaView,StyleSheet,View,Dimensions,Text,TouchableOpacity,ScrollView,Image,FlatList,Alert,ActivityIndicator} from "react-native";
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from "react";
 import { SvgXml } from "react-native-svg";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
-import { getGroups } from "../backendFiles/firebaseFunctions";
+import { getGroups, getUserData } from "../backendFiles/firebaseFunctions";
 import {Logo,BottomBar,BottomLayer, AddButton} from "../components/Svgs";
-import { setGroupId, setGroupInfo, setGroupsData, setUserId } from "../AppData";
+import { setGroupId, setGroupInfo, setGroupsData, setUserData, setUserId } from "../AppData";
 import {firebase} from "../config/firebase";
   const Home = () => {
     const navigation = useNavigation();
     const isFocused = useIsFocused();
     const [isShow, setisShow] = useState(false);
-    const [isLoading, setisLoading] = useState(false);
+    const [isLoading, setisLoading] = useState(true);
     const [allGroups, setallGroups] = useState([]);
     const [image, setimage] = useState(null);
     const [TextReaded, setTextReaded] = useState("");
@@ -36,7 +36,9 @@ import {firebase} from "../config/firebase";
       setUserId(userId);
       const groups = await getGroups(userId);
       setGroupsData(groups);
+      setUserData(await getUserData(userId));
       setallGroups(groups);
+      setisLoading(false);
     }
     useEffect(() => {isFocused && getGroupData() },[isFocused]);
   
@@ -58,7 +60,6 @@ import {firebase} from "../config/firebase";
             </TouchableOpacity>
             <BottomBar/>
             <Logo/>
-
 
           <View>
           <Text style={styles.myGroup}>My Groups</Text>
@@ -116,6 +117,11 @@ import {firebase} from "../config/firebase";
           </View>
 
         </View>
+        {isLoading && 
+        <View style={{position:'absolute',justifyContent:'center',alignContent:'center',alignItems:'center',alignSelf:'center',top:200}}>
+          <ActivityIndicator size="large" color="#4F555A" />
+          </View>
+        }
       </SafeAreaView>
     );
   };

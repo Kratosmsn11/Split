@@ -295,8 +295,15 @@ import { useNavigation } from "@react-navigation/native";
               <View style = {{top:30}}>
               
               <TouchableOpacity style={{flex:1, flexDirection: 'row',paddingVertical:10,}}>
-                {/* <View style={{justifyContent:'center',}}> */}
-                  {/* <Image style={styles.smallImage} source={{uri: item.picture}}/> */}
+
+                {item.picture!="none" &&
+                 <View style={{justifyContent:'center',}}>
+                  <Image style={styles.smallImage} source={{uri: item.picture}}/>
+                  </View>
+
+                }
+
+               {item.picture=="none" &&
             <View style={{
               width:25,
               height:25,
@@ -313,10 +320,12 @@ import { useNavigation } from "@react-navigation/native";
               textAlign:'center'
             }}>{item.name[0].toUpperCase()}</Text>
                 </View>
+          }
                 <View style={styles.userContainer}>
                   <Text style={styles.text}>{item.name}</Text>
                   <Text style={styles.secondaryText}>{item.email}</Text>
                 </View>
+          
               </TouchableOpacity>
               <View style = {styles.lineSeperator}></View>
               </View>
@@ -383,6 +392,7 @@ import { useNavigation } from "@react-navigation/native";
       width:30,
       height:30,
       borderRadius:30,
+      marginHorizontal:10,
     },
     centeredView: {
       flex: 1,
