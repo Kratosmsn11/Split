@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import * as React from 'react';
 import { View, Dimensions,StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -6,7 +7,6 @@ import TransactionOption from "./Scrns/TransactionOption"
 import Camera from "./Scrns/Camera"
 import CreateTransaction from './Scrns/CreateTransaction';
 import Login from './Scrns/Login';
-import AllTransactions from './Scrns/AllDebts';
 import AllDebts from './Scrns/AllDebts';
 import Create from './Scrns/Create';
 import CreateGroup from './Scrns/CreateGroup';
@@ -19,6 +19,10 @@ import JoinGroup from './Scrns/JoinGroup';
 import GroupOption from './Scrns/GroupOption';
 import UserProfile  from './Scrns/UserProfile';
 import About from './Scrns/About';
+import Sidebar from './Scrns/Sidebar';
+import Summary from './Scrns/Summary';
+import AllTransactions from './Scrns/AllTransactions';
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -26,9 +30,12 @@ export default function App() {
   <StatusBar barStyle={"dark-content"} backgroundColor="white"/>
     <View style={{height:Dimensions.get("window").height}}>
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="About"
+      <Stack.Navigator initialRouteName="Sidebar"
         screenOptions={{
-          headerShown: false,}}
+          headerShown: false,gestureEnabled:false}
+          
+        }
+        
           >
             
         <Stack.Screen name="Signup" component={Signup}/>
@@ -47,6 +54,9 @@ export default function App() {
         <Stack.Screen name="GroupOption" component={GroupOption}/>
         <Stack.Screen name="UserProfile" component={UserProfile}/>
         <Stack.Screen name="About" component={About}/>
+        <Stack.Screen name="Sidebar" component={Sidebar}/>
+        <Stack.Screen name="Summary" component={Summary}/>
+        <Stack.Screen name="AllTransactions" component={AllTransactions}/>
       </Stack.Navigator>
     </NavigationContainer>
     </View>

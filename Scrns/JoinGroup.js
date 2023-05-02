@@ -8,7 +8,7 @@ export default function App() {
   const navigation = useNavigation();
   const [passcode,setPasscode] = useState("");
   const passcodeLength = 5;
-  const userId = "7Ln6gDYXTqYynjqzKtxC";
+  const userId = "No3n3K6b7EhzHhQIxU81I2Mibvg1";
   async function Join(){
     console.log(passcode);
     if(passcode.length != passcodeLength){
@@ -24,7 +24,7 @@ export default function App() {
             // Alert.alert("You have joined the group!");
         }
         else if(x==2){
-            Alert.alert("No group found!");
+            Alert.alert("Group does not exist!");
         }
     }
   }

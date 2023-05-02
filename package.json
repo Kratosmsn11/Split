@@ -11,6 +11,7 @@
   "dependencies": {
     "@google-cloud/vision": "^3.1.2",
     "@react-native-clipboard/clipboard": "^1.11.2",
+    "@react-navigation/drawer": "^6.6.2",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
     "expo": "^48.0.6",
@@ -28,9 +29,12 @@
     "react-native": "0.71.6",
     "react-native-btr": "^2.2.0",
     "react-native-elements": "^3.4.3",
+    "react-native-gesture-handler": "~2.9.0",
     "react-native-indicators": "^0.17.0",
     "react-native-modal": "^13.0.1",
-    "react-native-svg": "^13.9.0"
+    "react-native-reanimated": "~2.14.4",
+    "react-native-svg": "^13.9.0",
+    "react-native-table-component": "^1.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

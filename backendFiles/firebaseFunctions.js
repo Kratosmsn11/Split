@@ -89,6 +89,7 @@ export async function GetGroupData(groupId){
       total:newTotal,
       groupId:groupId,
       receipt:receiptURL,
+      date:firebase.firestore.Timestamp.fromDate(new Date()),
       highestPayer: highestPayer,
     }
 
@@ -175,7 +176,8 @@ export async function GetGroupData(groupId){
     console.log(authId);
     const q = (doc(db, "user", authId));
     const user= await getDoc(q);
-    return user.data();
+    const data = ({...user.data(), id: user.id})
+    return data;
   }
 
 
@@ -223,6 +225,7 @@ export async function GetGroupData(groupId){
       name:groupName,
       total:0.00,
       passcode: passcode,
+      color:randomNumber()
     }
     const r = await addDoc(groupCollection, startingData)
     .then(docRef => {
@@ -302,32 +305,33 @@ export async function GetGroupData(groupId){
       //get the document
       const userDoc = await getDoc(userRef);
       if (!userDoc.exists) {
-        console.log('No group');
+        console.log('No user');
+        return;
       } else {
         //this is the users group list
         console.log(userDoc.data());
-        groups = userDoc.data()['groups'];
-        //adding the group
-        groups[groupId]=true;
-        //updating the users document
-        updateDoc(userRef,{
-          groups
-        })
+        // groups = userDoc.data()['groups'];
+        // //adding the group
+        // groups[groupId]=true;
+        // //updating the users document
+        // updateDoc(userRef,{
+        //   groups
+        // })
       }
       //Adding the user to the group's list
       //getting a reference to the group
-      const groupRef = doc(groupCollection,groupId);
-      //adding the user to the group
-      users[userId]=true;
-      //updating the document
-      const response = await updateDoc(groupRef,{
-        users
-      })
+      // const groupRef = doc(groupCollection,groupId);
+      // //adding the user to the group
+      // users[userId]=true;
+      // //updating the document
+      // const response = await updateDoc(groupRef,{
+      //   users
+      // })
       console.log("Added to the group!");
       return 1;
     //no documents
     } else {
-      console.log("No group found!");
+      console.log("Group does not exist!");
       return 2;
     }
   }

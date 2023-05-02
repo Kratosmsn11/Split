@@ -1,13 +1,13 @@
-import {SafeAreaView,StyleSheet,View,Dimensions,Text,TouchableOpacity,ScrollView,Image,FlatList,Alert,ActivityIndicator} from "react-native";
+import {SafeAreaView,StyleSheet,View,Dimensions,Text,TouchableOpacity,ScrollView,Image,FlatList,Alert,ActivityIndicator,RefreshControl} from "react-native";
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from "react";
 import { SvgXml } from "react-native-svg";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
-import { getGroups, getUserData } from "../backendFiles/firebaseFunctions";
+import { getGroups, getUserData, randomNumber } from "../backendFiles/firebaseFunctions";
 import {Logo,BottomBar,BottomLayer, AddButton} from "../components/Svgs";
 import { setGroupId, setGroupInfo, setGroupsData, setUserData, setUserId } from "../AppData";
 import {firebase} from "../config/firebase";
-  const Home = () => {
+  export const Home = () => {
     const navigation = useNavigation();
     const isFocused = useIsFocused();
     const [isShow, setisShow] = useState(false);
@@ -15,13 +15,8 @@ import {firebase} from "../config/firebase";
     const [allGroups, setallGroups] = useState([]);
     const [image, setimage] = useState(null);
     const [TextReaded, setTextReaded] = useState("");
+    const [refreshing, setRefreshing] = useState(false);
     const colors = [
-      { bg: "red", textColor: "white" },
-      { bg: "green", textColor: "white" },
-      { bg: "blue", textColor: "white" },
-      { bg: "yellow", textColor: "black" },
-      { bg: "orange", textColor: "black" },
-      { bg: "purple", textColor: "black" },
     ];
     const images = [
       "https://th.bing.com/th/id/R.6b0022312d41080436c52da571d5c697?rik=ejx13G9ZroRrcg&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fuser-png-icon-young-user-icon-2400.png&ehk=NNF6zZUBr0n5i%2fx0Bh3AMRDRDrzslPXB0ANabkkPyv0%3d&risl=&pid=ImgRaw&r=0",
@@ -35,12 +30,21 @@ import {firebase} from "../config/firebase";
       const userId = "No3n3K6b7EhzHhQIxU81I2Mibvg1";
       setUserId(userId);
       const groups = await getGroups(userId);
+      console.log(groups);
       setGroupsData(groups);
-      setUserData(await getUserData(userId));
+      await setUserData(await getUserData(userId));
       setallGroups(groups);
       setisLoading(false);
     }
     useEffect(() => {isFocused && getGroupData() },[isFocused]);
+
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true);
+      setTimeout(() => {
+        setRefreshing(false);
+        getGroupData();
+      }, 2000);
+    }, []);
   
 
    const onGroupPress=(item)=>{
@@ -59,14 +63,25 @@ import {firebase} from "../config/firebase";
                 <AddButton/>
             </TouchableOpacity>
             <BottomBar/>
-            <Logo/>
-
+            
+            <TouchableOpacity>
+              <Logo/>
+          </TouchableOpacity>
           <View>
           <Text style={styles.myGroup}>My Groups</Text>
           <View style={styles.MyGroupSpace}>
+            {allGroups.length==0 && !isLoading &&
+              <ScrollView style={{backgroundColor:'#EAF0F7',height:10}}>
+                <Text style={{color:'#4F555A',left:10,top:10}}>You have no groups. Create or join a group to get started.</Text>
+              </ScrollView>
+              
+            }
             <FlatList
               showsVerticalScrollIndicator={false}
               data={allGroups}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
               ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
               renderItem={({ item }) => {
                 const randomIndex = Math.floor(Math.random() * colors.length);
@@ -84,7 +99,7 @@ import {firebase} from "../config/firebase";
                       width: "90%",
                       alignSelf: "center",
                       borderRadius: 10,
-                      backgroundColor: randomColor.bg,
+                      backgroundColor: item.color,
                       justifyContent: "center",
                     }}
                   >
@@ -105,7 +120,7 @@ import {firebase} from "../config/firebase";
                         textAlign: "center",
                         fontSize: 16,
                         fontWeight: "bold",
-                        color: randomColor.textColor,
+                        color:'white'
                       }}
                     >
                       {item?.name}
@@ -122,6 +137,9 @@ import {firebase} from "../config/firebase";
           <ActivityIndicator size="large" color="#4F555A" />
           </View>
         }
+        
+        
+       
       </SafeAreaView>
     );
   };

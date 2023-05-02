@@ -124,11 +124,9 @@ export function Logo() {
 export function BigLogo() {
     const navigation = useNavigation();
     return(
-        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
-            <View style={styles.BigLogo}>
-            <SvgXml xml = {logo} width='800%' height = '800%'/>
+            <View style ={styles.BigLogo}>
+            <SvgXml xml = {logo} width='130%' height = '130%'/>
             </View>
-        </TouchableOpacity>
     )
 }
 
@@ -227,13 +225,17 @@ export function BottomBar(){
         <View style = {styles.icons}>
             <View>
                 <TouchableOpacity onPress={()=>navigation.navigate("Home")}>
-                    <SvgXml xml = {home} width='50' height = '50'/>
+                    <View style={{alignSelf:'center'}}>
+                        <SvgXml xml = {home} width='50' height = '50'/>
+                    </View>
                     <Text style = {styles.iconText}>Home</Text>
                 </TouchableOpacity>
             </View>
             <View>
                 <TouchableOpacity onPress={()=>navigation.navigate("UserProfile")}>
+                <View style={{alignSelf:'center'}}>
                     <SvgXml xml = {profile} width='50' height = '50'/>
+                </View>
                     <Text style = {styles.iconText}>Account</Text>
                 </TouchableOpacity>
             </View>
@@ -263,13 +265,10 @@ const styles = StyleSheet.create({
       flexDirection: "row",
     },
     BigLogo: {
-        height:15,
-        bottom:-170,
-        alignSelf: "center",
-        alignItems: "center",
-        justifyContent: "center",
-        position:'absolute',
-        flexDirection: "row",
+        height:100,
+        alignItems:'center',
+        alignContent:'center'
+
     },
     Arrow: {
         height:15,
@@ -297,7 +296,7 @@ const styles = StyleSheet.create({
     icons:{
         top:720,
         flex:1,
-        left:55,
+
         flexDirection:'row',
         alignSelf: "center",
         alignItems: "center",

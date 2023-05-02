@@ -4,7 +4,7 @@ import {Logo,BottomLayer,LeftArrow,ProfileImage,User,OrderLight,CameraIcon, Home
 import * as Clipboard from 'expo-clipboard';
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import { GetGroupDebts, GetGroupTransactions, getGroupUsers, randomNumber } from "../backendFiles/firebaseFunctions";
-import { getGroupInfo, setGroupInfo, getGroupId,setUsers } from "../AppData";
+import { getGroupInfo, setGroupInfo, getGroupId,setUsers, setGroupDebtsAll, setGroupTransactionsAll } from "../AppData";
 import { useNavigation } from "@react-navigation/native";
   
   const GroupDetail = () => {
@@ -43,6 +43,7 @@ import { useNavigation } from "@react-navigation/native";
       const debtData = await GetGroupDebts(groupId);
       console.log(debtData);
       setDebts(debtData);
+      setGroupDebtsAll(debtData);
       // setDebts(dummyDebts);
     };
 
@@ -50,6 +51,7 @@ import { useNavigation } from "@react-navigation/native";
       const transactionData = await GetGroupTransactions(groupId);
       console.log(transactionData);
       setTransactions(transactionData);
+      setGroupTransactionsAll(transactionData);
       // setTransactions(dummyTransactions);
     };
 
@@ -200,6 +202,7 @@ import { useNavigation } from "@react-navigation/native";
           </TouchableOpacity>
           <View style={styles.MyGroupSpace}>
             <Text style={{ ...styles.myGroup, fontSize: 22,left:0}}>Transactions</Text>
+            <TouchableOpacity onPress={() => navigation.navigate("AllTransactions")}>
             <View
               style={{
                 height: 120,
@@ -221,6 +224,7 @@ import { useNavigation } from "@react-navigation/native";
                 /> 
 
             </View>
+            </TouchableOpacity>
   
             <Text style={{ ...styles.myGroup, fontSize: 22,left:0, marginTop: 0 }}>
               Settle Debts

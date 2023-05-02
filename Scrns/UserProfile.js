@@ -4,28 +4,41 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {Logo,BottomLayer,BottomBar,AddButton, ContinueButton, CheckmarkIcon, LeftArrow} from "../components/Svgs";
 import { useState,useEffect } from 'react';
 import * as ImagePicker from 'expo-image-picker';
-import { updateUserProfile } from '../backendFiles/firebaseFunctions';
-import { getUserData, getUserInfo } from '../AppData';
+import { updateUserProfile, getUserData } from '../backendFiles/firebaseFunctions';
+import { getUserInfo } from '../AppData';
 import { manipulateAsync } from "expo-image-manipulator";
 
 export default function App() {
   const[name,setUsername] = useState("");
   const[email,setEmail] = useState("");
   const[password,setPassword] = useState("");
+  const[phone,setPhone] = useState("");
   const[change,setChanged] = useState(false);
   const[currentPicture,setPicture] = useState("");
   const[user,setUser] = useState("");
+  const [isOwner,setIsOwner] = useState(false);
 
   async function getData(){
-    setUser(await getUserData());
-    setPicture(user.picture);
+    setUser(await getUserData("No3n3K6b7EhzHhQIxU81I2Mibvg1"));
+    console.log(user.id);
+    setIsOwner(user.id == "No3n3K6b7EhzHhQIxU81I2Mibvg1");
     console.log(currentPicture);
     setUsername(user.name);
     setEmail(user.email);
     setPassword(user.password);
+    if(user==undefined){
+    setPicture("none");
+    }
+    else{
+      setPicture(user.picture);
+    }
+
+    setPhone(user.phone);
   }
   useEffect(() => {
     // const user ={username:"Joseph123",email:"joarredondo@csumb.edu",password:"password"};
+    getData();
+    getData();
     getData();
   }, [])
 
@@ -43,6 +56,7 @@ export default function App() {
   }
 
   const pickImage = async () => {
+    if(!isOwner){return;}
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -50,7 +64,6 @@ export default function App() {
       aspect: [4, 3],
       quality: 1,
     });
-    console.log(result);
 
     if (!result.canceled) {
       setChanged(true);
@@ -77,9 +90,12 @@ export default function App() {
         <BottomLayer/>
         <BottomBar/>
 
+        {change &&
+
         <TouchableOpacity onPress={() => UpdateAccount()}>
             <CheckmarkIcon/>
         </TouchableOpacity>
+        }
 
         
 
@@ -118,7 +134,7 @@ export default function App() {
                     shadowOpacity: 0.4,
                     shadowRadius: 4,}}>
                     
-                    <Image source={{uri:currentPicture}} style={styles.image}></Image>
+                    <Image source={currentPicture ? {uri: currentPicture } : null} style={styles.image}></Image>
                     </View>
                     
                     }
@@ -131,7 +147,7 @@ export default function App() {
             
             >{user.email}</Text>
 
-        <View style ={{alignSelf:'center',justifyContent:'center',alignContent:'center',bottom:50,top:50}}>
+        <View style ={{alignSelf:'center',justifyContent:'center',alignContent:'center',bottom:50,top:0}}>
 
             <View style ={{flexDirection:'row',marginVertical:30,justifyContent:'flex-start'}}>
             <View style={{}}>
@@ -139,7 +155,7 @@ export default function App() {
             </View>
             <View  style ={{alignItems:'flex-end'}}>
                 <View style ={{justifyContent:'center',backgroundColor:'#D9D9D9',borderRadius:10,height:35,width:160,borderWidth:10,borderColor:'#D9D9D9'}}>
-                <TextInput style ={{}} onChangeText={setUsername} defaultValue={user.name}>
+                <TextInput style ={{}} onChangeText={setUsername} defaultValue={user.name} editable={isOwner}>
                 </TextInput>
                 </View>
             </View>
@@ -151,22 +167,40 @@ export default function App() {
             </View>
             <View  style ={{flex:1,alignItems:'flex-end'}}>
                 <View style ={{justifyContent:'center',backgroundColor:'#D9D9D9',borderRadius:10,height:35,width:160,borderWidth:10,borderColor:'#D9D9D9'}}>
-                <TextInput onChangeText={setEmail} style ={{}} defaultValue={user.email}>
+                <TextInput onChangeText={setEmail} style ={{}} defaultValue={user.email} editable={isOwner}>
                 </TextInput>
                 </View>
             </View>
             </View>
+            {isOwner &&
+              <View style ={{flexDirection:'row',marginVertical:30,justifyContent:'flex-start'}}>
+              <View style={{flex:1}}>
+                  <Text style ={{fontSize:20,alignItems:'flex-start',justifyContent:'center',marginHorizontal:30}}>Password</Text>
+              </View>
+
+                <View  style ={{flex:1,alignItems:'flex-end'}}>
+                    <View style ={{justifyContent:'center',backgroundColor:'#D9D9D9',borderRadius:10,height:35,width:160,borderWidth:10,borderColor:'#D9D9D9'}}>
+                    <TextInput defaultValue={user.password} style ={{}} onChangeText={setPassword} secureTextEntry={true} editable={isOwner}>
+                    </TextInput>
+                    </View>
+                </View>
+              
+              </View>
+            }
             <View style ={{flexDirection:'row',marginVertical:30,justifyContent:'flex-start'}}>
             <View style={{flex:1}}>
-                <Text style ={{fontSize:20,alignItems:'flex-start',justifyContent:'center',marginHorizontal:30}}>Password</Text>
+                <Text style ={{fontSize:20,alignItems:'flex-start',justifyContent:'center',marginHorizontal:30}}>Phone</Text>
             </View>
             <View  style ={{flex:1,alignItems:'flex-end'}}>
                 <View style ={{justifyContent:'center',backgroundColor:'#D9D9D9',borderRadius:10,height:35,width:160,borderWidth:10,borderColor:'#D9D9D9'}}>
-                <TextInput defaultValue={user.password} style ={{}} onChangeText={setPassword} secureTextEntry={true}>
+                <TextInput defaultValue={user.phone} style ={{}} onChangeText={setPhone} editable={isOwner}>
                 </TextInput>
                 </View>
             </View>
             </View>
+
+
+
         </View>
         </View>
     </SafeAreaView>
@@ -184,14 +218,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   picture: {
-    height:100,
-    width:100,
+    height:130,
+    width:130,
     backgroundColor:'#ecf0f1'
   },
   image:{
-    height:100,
-    width:100,
-    borderRadius:100,
+    height:130,
+    width:130,
+    borderRadius:130,
     alignSelf:'center',
     bottom:10,
   }
