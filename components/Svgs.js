@@ -113,9 +113,9 @@ const home = `<svg width="40" height="41" viewBox="0 0 40 41" fill="none" xmlns=
 export function Logo() {
     const navigation = useNavigation();
     return(
-        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+        <TouchableOpacity onPress={() => [navigation.reset("Sidebar"),navigation.navigate("Sidebar")] }>
             <View style={styles.Logo}>
-            <SvgXml xml = {logo} width='280%' height = '280%'/>
+            <SvgXml xml = {logo} width='80' height = '80'/>
             </View>
         </TouchableOpacity>
     )

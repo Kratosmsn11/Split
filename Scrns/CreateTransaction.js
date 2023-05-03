@@ -5,7 +5,8 @@ import { BottomSheet } from 'react-native-btr';
 import { useNavigation } from '@react-navigation/native';
 import { AddButton, BottomBar, BottomLayer, Logo,ContinueButton } from '../components/Svgs';
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import { getReceiptData, getTransactionTotal, getUserSpending, setTransactionTotal, setUserSpending, getUsers } from '../AppData';
+import { getTransactionTotal, getUserSpending, setTransactionTotal, setUserSpending, getUsers, getImageURI } from '../AppData';
+import { getReceiptData } from '../backendFiles/firebaseFunctions';
 const Create = () => {
     const navigation = useNavigation();
 
@@ -268,8 +269,9 @@ const Create = () => {
     const [refesh,SetRefresh] = useState("");
 
     useEffect(() => {
-      let data = getReceiptData();
-      if(data==undefined){
+      var data;
+      data = getImageURI();
+      if(data == undefined){
         data = [];
         data.items =[];
         setItemData(data.items);
@@ -279,6 +281,7 @@ const Create = () => {
         SetRefresh(!refesh);
         return;
       }
+      data = getReceiptData(getImageURI());
       setItemData(data.items);
       setItemCount(data.items.length)
       let total = 0;

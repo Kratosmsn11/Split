@@ -1,12 +1,21 @@
 import {SafeAreaView,StyleSheet,View,Dimensions,Text,TouchableOpacity,ScrollView,Image} from "react-native";
 import Svg, { Path } from "react-native-svg"
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import { useNavigation } from '@react-navigation/native';
 import {Logo,BottomLayer,LeftArrow,BottomBar} from "../components/Svgs";
 import PermissionPop from '../components/AlertModal';
+import ActionSheet from 'react-native-actionsheet';
+import * as ImagePicker from 'expo-image-picker';
+import { manipulateAsync } from "expo-image-manipulator";
+import { setImageURI } from "../AppData";
+//Bottom action sheet referenced from :https://snack.expo.dev/embedded/@aboutreact/react-native-bottom-actionsheet?preview=true&platform=ios&iframeId=qn4os3zz2g&theme=dark
+
 const AddExpense = () => {
   const navigation = useNavigation();
   const [isShow,setIsShow] = useState(false);
+  const[currentPicture,setPicture] = useState("");
+  let actionSheet = useRef();
+  var optionArray = ['Take a picture', 'Choose from gallery', 'Cancel'];
 
   function onCamera(){
     setIsShow(false);
@@ -16,6 +25,49 @@ const AddExpense = () => {
   function onGallary(){
     setIsShow(false);
   }
+
+  const showActionSheet = () => {
+    actionSheet.current.show();
+  };
+
+  function actionSheetPress(index){
+    console.log(index);
+    //take picture
+    if(index == 0){
+      console.log("Take a picture");
+      navigation.navigate("Camera")
+    }
+    //gallery
+    if(index == 1){
+      pickImage();
+      console.log("Open gallery");
+
+    }
+  }
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setPicture(result.assets[0].uri);
+
+      const manipResult = await manipulateAsync(
+        currentPicture,
+        [{ resize: { width: 512, height: 512 } }],
+        { format: "jpeg", base64: true }
+      );
+      setPicture(manipResult.uri);
+      setImageURI(currentPicture);
+
+      navigation.navigate("CreateTransaction")
+    }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -56,7 +108,7 @@ const AddExpense = () => {
             OR
           </Text>
           <TouchableOpacity
-            onPress={() => {setIsShow(true);}}
+            onPress={() => showActionSheet()}
             style={{
               height: 50,
               width: "90%",
@@ -111,14 +163,23 @@ const AddExpense = () => {
         >
         </TouchableOpacity>
       </View>
-      <PermissionPop
+      {/* <PermissionPop
         isOpen={isShow}
         onCamera={() => onCamera()}
         onGallary={() => onGallary()}
         onClose={() => {
           setIsShow(false);
         }}
-      />
+      /> */}
+
+        <ActionSheet
+          ref={actionSheet}
+          options={optionArray}
+          cancelButtonIndex={2}
+          onPress={(index) => {
+            actionSheetPress(index);
+          }}
+        />
     </SafeAreaView>
   );
 };

@@ -6,6 +6,7 @@ import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import { getGroups, getUserData, randomNumber } from "../backendFiles/firebaseFunctions";
 import {Logo,BottomBar,BottomLayer, AddButton} from "../components/Svgs";
 import { setGroupId, setGroupInfo, setGroupsData, setUserData, setUserId } from "../AppData";
+import ActionSheet from 'react-native-actionsheet';
 import {firebase} from "../config/firebase";
   export const Home = () => {
     const navigation = useNavigation();
@@ -16,6 +17,10 @@ import {firebase} from "../config/firebase";
     const [image, setimage] = useState(null);
     const [TextReaded, setTextReaded] = useState("");
     const [refreshing, setRefreshing] = useState(false);
+
+    let actionSheet = useRef();
+    var optionArray = ['Create a group', 'Join a group','Cancel'];
+
     const colors = [
     ];
     const images = [
@@ -24,6 +29,10 @@ import {firebase} from "../config/firebase";
       "https://th.bing.com/th/id/R.de2135625ce46525e09320ba02e86032?rik=03qOiI9B0N9KfA&pid=ImgRaw&r=0",
       "https://th.bing.com/th/id/R.8ecb8e1845f04b543161e388bef36334?rik=tXj9313wlJX5Tw&pid=ImgRaw&r=0",
     ];
+
+    const showActionSheet = () => {
+      actionSheet.current.show();
+    };
   
     async function getGroupData(){
       // const userId = firebase.auth().currentUser.uid;
@@ -52,6 +61,21 @@ import {firebase} from "../config/firebase";
         setGroupId(item.id);
         navigation.navigate("GroupPage");
    }
+
+   function actionSheetPress(index){
+    console.log(index);
+    //take picture
+    if(index == 0){
+      console.log("Create a group");
+      navigation.navigate("CreateGroup");
+    }
+    //gallery
+    if(index == 1){
+      console.log("Join a group");
+      navigation.navigate("JoinGroup");
+
+    }
+  }
   
     return (
       <SafeAreaView style={{ flex: 1 }}>
@@ -137,6 +161,15 @@ import {firebase} from "../config/firebase";
           <ActivityIndicator size="large" color="#4F555A" />
           </View>
         }
+
+        <ActionSheet
+          ref={actionSheet}
+          options={optionArray}
+          cancelButtonIndex={2}
+          onPress={(index) => {
+            actionSheetPress(index);
+          }}
+        />
         
         
        

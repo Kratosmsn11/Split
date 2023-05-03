@@ -10,6 +10,7 @@ var groupInfo = {};
 var groupDebts = {};
 var groupTransactiions={};
 var receiptURL;
+var imageURI;
 var userSpending = [];
 var total;
 export function setUserId(id){
@@ -100,6 +101,15 @@ export function setReceiptURL(url){
 export function getReceiptURL(){
     return this.receiptURL;
 }
+
+export function setImageURI(url){
+    this.imageURI = url
+}
+
+export function getImageURI(){
+    return this.imageURI;
+}
+
 
 
 export function setGroupDebtsAll(debts){

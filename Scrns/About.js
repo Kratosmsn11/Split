@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { Text, View, StyleSheet, SafeAreaView, FlatList,Image,Linking } from 'react-native';
 import {Logo,BottomLayer,LeftArrow,ProfileImage,User,OrderLight,CameraIcon, HomeIcon, AddButton, BottomBar,BigLogo} from '../components/Svgs';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import CustomSidebar from './CustomSidebar'
+
 const about = "Split is a student led Capstone Project from CSUMB’s College of Computer Science.";
 const help = "For further questions, send a message to splitquestions@realemail.com";
 const developers = [{firstName:"Joseph",lastName:"Arredondo", picture:"https://firebasestorage.googleapis.com/v0/b/split-cst499.appspot.com/o/a39a019a-a905-4465-8513-46b668e8f073?alt=media&token=63e7a989-f9b7-4258-aae9-ca3c7299e80b",li:"https://www.linkedin.com/in/joseph-arredondo-8a836a1b1/"},
@@ -15,7 +18,7 @@ const shuffled = developers
     .map(({ value }) => value)
 const mentor = {firstName:"Young-Joon",lastName:"Byun", picture:"https://csumb.edu/media/csumb/section-editors/college-of-science/school-of-computing-and-design/byun.PNG"}
 shuffled.push(mentor)
-export default function About() {
+function AboutPage() {
     const Member = ({member,index}) => (
         <View style={{flexDirection:'row',marginVertical:10}}>
             <View>
@@ -37,7 +40,7 @@ export default function About() {
   return (
     <SafeAreaView>
         <Logo/>
-        <View><LeftArrow/></View>
+
         
     <View style={styles.container}>
 
@@ -91,6 +94,25 @@ export default function About() {
     </SafeAreaView>
   );
 }
+
+const Drawer = createDrawerNavigator();
+
+export default function About() {
+  return (
+      <Drawer.Navigator useLegacyImplementation initialRouteName="Home" screenOptions={{
+        headerShown: true,headerTransparent:true,headerTitle:"",headerTintColor: 'black',
+        drawerActiveTintColor:'white'
+        
+      }} drawerContent={(props) => <CustomSidebar {...props} />}>
+
+        
+        <Drawer.Screen name=" " component={AboutPage} />
+        
+      </Drawer.Navigator>
+
+  );
+}
+
 
 const styles = StyleSheet.create({
   container: {

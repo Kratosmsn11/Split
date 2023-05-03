@@ -85,7 +85,7 @@ export default function App() {
         </View>
         
 
-        <Logo/>
+        
 
         <BottomLayer/>
         <BottomBar/>
@@ -97,7 +97,7 @@ export default function App() {
         </TouchableOpacity>
         }
 
-        
+        <Logo/>
 
         
         <View style={styles.container}>

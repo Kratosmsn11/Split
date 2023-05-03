@@ -5,6 +5,8 @@ import { updatePassword,updateEmail,getAuth} from "firebase/auth";
 import {firebase} from '../config/firebase';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import uuid from "uuid";
+import { getReceiptInfo } from "./GoogleVision";
+import { extractData } from "./TextParser";
 const transactionCollection = collection(db,'transaction');
 const groupCollection = collection(db,'group');
 const debtCollection = collection(db,'debt');
@@ -463,4 +465,23 @@ export async function GetGroupData(groupId){
     const result = await uploadBytes(fileRef, blob);
     blob.close();
     return await getDownloadURL(fileRef);
+  }
+
+  export async function getReceiptData(){
+    if(getReceiptURL()!=undefined){
+      try{
+      var url = await uploadImageAsync(current);
+      var info = await getReceiptInfo(url);
+      var data = await extractData(info);
+      
+      }catch{
+      console.log("An error occured");
+      }finally{
+        return data;
+      }
+    }
+    else{
+      return;
+    }
+
   }

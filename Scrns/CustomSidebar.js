@@ -24,6 +24,8 @@ import { useNavigation } from '@react-navigation/native';
 
 import firebase from 'firebase/compat';
 
+import { DrawerActions } from '@react-navigation/native';
+
 
 const CustomSidebarMenu = (props) => {
   const navigation = useNavigation();
@@ -61,7 +63,8 @@ const CustomSidebarMenu = (props) => {
       <TouchableOpacity
             onPress={() => {
               navigation.navigate("UserProfile");
-            }}>
+            }}
+            > 
       <View style={{height:100,width:200,backgroundColor:'#D9D9D9',alignSelf:'center',borderRadius:20,justifyContent:'center',paddingBottom:20}}>
       <View style={{height:60,width:60,backgroundColor:'#73FF33',alignSelf:'center',borderRadius:60,justifyContent:'center',alignContent:'center',alignItems:'center',shadowColor: "#000",
                     shadowOffset: {
@@ -90,33 +93,34 @@ const CustomSidebarMenu = (props) => {
         <View style={styles.customItem}>
           <Text
           style = {styles.sideBarOptions}
-            onPress={() => {
-
+            onPress={() => {[navigation.dispatch(DrawerActions.closeDrawer()),navigation.navigate("Sidebar")]
             }}>
             Home
           </Text>
 
         </View>
-                <View style={styles.customItem}>
+        <TouchableOpacity onPress={() => {
+              [navigation.dispatch(DrawerActions.closeDrawer()),navigation.navigate("UserProfile")]
+            }}>
+            <View style={styles.customItem}>
           <Text
           style = {styles.sideBarOptions}
-            onPress={() => {
-              navigation.navigate("UserProfile");
-            }}>
+>
             Profile
           </Text>
 
         </View>
-              <View style={styles.customItem}>
-          <Text
-            style = {styles.sideBarOptions}
-            onPress={() => {
-              navigation.navigate("About");
-            }}>
-            About
-          </Text>
-
-        </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {
+          [navigation.dispatch(DrawerActions.closeDrawer()),navigation.navigate("About")]
+        }}>
+          <View style={styles.customItem}>
+            <Text
+              style = {styles.sideBarOptions}>
+              About
+            </Text>
+          </View>
+        </TouchableOpacity>
                       <View style={styles.customItem}>
           <Text
             style = {styles.sideBarOptions}

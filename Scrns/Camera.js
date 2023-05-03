@@ -11,7 +11,7 @@ import uuid from "uuid";
 import { getReceiptInfo } from "../backendFiles/GoogleVision";
 import { extractData } from "../backendFiles/TextParser";
 import { useNavigation } from "@react-navigation/native";
-import { getReceiptData, setReceiptData, setReceiptURL } from '../AppData';
+import { getReceiptData, setImageURI, setReceiptData, setReceiptURL } from '../AppData';
 
 
 
@@ -49,20 +49,21 @@ const ScannedSlip = () => {
 
   const submitPicture = async () => {
     if (capturedImage != undefined) {
-      console.log("Image exists");
-      const firebaseURL = await uploadImageAsync(capturedImage);
-      setReceiptURL(firebaseURL);
-      console.log(firebaseURL);
-      var imageData = await getReceiptInfo(firebaseURL);
-      console.log(imageData);
-      var extractedData = await extractData(imageData);
-      console.log(extractedData);
-      if (extractedData) {
-        setReceiptData(extractedData);
-        console.log(getReceiptData());
+      setImageURI(capturedImage);
+      // console.log("Image exists");
+      // const firebaseURL = await uploadImageAsync(capturedImage);
+      // setReceiptURL(firebaseURL);
+      // console.log(firebaseURL);
+      // var imageData = await getReceiptInfo(firebaseURL);
+      // console.log(imageData);
+      // var extractedData = await extractData(imageData);
+      // console.log(extractedData);
+      // if (extractedData) {
+      //   setReceiptData(extractedData);
+      //   console.log(getReceiptData());
         navigation.navigate("CreateTransaction");
-      }
     }
+    // }
   };
 
 
@@ -194,14 +195,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     height:400,
-    width:300,
+    width:400,
     backgroundColor: "#EAF0F7",
   },
   image:{
     position:'absolute',
     alignSelf:'center',
     top:140,
-    width:300,
+    width:400,
     height:500,
   },
 });

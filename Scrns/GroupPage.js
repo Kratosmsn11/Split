@@ -6,7 +6,9 @@ import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import { GetGroupDebts, GetGroupTransactions, getGroupUsers, randomNumber } from "../backendFiles/firebaseFunctions";
 import { getGroupInfo, setGroupInfo, getGroupId,setUsers, setGroupDebtsAll, setGroupTransactionsAll } from "../AppData";
 import { useNavigation } from "@react-navigation/native";
-  
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import CustomSidebar from './CustomSidebar'
+
   const GroupDetail = () => {
     const navigation = useNavigation();
     const [isShow, setisShow] = useState(false);
@@ -174,7 +176,7 @@ import { useNavigation } from "@react-navigation/native";
     const startTransaction = () => {
       const members = Object.keys(gData.users).length;
       console.log(members);
-      if(members<=1){
+      if(members==100){
         Alert.alert("You must add at least one member to create a transaction!");
       }
       else{
@@ -194,9 +196,9 @@ import { useNavigation } from "@react-navigation/native";
         </TouchableOpacity>
 
         <Logo/>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            {/* <TouchableOpacity onPress={() => navigation.goBack()}>
               <LeftArrow style={{ right: 100 }} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           <TouchableOpacity onPress={() => setModalVisible(true)}>
             <Text style={styles.heading}>{gData.name}</Text>
           </TouchableOpacity>
@@ -273,7 +275,7 @@ import { useNavigation } from "@react-navigation/native";
 
           <TouchableWithoutFeedback  onPress ={()=>setModalVisible(false)}>
       <Modal
-        animationType="fade"
+        animationType="slide"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
@@ -349,7 +351,24 @@ import { useNavigation } from "@react-navigation/native";
     );
   };
   
-  export default GroupDetail;
+  // export default GroupDetail;
+  const Drawer = createDrawerNavigator();
+
+  export default function GroupPage() {
+    return (
+        <Drawer.Navigator useLegacyImplementation initialRouteName="Home" screenOptions={{
+          headerShown: true,headerTransparent:true,headerTitle:"",headerTintColor: 'black',
+          drawerActiveTintColor:'white'
+          
+        }} drawerContent={(props) => <CustomSidebar {...props} />}>
+  
+          
+          <Drawer.Screen name=" " component={GroupDetail} />
+          
+        </Drawer.Navigator>
+  
+    );
+  }
   
   const styles = StyleSheet.create({
     Logo: {
