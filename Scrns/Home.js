@@ -1,6 +1,6 @@
 import {SafeAreaView,StyleSheet,View,Dimensions,Text,TouchableOpacity,ScrollView,Image,FlatList,Alert,ActivityIndicator,RefreshControl} from "react-native";
 import { useIsFocused, useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import { SvgXml } from "react-native-svg";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import { getGroups, getUserData, randomNumber } from "../backendFiles/firebaseFunctions";
@@ -83,7 +83,7 @@ import {firebase} from "../config/firebase";
             <BottomLayer/>
             
             <TouchableOpacity
-            onPress={() => navigation.navigate("GroupOption")}>
+            onPress={() => showActionSheet()}>
                 <AddButton/>
             </TouchableOpacity>
             <BottomBar/>

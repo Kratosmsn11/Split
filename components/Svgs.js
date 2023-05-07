@@ -113,7 +113,7 @@ const home = `<svg width="40" height="41" viewBox="0 0 40 41" fill="none" xmlns=
 export function Logo() {
     const navigation = useNavigation();
     return(
-        <TouchableOpacity onPress={() => [navigation.reset("Sidebar"),navigation.navigate("Sidebar")] }>
+        <TouchableOpacity onPress={() => [navigation.navigate("Sidebar")] }>
             <View style={styles.Logo}>
             <SvgXml xml = {logo} width='80' height = '80'/>
             </View>
@@ -204,7 +204,7 @@ export function OrderLight() {
 export function HomeIcon() {
     const navigation = useNavigation();
     return(
-        <TouchableOpacity onPress={()=>navigation.navigate("Home")}>
+        <TouchableOpacity onPress={() => [navigation.reset("Sidebar"),navigation.navigate("Sidebar")] }>
             <SvgXml xml = {home} width='30' height = '30'/>
         </TouchableOpacity>
     )
@@ -224,7 +224,7 @@ export function BottomBar(){
     return(
         <View style = {styles.icons}>
             <View>
-                <TouchableOpacity onPress={()=>navigation.navigate("Home")}>
+                <TouchableOpacity onPress={()=>navigation.navigate("Sidebar")}>
                     <View style={{alignSelf:'center'}}>
                         <SvgXml xml = {home} width='50' height = '50'/>
                     </View>

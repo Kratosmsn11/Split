@@ -14,7 +14,67 @@ export default function App() {
   const [groupName,setGroupName] = useState([]);
   const [passcode,setPasscode] = useState([]);
   const image = 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg';
-  const dummyData = [{username:"Joseph123", name:"Joseph Arredondo",uri:"https://th.bing.com/th/id/R.6b0022312d41080436c52da571d5c697?rik=ejx13G9ZroRrcg&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fuser-png-icon-young-user-icon-2400.png&ehk=NNF6zZUBr0n5i%2fx0Bh3AMRDRDrzslPXB0ANabkkPyv0%3d&risl=&pid=ImgRaw&r=0",id:1},{username:"Seos56", name:"Bob Young",uri:"https://th.bing.com/th/id/R.6b0022312d41080436c52da571d5c697?rik=ejx13G9ZroRrcg&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fuser-png-icon-young-user-icon-2400.png&ehk=NNF6zZUBr0n5i%2fx0Bh3AMRDRDrzslPXB0ANabkkPyv0%3d&risl=&pid=ImgRaw&r=0",id:2},{username:"quiop462", name:"Quentin Smith",uri:"https://th.bing.com/th/id/R.6b0022312d41080436c52da571d5c697?rik=ejx13G9ZroRrcg&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fuser-png-icon-young-user-icon-2400.png&ehk=NNF6zZUBr0n5i%2fx0Bh3AMRDRDrzslPXB0ANabkkPyv0%3d&risl=&pid=ImgRaw&r=0",id:7},{username:"pytr300", name:"John Sean",uri:"https://th.bing.com/th/id/R.6b0022312d41080436c52da571d5c697?rik=ejx13G9ZroRrcg&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fuser-png-icon-young-user-icon-2400.png&ehk=NNF6zZUBr0n5i%2fx0Bh3AMRDRDrzslPXB0ANabkkPyv0%3d&risl=&pid=ImgRaw&r=0",id:3},{username:"wumi123", name:"Dylan Egan",uri:"https://th.bing.com/th/id/R.6b0022312d41080436c52da571d5c697?rik=ejx13G9ZroRrcg&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fuser-png-icon-young-user-icon-2400.png&ehk=NNF6zZUBr0n5i%2fx0Bh3AMRDRDrzslPXB0ANabkkPyv0%3d&risl=&pid=ImgRaw&r=0",id:9},{username:"onys89", name:"John Sean",uri:"https://th.bing.com/th/id/R.6b0022312d41080436c52da571d5c697?rik=ejx13G9ZroRrcg&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fuser-png-icon-young-user-icon-2400.png&ehk=NNF6zZUBr0n5i%2fx0Bh3AMRDRDrzslPXB0ANabkkPyv0%3d&risl=&pid=ImgRaw&r=0",id:4}];
+  const dummyData = [
+  {name:"jOhnP18",color:'blue',id:2,email:'huvafo_nane21@outlook.com'},
+  {name:"iEntriAt",color:'red',id:3,email:'dozocik-oko94@mail.com'},
+  {name:"XiCingEO",color:'green',id:4,email:'sarefa-tepi47@hotmail.com'},
+  {name:"IumEtrON",color:'orange',id:5,email:'juyez_ohuma36@outlook.com'},
+  {name:"laTerbUi",color:'purple',id:6,email:'celega_heya92@gmail.com'},
+  {name:"jOhnP18",color:'blue',id:7,email:'huvafo_nane21@outlook.com'},
+  {name:"iEntriAt",color:'red',id:8,email:'dozocik-oko94@mail.com'},
+  {name:"XiCingEO",color:'green',id:9,email:'sarefa-tepi47@hotmail.com'},
+  {name:"IumEtrON",color:'orange',id:10,email:'juyez_ohuma36@outlook.com'},
+  {name:"laTerbUi",color:'purple',id:11,email:'celega_heya92@gmail.com'},
+  {name:"jOhnP18",color:'blue',id:12,email:'huvafo_nane21@outlook.com'},
+  {name:"iEntriAt",color:'red',id:13,email:'dozocik-oko94@mail.com'},
+  {name:"XiCingEO",color:'green',id:14,email:'sarefa-tepi47@hotmail.com'},
+  {name:"IumEtrON",color:'orange',id:15,email:'juyez_ohuma36@outlook.com'},
+  {name:"laTerbUi",color:'purple',id:16,email:'celega_heya92@gmail.com'},
+  {name:"jOhnP18",color:'blue',id:17,email:'huvafo_nane21@outlook.com'},
+  {name:"iEntriAt",color:'red',id:18,email:'dozocik-oko94@mail.com'},
+  {name:"XiCingEO",color:'green',id:19,email:'sarefa-tepi47@hotmail.com'},
+  {name:"IumEtrON",color:'orange',id:20,email:'juyez_ohuma36@outlook.com'},
+  {name:"laTerbUi",color:'purple',id:21,email:'celega_heya92@gmail.com'},
+  {name:"jOhnP18",color:'blue',id:22,email:'huvafo_nane21@outlook.com'},
+  {name:"iEntriAt",color:'red',id:23,email:'dozocik-oko94@mail.com'},
+  {name:"XiCingEO",color:'green',id:24,email:'sarefa-tepi47@hotmail.com'},
+  {name:"IumEtrON",color:'orange',id:25,email:'juyez_ohuma36@outlook.com'},
+  {name:"laTerbUi",color:'purple',id:26,email:'celega_heya92@gmail.com'},
+  {name:"jOhnP18",color:'blue',id:27,email:'huvafo_nane21@outlook.com'},
+  {name:"iEntriAt",color:'red',id:28,email:'dozocik-oko94@mail.com'},
+  {name:"XiCingEO",color:'green',id:29,email:'sarefa-tepi47@hotmail.com'},
+  {name:"IumEtrON",color:'orange',id:30,email:'juyez_ohuma36@outlook.com'},
+  {name:"laTerbUi",color:'purple',id:31,email:'celega_heya92@gmail.com'},
+  {name:"jOhnP18",color:'blue',id:32,email:'huvafo_nane21@outlook.com'},
+  {name:"iEntriAt",color:'red',id:33,email:'dozocik-oko94@mail.com'},
+  {name:"XiCingEO",color:'pink',id:34,email:'sarefa-tepi47@hotmail.com'},
+  {name:"IumEtrON",color:'brown',id:35,email:'juyez_ohuma36@outlook.com'},
+  {name:"laTerbUi",color:'purple',id:36,email:'celega_heya92@gmail.com'},
+  {name:"jOhnP18",color:'blue',id:37,email:'huvafo_nane21@outlook.com'},
+  {name:"iEntriAt",color:'pink',id:38,email:'dozocik-oko94@mail.com'},
+  {name:"XiCingEO",color:'green',id:39,email:'sarefa-tepi47@hotmail.com'},
+  {name:"IumEtrON",color:'orange',id:40,email:'juyez_ohuma36@outlook.com'},
+  {name:"laTerbUi",color:'purple',id:41,email:'celega_heya92@gmail.com'},
+  {name:"jOhnP18",color:'blue',id:42,email:'huvafo_nane21@outlook.com'},
+  {name:"iEntriAt",color:'red',id:43,email:'dozocik-oko94@mail.com'},
+  {name:"XiCingEO",color:'green',id:44,email:'sarefa-tepi47@hotmail.com'},
+  {name:"IumEtrON",color:'orange',id:45,email:'juyez_ohuma36@outlook.com'},
+  {name:"laTerbUi",color:'purple',id:46,email:'celega_heya92@gmail.com'},
+  {name:"jOhnP18",color:'pink',id:47,email:'huvafo_nane21@outlook.com'},
+  {name:"iEntriAt",color:'red',id:48,email:'dozocik-oko94@mail.com'},
+  {name:"XiCingEO",color:'green',id:49,email:'sarefa-tepi47@hotmail.com'},
+  {name:"IumEtrON",color:'orange',id:50,email:'juyez_ohuma36@outlook.com'},
+  {name:"laTerbUi",color:'purple',id:51,email:'celega_heya92@gmail.com'},
+  {name:"jOhnP18",color:'pink',id:52,email:'huvafo_nane21@outlook.com'},
+  {name:"iEntriAt",color:'red',id:53,email:'dozocik-oko94@mail.com'},
+  {name:"XiCingEO",color:'green',id:54,email:'sarefa-tepi47@hotmail.com'},
+  {name:"IumEtrON",color:'orange',id:55,email:'juyez_ohuma36@outlook.com'},
+  {name:"laTerbUi",color:'purple',id:56,email:'celega_heya92@gmail.com'},
+  {name:"jOhnP18",color:'blue',id:57,email:'huvafo_nane21@outlook.com'},
+  {name:"iEntriAt",color:'red',id:58,email:'dozocik-oko94@mail.com'},
+  {name:"XiCingEO",color:'brown',id:59,email:'sarefa-tepi47@hotmail.com'},
+  {name:"IumEtrON",color:'orange',id:60,email:'juyez_ohuma36@outlook.com'},
+  {name:"laTerbUi",color:'purple',id:61,email:'celega_heya92@gmail.com'}];
   const [users,setUsers] = useState([]);
 
   const [userData,setUserData] = useState([]);
@@ -32,10 +92,13 @@ export default function App() {
       setUsers(currentUser);
       var usersInApp = await getAllUsers();
 
+
       var newUsers = usersInApp.filter(function (user) {
         return user.id != getUserId();
        });
-      setUserData(newUsers);
+       newUsers.push(...dummyData);
+       const shuffled = newUsers.sort((a, b) => 0.5 - Math.random());
+      setUserData(shuffled);
     }
 
     useEffect(() => {
@@ -152,9 +215,10 @@ export default function App() {
 
   return (
     <SafeAreaView>
-          <BottomLayer/>
-      <BottomBar/>
+
+      {!searching &&
       <Logo/>
+      }
       <TouchableOpacity onPress={() => finish()}>
         <ContinueButton/>
       </TouchableOpacity>
@@ -175,10 +239,11 @@ export default function App() {
       </View>
       <View style = {styles.line}></View>
 
-      <View style={{left: 20,top:20,height:700}}>
+      <View style={{left: 20,top:20,height:500}}>
         <FlatList
           data={searchData}
           extraData={refresh}
+          showsVerticalScrollIndicator={true}
           renderItem={({ item, index }) => {
             return (
               <View>
@@ -242,7 +307,7 @@ export default function App() {
       </View>
       </TouchableOpacity>
 
-      <View style={{height:250}}>
+      <View style={{height:180}}>
 
         <FlatList
         data={users}
@@ -278,6 +343,8 @@ export default function App() {
     }
 
     </View>
+    <BottomLayer/>
+      <BottomBar/>
     </SafeAreaView>
   );
 }
@@ -293,18 +360,19 @@ const styles = StyleSheet.create({
     alignContent:'center',
     backgroundColor:'#EAF0F7',
     marginVertical:15,
-    width:250,
-    height:40,
+    width:300,
+    height:60,
     borderRadius:7
   },
   textInput:{
     color:'#4F555A',
+    fontSize:20,
     left:20,
   },
   bg:{
     justifyContent:'center',
     alignContent:'center',
-    top:60,
+    top:20,
   },
   userContainer:{
     left:10,

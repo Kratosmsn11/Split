@@ -1,12 +1,13 @@
 import * as React from 'react';
 import {useState,useEffect} from 'react';
-import {Text,View,StyleSheet,SafeAreaView,TouchableOpacity,FlatList,TextInput,Alert,Modal,Pressable,Image,TouchableWithoutFeedback} from 'react-native';
+import {Text,View,StyleSheet,SafeAreaView,TouchableOpacity,FlatList,TextInput,Alert,Modal,Pressable,Image,TouchableWithoutFeedback,Swipeable,ActivityIndicator} from 'react-native';
 import { BottomSheet } from 'react-native-btr';
 import { useNavigation } from '@react-navigation/native';
 import { AddButton, BottomBar, BottomLayer, Logo,ContinueButton } from '../components/Svgs';
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import { getTransactionTotal, getUserSpending, setTransactionTotal, setUserSpending, getUsers, getImageURI } from '../AppData';
+import { getTransactionTotal, getUserSpending, setTransactionTotal, setUserSpending, getUsers, getImageURI,getImageURL,getReceiptURL } from '../AppData';
 import { getReceiptData } from '../backendFiles/firebaseFunctions';
+import { ScrollView } from 'react-native-gesture-handler';
 const Create = () => {
     const navigation = useNavigation();
 
@@ -20,7 +21,7 @@ const Create = () => {
     const [userData,setUserData] = useState("");
     const [canContinue,setCanContinue] = useState(false);
     
-    var udata = [
+    const udata = [
       { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg', name: 'Jane', id: 20055},
       { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-2.jpg', name: 'Chloe', id: 20056},
       { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-8.jpg', name: 'Bob', id: 20057},
@@ -162,14 +163,20 @@ const Create = () => {
     }
 
     function AddItem(){
-      let item = {name:"",price:undefined,id:itemData.length,users:[]};
+      let item = {name:"",price:0.00,id:itemData.length,users:[]};
       itemData[itemData.length] = item;
       setItemData(itemData);
       setCurrentItem(item);
+      setPrice("");
+      setName("");
       setTransactionModalVisible(true);
     }
 
     function MakeItemChanges(){
+      if(newPrice==0.00 || newPrice=="" || newName ==0.00){
+        ClickAway();
+        return;
+      }
       let i = itemData.findIndex(data=>data.id==currentItem.id);
       itemData[i].name = newName;
       itemData[i].price = parseFloat(newPrice);
@@ -208,7 +215,8 @@ const Create = () => {
 
 
     function AddIndex(){
-      var usersInGroup = getUsers();
+      // var usersInGroup = getUsers();
+      var usersInGroup = [{name:"Joseph",color:'red'},{name:"Joseph",color:'red'},{name:"Joseph",color:'red'},{name:"Joseph",color:'red'}]
       for(var x = 0;x<usersInGroup.length;x++){
         usersInGroup[x].index = x;
       }
@@ -216,15 +224,37 @@ const Create = () => {
     }
     
     function ClickAway(){
-      if(currentItem.name=="" || currentItem.price ==undefined){
+      if(currentItem.name=="" || currentItem.price ==0.00){
         itemData.pop();
         setItemData(itemData);
         SetRefresh(!refesh);
       }
       setTransactionModalVisible(false);
     }
+
+    const renderRightActions = () => {
+      return (
+        <View
+          style={{
+            margin: 0,
+            alignContent: 'center',
+            justifyContent: 'center',
+            width: 70,
+          }}>
+
+          <TouchableOpacity style={{alignItems:'center',alignContent:'center',alignSelf:'center',justifyContent:'center',backgroundColor:'red',width:60,height:30}}>
+            <FontAwesome5
+                  name={"trash-alt"}
+                  color={"white"}
+                  size={20}
+            />
+          </TouchableOpacity>
+        </View>
+      );
+    };
     
     const Item = ({ item }) => (
+
       <View style={{flexDirection:"row"}}>
         <TouchableOpacity onPress={() => EditItem(item)}>
             <View style={styles.wrapper}>
@@ -257,6 +287,8 @@ const Create = () => {
           />
         </TouchableOpacity>
       </View>
+
+
     );
 
     const [itemData,setItemData] = useState([]);
@@ -267,10 +299,28 @@ const Create = () => {
     const [transactionModal,setTransactionModalVisible] = useState("");
     const [currentItem,setCurrentItem] = useState("");
     const [refesh,SetRefresh] = useState("");
+    const [isLoading,setisLoading] = useState(true);
+
+    async function callGetReceiptData(){
+      // const data = await getReceiptData();
+
+      // setItemData(data.items);
+      // setItemCount(data.items.length)
+      // let total = 0;
+      // if(data.items.length>0){
+      //   total = data.items.map(item => item.price).reduce((prev, next) => prev + next);
+      // }
+      // setTotal(total);
+      // setUserData(AddIndex());
+      // SetRefresh(!refesh);
+      // console.log(userData);
+      // setisLoading(false);
+    }
 
     useEffect(() => {
+      setisLoading(true);
       var data;
-      data = getImageURI();
+      data = getReceiptURL();
       if(data == undefined){
         data = [];
         data.items =[];
@@ -279,27 +329,35 @@ const Create = () => {
         setTotal(0);
         setUserData(AddIndex());
         SetRefresh(!refesh);
+        setisLoading(false);
         return;
       }
-      data = getReceiptData(getImageURI());
-      setItemData(data.items);
-      setItemCount(data.items.length)
-      let total = 0;
-      if(data.items.length>0){
-        total = data.items.map(item => item.price).reduce((prev, next) => prev + next);
-      }
-      setTotal(total);
-      setUserData(AddIndex());
-      SetRefresh(!refesh);
-      console.log(userData);
+      callGetReceiptData();
+
     }, [])
 
   return (
     <SafeAreaView>
-      <Logo/>
+      
       <BottomLayer/>
       <BottomBar/>
+
+      <Logo></Logo>
+
+      <Text style={styles.myGroup}>Add Expense</Text>
+
+      {isLoading &&
+        
+        <ScrollView style={{height:400,bottom:0}}>
+        <View style={{position:'absolute',justifyContent:'center',alignContent:'center',alignItems:'center',alignSelf:'center',top:200}}>
+          <ActivityIndicator size="large" color="#4F555A" />
+          </View>
+          </ScrollView>
+
       
+      }
+      {!isLoading &&
+      <View>
       {canContinue ? (
           <TouchableOpacity onPress={() => CalculateUserExpense()}>
             <ContinueButton/>
@@ -311,7 +369,9 @@ const Create = () => {
       )}
 
 
-      <Text style={styles.myGroup}>Add Expense</Text>
+
+
+
       <View style = {styles.centeredView}>  
         {itemData.length == 0 ? (
             <View style={styles.wrapper}>
@@ -327,23 +387,26 @@ const Create = () => {
 
       <View style={styles.extraInfoContainer}>
           <Text  style={styles.extraInfo}>Item count: {itemCount}</Text>
-          <Text  style={styles.extraInfo}>Subtotal: {total}</Text>
+          <Text  style={styles.extraInfo}>Total: ${total.toFixed(2)}</Text>
 
       </View>
 
       <Modal
-        animationType="fade"
-        transparent={true}
+        animationType="slide"
         visible={transactionModal}
+        presentationStyle='pageSheet'
         onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
           setTransactionModalVisible(false);
+          ClickAway();
         }}>
 
-        <TouchableWithoutFeedback onPress={() => ClickAway()}>
+        {/* <TouchableWithoutFeedback onPress={() => ClickAway()}>
           <View style={styles.modalOverlay} />
-        </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback> */}
         <View style={styles.centeredView}>
+        <TouchableOpacity style={{justifyContent: 'center',alignSelf:'flex-start',left:35,bottom:60}} onPress ={()=>ClickAway()}>
+          <Text style={{fontSize: 20, fontWeight: 'bold',textAlign:'center',color:'#00AEFF'}}>Cancel</Text>
+        </TouchableOpacity>
           <View style={styles.modalView}>
             {/* <Text style={styles.modalText}>Edit Item</Text> */}
             <View style = {styles.modalContent}>
@@ -368,9 +431,9 @@ const Create = () => {
                 </TouchableOpacity> */}
               </View>
             </View>
-              <View style={{width:130,height:40,alignContent:'flex-end',alignSelf:'flex-end',alignItems:'flex-end',bottom:30}}>                  
+              <View style={{width:130,height:40,alignContent:'flex-end',alignSelf:'flex-end',alignItems:'flex-end',bottom:30,flex:1}}>                  
                   <FlatList
-                    data={currentItem.users}
+                    data={udata}
                     extraData={refesh}
                     renderItem={({ item }) => <View style = {{marginHorizontal:5}}>
                       
@@ -383,6 +446,7 @@ const Create = () => {
                         backgroundColor:item.color,
                         alignContent:'center',
                         justifyContent:'center',
+                        flex:1,
                       }}>
 
                       <Text style={{
@@ -401,18 +465,26 @@ const Create = () => {
 
 
               <View style={{justifyContent:'center',bottom:5}}> 
-                <TextInput placeholder ="Name"  placeholderTextColor='#9E9E9E' color='#4F555A' defaultValue={currentItem.name} style ={styles.input} onChangeText={newText => setName(newText)}></TextInput>
-                <TextInput placeholder = "0.00" placeholderTextColor='#9E9E9E' color='#4F555A' style ={styles.input} defaultValue={currentItem.name} onChangeText={newText => setPrice(newText)}></TextInput>
+                  <Text style={{fontSize:22,fontWeight:'bold',left:10}}>Name</Text>
+                <TextInput placeholder ="Name"  placeholderTextColor='#9E9E9E' color='#4F555A' defaultValue={newName} style ={styles.input} onChangeText={newText => setName(newText)}></TextInput>
+                <Text style={{fontSize:22,fontWeight:'bold',left:10}}>Price</Text>
+                <TextInput placeholder = "0.00" placeholderTextColor='#9E9E9E' color='#4F555A' style ={styles.input} defaultValue={newPrice.toString()} onChangeText={newText => setPrice(newText)}></TextInput>
               </View>
 
-              <View style={{justifyContent:'center',alignContent:'center',alignItems:'center'}}><TouchableOpacity style={styles.itemButton} onPress={()=>MakeItemChanges()}><Text style = {{color:'white'}}>Finish</Text></TouchableOpacity></View>
+              <Text style={{fontSize:22,fontWeight:'bold',left:10}}>Group Members</Text>
 
+              {/* <View style={{justifyContent:'center',alignContent:'center',alignItems:'center'}}><TouchableOpacity style={styles.itemButton} onPress={()=>MakeItemChanges()}><Text style = {{color:'white'}}>Finish</Text></TouchableOpacity></View> */}
+              {/* <TouchableOpacity style={{justifyContent: 'center',width:150,height:50,borderRadius:5,alignSelf:'center',backgroundColor:'#00AEFF'}} onPress ={()=>MakeItemChanges()}>
+          <Text style={{fontSize: 15, fontWeight: 'bold',textAlign:'center',color:'white',fontSize:30,fontWeight:'300'}}>Submit</Text>
+        </TouchableOpacity> */}
 
-            <View style={{flexDirection:"row",width:250,top:30,}}>
+            <View style={{width:300,top:30,alignSelf:'center'}}>
             <FlatList
               contentContainerStyle={{
+                
                 flexDirection:'row',
-                alignSelf:'center'
+                width:500,
+                height:100
               }}
               data={userData}
               extraData={refesh}
@@ -421,9 +493,9 @@ const Create = () => {
                 
                 {/* <Image style = {styles.image} source={{uri: userData[index].picture}}/> */}
                 <View style={{
-                  width:50,
-                  height:50,
-                  borderRadius:50,
+                  width:80,
+                  height:80,
+                  borderRadius:80,
                   marginHorizontal:10,
                   backgroundColor:userData[index].color,
                   alignContent:'center',
@@ -431,14 +503,11 @@ const Create = () => {
                 }}>
 
                 <Text style={{
-                  fontSize:17,
+                  fontSize:35,
                   color:'white',
                   textAlign:'center'
                 }}>{userData[index].name[0].toUpperCase()}</Text>
                 </View>
-                
-                
-                
                 <Text style={{
                 alignSelf: 'center',
                 color:'#4F555A',
@@ -446,10 +515,22 @@ const Create = () => {
               }}>{userData[index].name}</Text></View></TouchableOpacity></View></View>}
             />
             </View>
+            <TouchableOpacity style={{justifyContent: 'center',borderWidth:2,width:120,height:60,borderRadius:5,borderColor:'#4461F2',alignSelf:'center',top:100,backgroundColor:'#4461F2',alignItems:'center'}} onPress ={()=>MakeItemChanges()}>
+          {/* <Text style={{fontSize: 15, fontWeight: 'bold',textAlign:'center',color:'#00AEFF'}}>Finish</Text> */}
+
+          <FontAwesome5
+                      name={"check"}
+                      color={'white'}
+                      size={30}
+                    />
+
+        </TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
+      </View>
+      }
 
 
     </SafeAreaView>
@@ -472,7 +553,7 @@ const styles = StyleSheet.create({
     alignSelf:'flex-start', justifyContent:'center',fontSize:20,left:30,color:'#4F555A'
   },
   itemPrice:{
-    alignSelf:'flex-end', justifyContent:'center',fontSize:20,right:30,color:'#4F555A'
+    alignSelf:'flex-end', justifyContent:'center',fontSize:20,right:30,color:'#4F555A',fontWeight:'bold'
   },
   title: {
     marginTop: 16,
@@ -501,7 +582,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 100,
-    height:300,
+    height:350,
+
   },
   pictures: {
         alignSelf: 'center',
@@ -517,32 +599,35 @@ const styles = StyleSheet.create({
     alignContent:'center',
   },
   modalView: {
-    top:20,
-    justifyContent:'center',
-    alignSelf:'center',
-    width:330,
-    height:410,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    // top:20,
+    // justifyContent:'center',
+    // alignSelf:'center',
+    // width:230,
+    // height:410,
+    // backgroundColor: 'white',
+    // borderRadius: 20,
+    // alignItems: 'center',
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
+    // shadowOpacity: 0.25,
+    // shadowRadius: 4,
+    // elevation: 5,
+
   },
   input: {
-    left:15,
-    height: 40,
-    width:200,
+    height: 60,
+    width:300,
     margin: 12,
     borderRadius:8,
     borderWidth:5,
     borderColor:'#EAF0F7',
-    backgroundColor:'#EAF0F7'
+    backgroundColor:'#EAF0F7',
+    alignSelf:'center',
+    borderWidth:20,
+    fontSize:23
   },
   image:{
     width:80,
@@ -590,16 +675,16 @@ const styles = StyleSheet.create({
   },
   extraInfoContainer:{
     alignSelf:'center',
-    marginTop: 550,
+    marginTop: 470,
     position:'absolute',
   },
   modalOverlay: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)'
+    // position: 'absolute',
+    // top: 0,
+    // bottom: 0,
+    // left: 0,
+    // right: 0,
+    // backgroundColor: 'rgba(0,0,0,0.5)'
   },
   itemButton:{
     borderRadius:8,

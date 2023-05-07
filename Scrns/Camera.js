@@ -50,20 +50,20 @@ const ScannedSlip = () => {
   const submitPicture = async () => {
     if (capturedImage != undefined) {
       setImageURI(capturedImage);
-      // console.log("Image exists");
-      // const firebaseURL = await uploadImageAsync(capturedImage);
-      // setReceiptURL(firebaseURL);
-      // console.log(firebaseURL);
-      // var imageData = await getReceiptInfo(firebaseURL);
-      // console.log(imageData);
-      // var extractedData = await extractData(imageData);
-      // console.log(extractedData);
-      // if (extractedData) {
-      //   setReceiptData(extractedData);
-      //   console.log(getReceiptData());
+      console.log("Image exists");
+      const firebaseURL = await uploadImageAsync(capturedImage);
+      setReceiptURL(firebaseURL);
+      console.log(firebaseURL);
+      var imageData = await getReceiptInfo(firebaseURL);
+      console.log(imageData);
+      var extractedData = await extractData(imageData);
+      console.log(extractedData);
+      if (extractedData) {
+        setReceiptData(extractedData);
+        console.log(getReceiptData());
         navigation.navigate("CreateTransaction");
     }
-    // }
+    }
   };
 
 

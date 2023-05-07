@@ -5,7 +5,7 @@ import { Logo,BottomBar,BottomLayer,ContinueButton,LeftArrow} from '../component
 import { useNavigation } from '@react-navigation/native';
 import { createTransaction } from '../backendFiles/firebaseFunctions';
 import { calculateDebts } from '../backendFiles/SplittingAlgorithm';
-import { getTransactionTotal, getUserSpending, getUsers, getUsersIds,getGroupId} from '../AppData';
+import { getTransactionTotal, getUserSpending, getUsers, getUsersIds,getGroupId, getTransactionName, getTransactionDescription} from '../AppData';
 export default function App() {
   const navigation = useNavigation();
   //the list that will contain each user's input
@@ -55,8 +55,9 @@ export default function App() {
     var highestPayer = usersIds[spending.indexOf(Math.max(...spending))];
     const debts = calculateDebts(spending,inputs,usersIds);
     console.log(debts);
-    var transactionName = "Default name";
-    createTransaction(transactionName,payment,getGroupId(),debts,highestPayer);
+    var transactionName = getTransactionName();
+    var transactionDescription = getTransactionDescription();
+    createTransaction(transactionName,transactionDescription,payment,getGroupId(),debts,highestPayer);
     navigation.navigate("GroupPage");
   }
 

@@ -13,6 +13,8 @@ var receiptURL;
 var imageURI;
 var userSpending = [];
 var total;
+var transactionName;
+var transactionDescription;
 export function setUserId(id){
     this.userId = id
 }
@@ -141,4 +143,19 @@ export function setTransactionTotal(total){
 
 export function getTransactionTotal(){
     return this.total;
+}
+
+export function setTransactionName(transactionName){
+    this.transactionName = transactionName;
+}
+export function getTransactionName(){
+    return this.transactionName;
+}
+
+export function setTransactionDescription(description){
+    this.transactionDescription = description;
+}
+
+export function getTransactionDescription(){
+    return this.transactionDescription;
 }

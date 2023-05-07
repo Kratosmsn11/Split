@@ -22,6 +22,8 @@ import About from './Scrns/About';
 import Sidebar from './Scrns/Sidebar';
 import Summary from './Scrns/Summary';
 import AllTransactions from './Scrns/AllTransactions';
+import BottomSheetTest from './Scrns/BottomSheetTest';
+import NameTransaction from './Scrns/NameTransaction';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,13 +32,12 @@ export default function App() {
   <StatusBar barStyle={"dark-content"} backgroundColor="white"/>
     <View style={{height:Dimensions.get("window").height}}>
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Sidebar"
+      <Stack.Navigator initialRouteName="CreateTransaction"
         screenOptions={{
           headerShown: false,gestureEnabled:false}
           
         }
-        
-          >
+      >
             
         <Stack.Screen name="Signup" component={Signup}/>
         <Stack.Screen name="Login" component={Login}/>
@@ -57,6 +58,8 @@ export default function App() {
         <Stack.Screen name="Sidebar" component={Sidebar}/>
         <Stack.Screen name="Summary" component={Summary}/>
         <Stack.Screen name="AllTransactions" component={AllTransactions}/>
+        <Stack.Screen name="BottomSheetTest" component={BottomSheetTest}/>
+        <Stack.Screen name="NameTransaction" component={NameTransaction}/>
       </Stack.Navigator>
     </NavigationContainer>
     </View>

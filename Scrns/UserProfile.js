@@ -42,6 +42,19 @@ export default function App() {
     getData();
   }, [])
 
+  function checkChange(){
+    console.log("check");
+    if(user.name!=name || user.password!=password ||user.email!=email ||user.phone!=phone){
+      setChanged(true);
+    }
+    else{
+      setChanged(false);
+    }
+    if(user.picture!=currentPicture){
+      setChanged(true);
+    }
+  }
+
   function UpdateAccount(){
     console.log("Hello");
     console.log(name+ password+ email);
@@ -83,15 +96,10 @@ export default function App() {
         <View>
         <LeftArrow/>
         </View>
-        
-
-        
-
         <BottomLayer/>
         <BottomBar/>
 
         {change &&
-
         <TouchableOpacity onPress={() => UpdateAccount()}>
             <CheckmarkIcon/>
         </TouchableOpacity>
@@ -101,8 +109,6 @@ export default function App() {
 
         
         <View style={styles.container}>
-
-
             <TouchableOpacity onPress={() => pickImage()}>
                 {currentPicture=="none" &&
                 <View style={{
@@ -155,7 +161,7 @@ export default function App() {
             </View>
             <View  style ={{alignItems:'flex-end'}}>
                 <View style ={{justifyContent:'center',backgroundColor:'#D9D9D9',borderRadius:10,height:35,width:160,borderWidth:10,borderColor:'#D9D9D9'}}>
-                <TextInput style ={{}} onChangeText={setUsername} defaultValue={user.name} editable={isOwner}>
+                <TextInput style ={{}} onChangeText={(text) => { setUsername(text); checkChange(); } } defaultValue={user.name} editable={isOwner}>
                 </TextInput>
                 </View>
             </View>
@@ -167,7 +173,7 @@ export default function App() {
             </View>
             <View  style ={{flex:1,alignItems:'flex-end'}}>
                 <View style ={{justifyContent:'center',backgroundColor:'#D9D9D9',borderRadius:10,height:35,width:160,borderWidth:10,borderColor:'#D9D9D9'}}>
-                <TextInput onChangeText={setEmail} style ={{}} defaultValue={user.email} editable={isOwner}>
+                <TextInput  onChangeText={(text) => { setEmail(text); checkChange(); } }  defaultValue={user.email} editable={isOwner}>
                 </TextInput>
                 </View>
             </View>
@@ -180,7 +186,7 @@ export default function App() {
 
                 <View  style ={{flex:1,alignItems:'flex-end'}}>
                     <View style ={{justifyContent:'center',backgroundColor:'#D9D9D9',borderRadius:10,height:35,width:160,borderWidth:10,borderColor:'#D9D9D9'}}>
-                    <TextInput defaultValue={user.password} style ={{}} onChangeText={setPassword} secureTextEntry={true} editable={isOwner}>
+                    <TextInput defaultValue={user.password} style ={{}} onChangeText={(text) => { setPassword(text); checkChange(); } } secureTextEntry={true} editable={isOwner}>
                     </TextInput>
                     </View>
                 </View>
@@ -193,7 +199,7 @@ export default function App() {
             </View>
             <View  style ={{flex:1,alignItems:'flex-end'}}>
                 <View style ={{justifyContent:'center',backgroundColor:'#D9D9D9',borderRadius:10,height:35,width:160,borderWidth:10,borderColor:'#D9D9D9'}}>
-                <TextInput defaultValue={user.phone} style ={{}} onChangeText={setPhone} editable={isOwner}>
+                <TextInput defaultValue={user.phone} style ={{}} onChangeText={(text) => { setPhone(text); checkChange(); } } editable={isOwner}>
                 </TextInput>
                 </View>
             </View>

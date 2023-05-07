@@ -1,5 +1,5 @@
 import {SafeAreaView,StyleSheet,View,Dimensions,Text,TouchableOpacity,ScrollView,Image,FlatList,TouchableWithoutFeedback,Modal,Alert} from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useCallback,useRef } from "react";
 import {Logo,BottomLayer,LeftArrow,ProfileImage,User,OrderLight,CameraIcon, HomeIcon, AddButton, BottomBar} from '../components/Svgs';
 import * as Clipboard from 'expo-clipboard';
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
@@ -8,7 +8,7 @@ import { getGroupInfo, setGroupInfo, getGroupId,setUsers, setGroupDebtsAll, setG
 import { useNavigation } from "@react-navigation/native";
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import CustomSidebar from './CustomSidebar'
-
+import BottomSheet , {BottomSheetView} from "@gorhom/bottom-sheet";
   const GroupDetail = () => {
     const navigation = useNavigation();
     const [isShow, setisShow] = useState(false);
@@ -19,27 +19,19 @@ import CustomSidebar from './CustomSidebar'
     const [total, setTotal] = useState("");
     const [debts, setDebts] = useState("");
     const [transactions, setTransactions] = useState("");
+
     //hte max number of transactions and debts that will be shown
     const itemCount = 3;
-    // const db = getFirestore(app);
-    const dummyDebts = [
-        {owerName:"Joseph",lenderName:"Bob", amount:5.99, owerURI:"https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg",lenderURI:"https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-2.jpg"},
-        {owerName:"John",lenderName:"Jack", amount:1.99,owerURI:"https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg",lenderURI:"https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg"},
-        {owerName:"Alex",lenderName:"Rick", amount:7.99,owerURI:"https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-2.jpg",lenderURI:"https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-8.jpg"}
-    ]
-
-    const dummyTransactions = [
-        {highestPayerName:"Joseph", amount:65.33, highestPayerURI:"https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg",name:"Dinner at 5 star restaurant"},
-        {highestPayerName:"Jake", amount:21.67, highestPayerURI:"https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg",name:"Lunch at bad restaurant"},
-        {highestPayerName:"Frank", amount:33.97, highestPayerURI:"https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-8.jpg",name:"Coffee at Starbucks"}
-    ]
-
-    const dummyData = [{username:"Joseph123", name:"Joseph Arredondo",uri:"https://th.bing.com/th/id/R.6b0022312d41080436c52da571d5c697?rik=ejx13G9ZroRrcg&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fuser-png-icon-young-user-icon-2400.png&ehk=NNF6zZUBr0n5i%2fx0Bh3AMRDRDrzslPXB0ANabkkPyv0%3d&risl=&pid=ImgRaw&r=0"},{username:"Jos56", name:"John Sean",uri:"https://th.bing.com/th/id/R.6b0022312d41080436c52da571d5c697?rik=ejx13G9ZroRrcg&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fuser-png-icon-young-user-icon-2400.png&ehk=NNF6zZUBr0n5i%2fx0Bh3AMRDRDrzslPXB0ANabkkPyv0%3d&risl=&pid=ImgRaw&r=0",id:2},{username:"Bob123", name:"Joseph Arredondo",uri:"https://th.bing.com/th/id/R.6b0022312d41080436c52da571d5c697?rik=ejx13G9ZroRrcg&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fuser-png-icon-young-user-icon-2400.png&ehk=NNF6zZUBr0n5i%2fx0Bh3AMRDRDrzslPXB0ANabkkPyv0%3d&risl=&pid=ImgRaw&r=0"},{username:"Jos56", name:"John Sean",uri:"https://th.bing.com/th/id/R.6b0022312d41080436c52da571d5c697?rik=ejx13G9ZroRrcg&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fuser-png-icon-young-user-icon-2400.png&ehk=NNF6zZUBr0n5i%2fx0Bh3AMRDRDrzslPXB0ANabkkPyv0%3d&risl=&pid=ImgRaw&r=0",id:3},{username:"Jake123", name:"Joseph Arredondo",uri:"https://th.bing.com/th/id/R.6b0022312d41080436c52da571d5c697?rik=ejx13G9ZroRrcg&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fuser-png-icon-young-user-icon-2400.png&ehk=NNF6zZUBr0n5i%2fx0Bh3AMRDRDrzslPXB0ANabkkPyv0%3d&risl=&pid=ImgRaw&r=0"},{username:"Jos56", name:"John Sean",uri:"https://th.bing.com/th/id/R.6b0022312d41080436c52da571d5c697?rik=ejx13G9ZroRrcg&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fuser-png-icon-young-user-icon-2400.png&ehk=NNF6zZUBr0n5i%2fx0Bh3AMRDRDrzslPXB0ANabkkPyv0%3d&risl=&pid=ImgRaw&r=0",id:4}];
     const [modalVisible, setModalVisible] = useState(false);
     const [gData,setgData] = useState("");
     const [groupMembers,setGroupMembers] = useState("");
     var groupId = getGroupInfo().id;
     // const [groupInfo,setGroupInfo] = useState("");
+    const userData= [{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"}]
+
+    async function deleteGroup(){
+
+    }
 
     const getDebts = async () => {
       const debtData = await GetGroupDebts(groupId);
@@ -75,7 +67,7 @@ import CustomSidebar from './CustomSidebar'
     };
 
     function getData(){
-      navigation.Add
+      // navigation.Add
       getGroupMembers();
       getDebts();
       getTransactions();
@@ -95,6 +87,7 @@ import CustomSidebar from './CustomSidebar'
                         height:25,
                         borderRadius:25,
                         marginHorizontal:10,
+                        marginVertical:5,
                         backgroundColor:transaction.highestPayerColor,
                         alignContent:'center',
                         justifyContent:'center',
@@ -108,7 +101,7 @@ import CustomSidebar from './CustomSidebar'
             </View>
             <Text style={{color:'#4F555A'}}>{transaction.name}</Text>
             <View style={{flex: 1}}>
-                <Text style={{textAlign: 'right',right:30,color:'#4F555A'}}>${transaction.total}</Text>
+                <Text style={{textAlign: 'right',right:30,color:'#4F555A',fontWeight:'bold'}}>${transaction.total}</Text>
             </View>
         </View>
     );
@@ -174,32 +167,33 @@ import CustomSidebar from './CustomSidebar'
     };
 
     const startTransaction = () => {
-      const members = Object.keys(gData.users).length;
-      console.log(members);
-      if(members==100){
-        Alert.alert("You must add at least one member to create a transaction!");
-      }
-      else{
-        navigation.navigate("TransactionOption");
-      }
+      // const members = Object.keys(gData.users).length;
+      // console.log(members);
+      // if(members==100){
+      //   Alert.alert("You must add at least one member to create a transaction!");
+      // }
+      // else{
+        navigation.navigate("NameTransaction");
+      // }
     };
+
+    function memberProfile(){
+      setModalVisible(!modalVisible);
+      navigation.navigate("UserProfile");
+    }
 
     return (
       <SafeAreaView>
-        
-
         <BottomLayer/>
         <BottomBar/>
-
         <TouchableOpacity onPress={() => startTransaction()}>
             <AddButton/>
         </TouchableOpacity>
-
         <Logo/>
             {/* <TouchableOpacity onPress={() => navigation.goBack()}>
               <LeftArrow style={{ right: 100 }} />
             </TouchableOpacity> */}
-          <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <TouchableOpacity  onPress ={()=>setModalVisible(true)} style={{height:50,width:200}}>
             <Text style={styles.heading}>{gData.name}</Text>
           </TouchableOpacity>
           <View style={styles.MyGroupSpace}>
@@ -221,7 +215,7 @@ import CustomSidebar from './CustomSidebar'
                 }
                 <FlatList
                     style = {styles.list}
-                    data={transactions.slice(0,20)}
+                    data={transactions.slice(0,itemCount)}
                     renderItem={({item}) => <Transaction transaction={item}/>}
                 /> 
 
@@ -248,7 +242,7 @@ import CustomSidebar from './CustomSidebar'
 
             <FlatList
                 style = {styles.list}
-                data={debts.slice(0,20)}
+                data={debts.slice(0,itemCount)}
                 renderItem={({item}) => <Debt debt={item}/>}
             />
 
@@ -273,34 +267,43 @@ import CustomSidebar from './CustomSidebar'
             </View>
           </View>
 
-          <TouchableWithoutFeedback  onPress ={()=>setModalVisible(false)}>
+    <TouchableWithoutFeedback  onPress ={()=>setModalVisible(false)}>
       <Modal
         animationType="slide"
-        transparent={true}
         visible={modalVisible}
+        presentationStyle="fullScreen"
         onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
           setModalVisible(!modalVisible);
         }}>
+        <TouchableOpacity onPress ={()=>setModalVisible(!modalVisible)}>
+          <View style={{justifyContent:'center',alignContent:'center',alignItems:'center',alignSelf:'center',top:30,right:140,width:200,height:100}}>
+        <FontAwesome5Icon
+                  name={"angle-down"}
+                  color={"#9E9E9E"}
+                  size={40}
+        />
+        </View>
+        </TouchableOpacity>
 
         <View style={styles.centeredView}>
+
           <TouchableWithoutFeedback>
           <View style={styles.modalView}>
           
           <Text style = {styles.passcodeHeader}>Passcode</Text>
           <TouchableOpacity onPress ={()=>copyToClipboard()}>
-            <Text style = {styles.passcodeText}>{gData.passcode}</Text>
+            <Text style = {styles.passcodeText}>{gData.passcode}128mdwi</Text>
           </TouchableOpacity>
 
-          <View style={{justifyContent:'left',right:30,height:300}}>
+          <View style={{justifyContent:'left',right:10,height:430,bottom:30}}>
 
          <FlatList
-          data={groupMembers}
+          data={userData}
           renderItem={({ item, index }) => {
             return (
-              <View style = {{top:30}}>
+              <View style = {{}}>
               
-              <TouchableOpacity style={{flex:1, flexDirection: 'row',paddingVertical:10,}}>
+              <TouchableOpacity style={{flex:1, flexDirection: 'row',paddingVertical:10,}} onPress ={()=>memberProfile()}>
 
                 {item.picture!="none" &&
                  <View style={{justifyContent:'center',}}>
@@ -311,17 +314,17 @@ import CustomSidebar from './CustomSidebar'
 
                {item.picture=="none" &&
             <View style={{
-              width:25,
-              height:25,
-              borderRadius:25,
+              width:50,
+              height:50,
+              borderRadius:50,
               marginHorizontal:10,
-              backgroundColor:item.color,
+              backgroundColor:randomNumber(),
               alignContent:'center',
               justifyContent:'center',
             }}>
 
             <Text style={{
-              fontSize:10,
+              fontSize:20,
               color:'white',
               textAlign:'center'
             }}>{item.name[0].toUpperCase()}</Text>
@@ -339,13 +342,16 @@ import CustomSidebar from './CustomSidebar'
           }}
         />
         </View>
-        <TouchableOpacity onPress ={()=>setModalVisible(!modalVisible)}><Text>Close</Text></TouchableOpacity>
+        {/* <View style={styles.deleteGroup} onPress ={()=>DeleteGroup()}>
+        <TouchableOpacity><Text>Delete Group</Text></TouchableOpacity>
+          </View> */}
           </View>
           
           </TouchableWithoutFeedback>
         </View>
       </Modal>
       </TouchableWithoutFeedback>
+
 
       </SafeAreaView>
     );
@@ -359,14 +365,9 @@ import CustomSidebar from './CustomSidebar'
         <Drawer.Navigator useLegacyImplementation initialRouteName="Home" screenOptions={{
           headerShown: true,headerTransparent:true,headerTitle:"",headerTintColor: 'black',
           drawerActiveTintColor:'white'
-          
         }} drawerContent={(props) => <CustomSidebar {...props} />}>
-  
-          
           <Drawer.Screen name=" " component={GroupDetail} />
-          
         </Drawer.Navigator>
-  
     );
   }
   
@@ -421,23 +422,10 @@ import CustomSidebar from './CustomSidebar'
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      marginTop: 22,
+      marginTop: 2,
     },
     modalView: {
-      width:300,
-      margin: 20,
-      backgroundColor: 'white',
-      borderRadius: 10,
-      padding: 35,
       alignItems: 'center',
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-      elevation: 5,
     },
     button: {
       borderRadius: 20,
@@ -461,11 +449,13 @@ import CustomSidebar from './CustomSidebar'
       color:'#4F555A',
     },
     passcodeHeader:{
+      bottom:70,
       fontSize:13,
       fontWeight:'bold',
     },
     passcodeText:{
-      fontSize:25,
+      bottom:70,
+      fontSize:20,
       color:'#4F555A',
     },
     emptyData:{
@@ -473,6 +463,19 @@ import CustomSidebar from './CustomSidebar'
       left:10,
       fontSize:15,
       color:'#4F555A',
+    },
+    deleteGroup:{
+      backgroundColor:'#FF0000',
+      width:80,
+      height:40,
+      borderRadius:8
+    },
+    lineSeperator:{
+      height:2,
+      justifyContent:'flex-end',
+      width:300,
+      left:60,
+      backgroundColor:'#EAF0F7',
     }
   });
   

@@ -67,7 +67,7 @@ export async function GetGroupData(groupId){
     });
     return transactionList;
   }
-  export async function createTransaction(transactionName,transactionTotal,groupId,debts,highestPayer){
+  export async function createTransaction(transactionName,transactionDescription,transactionTotal,groupId,debts,highestPayer){
     //Update the total expense in the group document
     const groupRef = doc(groupCollection,groupId);
     var currentGroupTotal = getGroupInfo()['total'];
@@ -91,6 +91,7 @@ export async function GetGroupData(groupId){
       total:newTotal,
       groupId:groupId,
       receipt:receiptURL,
+      description:transactionDescription,
       date:firebase.firestore.Timestamp.fromDate(new Date()),
       highestPayer: highestPayer,
     }
@@ -447,7 +448,7 @@ export async function GetGroupData(groupId){
   }
 
 
-  async function uploadImageAsync(uri) {
+  export async function uploadImageAsync(uri) {
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.onload = function () {
@@ -470,9 +471,12 @@ export async function GetGroupData(groupId){
   export async function getReceiptData(){
     if(getReceiptURL()!=undefined){
       try{
-      var url = await uploadImageAsync(current);
+      var url = await uploadImageAsync(getReceiptURL());
+      console.log(url);
       var info = await getReceiptInfo(url);
+      console.log(info);
       var data = await extractData(info);
+      console.log(data);
       
       }catch{
       console.log("An error occured");

@@ -76,7 +76,7 @@ const CustomSidebarMenu = (props) => {
 
                     elevation: 5,}}>
       <FontAwesome5Icon
-                  name={"user"}
+                  name={"user-alt"}
                   color={"white"}
                   size={40}
             />
@@ -89,20 +89,41 @@ const CustomSidebarMenu = (props) => {
       </View>
       </TouchableOpacity>
         <DrawerItemList {...props} />
+        <TouchableOpacity onPress={() => {[navigation.dispatch(DrawerActions.closeDrawer()),navigation.navigate("Sidebar")]
+            }}>
 
         <View style={styles.customItem}>
-          <Text
-          style = {styles.sideBarOptions}
-            onPress={() => {[navigation.dispatch(DrawerActions.closeDrawer()),navigation.navigate("Sidebar")]
-            }}>
+          <View style={{marginRight:5}}>
+          <FontAwesome5Icon
+                  name={"home"}
+                  color={"black"}
+                  size={24}
+          />
+
+          </View>
+
+          <View>
+          <Text style = {styles.sideBarOptions}>
             Home
           </Text>
+          </View>
+          
 
         </View>
+        </TouchableOpacity>
+        
+
         <TouchableOpacity onPress={() => {
               [navigation.dispatch(DrawerActions.closeDrawer()),navigation.navigate("UserProfile")]
             }}>
             <View style={styles.customItem}>
+            <View style={{marginRight:5}}>
+          <FontAwesome5Icon
+                  name={"user-alt"}
+                  color={"black"}
+                  size={24}
+          />
+          </View>
           <Text
           style = {styles.sideBarOptions}
 >
@@ -115,22 +136,34 @@ const CustomSidebarMenu = (props) => {
           [navigation.dispatch(DrawerActions.closeDrawer()),navigation.navigate("About")]
         }}>
           <View style={styles.customItem}>
+          <View style={{marginLeft:5,marginRight:13}}>
+          <FontAwesome5Icon
+                  name={"info"}
+                  color={"black"}
+                  size={24}
+          />
+          </View>
             <Text
               style = {styles.sideBarOptions}>
               About
             </Text>
           </View>
         </TouchableOpacity>
-                      <View style={styles.customItem}>
-          <Text
-            style = {styles.sideBarOptions}
-            onPress={() => {
-              LogoutAlert();
-            }}>
+        <TouchableOpacity onPress={() => {
+          [LogoutAlert()]}}>
+        <View style={styles.customItem}>
+        <View style={{marginLeft:0,marginRight:5}}>
+          <FontAwesome5Icon
+                  name={"sign-out-alt"}
+                  color={"black"}
+                  size={24}
+          />
+          </View>
+          <Text style = {styles.sideBarOptions}>
             Logout
           </Text>
-
         </View>
+        </TouchableOpacity>
       </DrawerContentScrollView>
 
     </SafeAreaView>
@@ -153,10 +186,12 @@ const styles = StyleSheet.create({
   customItem: {
     padding: 16,
     flexDirection: 'row',
+    width:400,
     alignItems: 'center',
   },
   sideBarOptions:{
       fontWeight:'bold',
+      fontSize:20
   }
 });
 

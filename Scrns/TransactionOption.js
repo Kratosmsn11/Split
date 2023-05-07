@@ -7,7 +7,8 @@ import PermissionPop from '../components/AlertModal';
 import ActionSheet from 'react-native-actionsheet';
 import * as ImagePicker from 'expo-image-picker';
 import { manipulateAsync } from "expo-image-manipulator";
-import { setImageURI } from "../AppData";
+import { setImageURI, setReceiptURL } from "../AppData";
+import {uploadImageAsync} from '../backendFiles/firebaseFunctions';
 //Bottom action sheet referenced from :https://snack.expo.dev/embedded/@aboutreact/react-native-bottom-actionsheet?preview=true&platform=ios&iframeId=qn4os3zz2g&theme=dark
 
 const AddExpense = () => {
@@ -62,12 +63,37 @@ const AddExpense = () => {
         [{ resize: { width: 512, height: 512 } }],
         { format: "jpeg", base64: true }
       );
-      setPicture(manipResult.uri);
-      setImageURI(currentPicture);
+      // setPicture(manipResult.uri);
+      // setImageURI(currentPicture);
+      // console.log(currentPicture);
+      const url = await uploadImageAsync(manipResult.uri);
+      console.log(url);
+      setReceiptURL(url);
 
-      navigation.navigate("CreateTransaction")
+      navigation.navigate("CreateTransaction");
     }
   };
+
+
+  // async function uploadImageAsync(uri) {
+  //   const blob = await new Promise((resolve, reject) => {
+  //     const xhr = new XMLHttpRequest();
+  //     xhr.onload = function () {
+  //       resolve(xhr.response);
+  //     };
+  //     xhr.onerror = function (e) {
+  //       console.log(e);
+  //       reject(new TypeError("Network request failed"));
+  //     };
+  //     xhr.responseType = "blob";
+  //     xhr.open("GET", uri, true);
+  //     xhr.send(null);
+  //   });
+  //   const fileRef = ref(getStorage(), uuid.v4());
+  //   const result = await uploadBytes(fileRef, blob);
+  //   blob.close();
+  //   return await getDownloadURL(fileRef);
+  // }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
