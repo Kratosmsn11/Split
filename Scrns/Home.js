@@ -5,7 +5,7 @@ import { SvgXml } from "react-native-svg";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import { getGroups, getUserData, randomNumber } from "../backendFiles/firebaseFunctions";
 import {Logo,BottomBar,BottomLayer, AddButton} from "../components/Svgs";
-import { setGroupId, setGroupInfo, setGroupsData, setUserData, setUserId } from "../AppData";
+import { setGroupId, setGroupInfo, setGroupsData, setUsersData, setUserId } from "../AppData";
 import ActionSheet from 'react-native-actionsheet';
 import {firebase} from "../config/firebase";
   export const Home = () => {
@@ -41,7 +41,7 @@ import {firebase} from "../config/firebase";
       const groups = await getGroups(userId);
       console.log(groups);
       setGroupsData(groups);
-      await setUserData(await getUserData(userId));
+      await setUsersData(await getUserData(userId));
       setallGroups(groups);
       setisLoading(false);
     }

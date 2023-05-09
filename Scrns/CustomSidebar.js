@@ -1,7 +1,7 @@
 // Custom Navigation Drawer / Sidebar with Image and Icon in Menu Options
 // https://aboutreact.com/custom-navigation-drawer-sidebar-with-image-and-icon-in-menu-options/
 
-import React from 'react';
+import React, {useEffect,useState} from 'react';
 import {
   SafeAreaView,
   View,
@@ -25,10 +25,20 @@ import { useNavigation } from '@react-navigation/native';
 import firebase from 'firebase/compat';
 
 import { DrawerActions } from '@react-navigation/native';
+import { getUserInfo,setUsersData} from '../AppData';
+import { getUserData } from '../backendFiles/firebaseFunctions';
+
 
 
 const CustomSidebarMenu = (props) => {
   const navigation = useNavigation();
+  const [userData,setUserData] = useState("");
+  const[currentPicture,setPicture] = useState("none");
+  const[email,setEmail] = useState("");
+  const[name,setName] = useState("");
+
+
+  
   function LogoutAlert(){
       Alert.alert('Are you sure you want to log out?', '', [
       {
@@ -50,7 +60,40 @@ const CustomSidebarMenu = (props) => {
       }
       navigation.navigate("Login");
   }
-    console.log("Log out");
+
+  async function setData(){
+    const id = firebase.auth().currentUser.uid;
+    // const id = "No3n3K6b7EhzHhQIxU81I2Mibvg1";
+    var data = await getUserData(id);
+    console.log(data);
+    setUsersData(data);
+    setUserData(data);
+    setEmail(userData.email);
+    setPicture(userData.picture);
+    setName(userData.name);
+    var data = await getUserData(id);
+    console.log(data);
+    setUsersData(data);
+    setUserData(data);
+    setEmail(userData.email);
+    setPicture(userData.picture);
+    setName(userData.name);
+    var data = await getUserData(id);
+    console.log(data);
+    setUsersData(data);
+    setUserData(data);
+    setEmail(userData.email);
+    setPicture(userData.picture);
+    setName(userData.name);
+  }
+
+
+  useEffect(() => {
+    setData();
+    
+  }, [])
+
+
   
 
 
@@ -65,8 +108,12 @@ const CustomSidebarMenu = (props) => {
               navigation.navigate("UserProfile");
             }}
             > 
-      <View style={{height:100,width:200,backgroundColor:'#D9D9D9',alignSelf:'center',borderRadius:20,justifyContent:'center',paddingBottom:20}}>
-      <View style={{height:60,width:60,backgroundColor:'#73FF33',alignSelf:'center',borderRadius:60,justifyContent:'center',alignContent:'center',alignItems:'center',shadowColor: "#000",
+      
+      <View style={{height:140,width:250,backgroundColor:'#D9D9D9',alignSelf:'center',borderRadius:20,justifyContent:'center',paddingBottom:20}}>
+
+      {currentPicture=="none" &&
+      
+      <View style={{height:80,width:80,backgroundColor:userData.color,alignSelf:'center',borderRadius:80,justifyContent:'center',alignContent:'center',alignItems:'center',shadowColor: "#000",
                     shadowOffset: {
                       width: 0,
                       height: 2,
@@ -75,15 +122,23 @@ const CustomSidebarMenu = (props) => {
                     shadowRadius: 4,
 
                     elevation: 5,}}>
-      <FontAwesome5Icon
+                      <Text style ={{fontSize:30,color:'white'}}>{name[0]}</Text>
+      {/* <FontAwesome5Icon
                   name={"user-alt"}
                   color={"white"}
                   size={40}
-            />
+            /> */}
+      
       </View>
+       }
+
+      {currentPicture!="none" &&
+          <Image style = {styles.smallImage} source={{uri: currentPicture}}></Image>
+
+      }
       <Text style={{textAlign:'center',top:10,  textShadowColor: 'rgba(0, 0, 0, 0.45)',
   textShadowOffset: {width: -1, height: 0.7},
-  textShadowRadius: 10}}>william@csumb.edu</Text>
+  textShadowRadius: 10}}>{email}</Text>
       
       
       </View>
@@ -192,7 +247,15 @@ const styles = StyleSheet.create({
   sideBarOptions:{
       fontWeight:'bold',
       fontSize:20
-  }
+  },
+  smallImage:{
+    width:100,
+    height:100,
+    borderRadius:100,
+    alignSelf: 'center',
+    justifyContent: 'center', //Centered horizontally
+    alignItems: 'center', //Centered vertically
+  },
 });
 
 export default CustomSidebarMenu;

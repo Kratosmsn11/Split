@@ -11,6 +11,8 @@ import { setImageURI, setReceiptURL } from "../AppData";
 import {uploadImageAsync} from '../backendFiles/firebaseFunctions';
 //Bottom action sheet referenced from :https://snack.expo.dev/embedded/@aboutreact/react-native-bottom-actionsheet?preview=true&platform=ios&iframeId=qn4os3zz2g&theme=dark
 
+setReceiptURL(undefined);
+
 const AddExpense = () => {
   const navigation = useNavigation();
   const [isShow,setIsShow] = useState(false);
@@ -60,7 +62,7 @@ const AddExpense = () => {
 
       const manipResult = await manipulateAsync(
         currentPicture,
-        [{ resize: { width: 512, height: 512 } }],
+        [{ resize: { width: 1024, height: 1024 } }],
         { format: "jpeg", base64: true }
       );
       // setPicture(manipResult.uri);

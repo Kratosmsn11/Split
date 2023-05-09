@@ -43,6 +43,7 @@ export default function App() {
         </TouchableOpacity>
         <Logo/>
         <View style ={{justifyContent:'center',alignContent:'center',alignItems:'center',alignSelf:'center',top:100}}>
+          <Text style={{fontSize:20,fontWeight:'bold',alignSelf:'flex-start',paddingBottom:30,bottom:20}}>Start Transaction</Text>
 
         <View style ={{justifyContent:'center',backgroundColor:'#EAF0F7',borderRadius:10,height:40,width:260,borderWidth:10,borderColor:'#EAF0F7'}}>
                     <TextInput placeholder='Name' placeholderTextColor={'#4F555A'} style ={{fontSize:20,justifyContent:'center'}} onChangeText={setName}>
@@ -50,7 +51,7 @@ export default function App() {
         </View>
 
         <View style ={{backgroundColor:'#EAF0F7',borderRadius:10,height:35,width:260, height:180,borderWidth:10,borderColor:'#EAF0F7',top:40}}>
-                    <TextInput placeholder='Description (optional)' placeholderTextColor={'#4F555A'} multiline={true} maxLength={100} style ={{fontSize:20}} onChangeText={setDescription}>
+                    <TextInput placeholder='Description (optional)' placeholderTextColor={'#4F555A'} multiline={true} maxLength={100} style ={{fontSize:20}} onChangeText={setDescription} blurOnSubmit={true}>
                     </TextInput>
         </View>
 

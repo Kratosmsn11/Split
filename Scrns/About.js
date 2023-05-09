@@ -8,7 +8,7 @@ const about = "Split is a student led Capstone Project from CSUMB’s College of
 const help = "For further questions, send a message to splitquestions@realemail.com";
 const developers = [{firstName:"Joseph",lastName:"Arredondo", picture:"https://firebasestorage.googleapis.com/v0/b/split-cst499.appspot.com/o/a39a019a-a905-4465-8513-46b668e8f073?alt=media&token=63e7a989-f9b7-4258-aae9-ca3c7299e80b",li:"https://www.linkedin.com/in/joseph-arredondo-8a836a1b1/"},
 {firstName:"Abraham",lastName:"Martinez", picture:"https://firebasestorage.googleapis.com/v0/b/split-cst499.appspot.com/o/Team18_RoblesMartinez_Abraham.jpg?alt=media&token=fa10f095-4d7c-4b6c-bb9b-307c80e737d0",li:"https://www.linkedin.com/in/joseph-arredondo-8a836a1b1/"},
-{firstName:"Vighnesh",lastName:"Prahbu", picture:"https://firebasestorage.googleapis.com/v0/b/split-cst499.appspot.com/o/18_Prabhu_Vighnesh.JPG?alt=media&token=392b8140-0165-4f40-84b3-46c739249b55",li:"https://www.linkedin.com/in/joseph-arredondo-8a836a1b1/"},
+{firstName:"Vighnesh",lastName:"Prahbu", picture:"https://firebasestorage.googleapis.com/v0/b/split-cst499.appspot.com/o/18_Prabhu_Vighnesh%20(1).JPG?alt=media&token=2028e123-c0b1-435f-bf28-cbe18a63ef06"},
 {firstName:"William",lastName:"Villantay", picture:"https://firebasestorage.googleapis.com/v0/b/split-cst499.appspot.com/o/18_Villantay_William.jpg?alt=media&token=67bca94f-0f69-46c5-bef4-0909220808af",li:"https://www.linkedin.com/in/joseph-arredondo-8a836a1b1/"},
 {firstName:"Joshua",lastName:"Gonong", picture:"https://firebasestorage.googleapis.com/v0/b/split-cst499.appspot.com/o/Team18_Gonong_Joshua.jpg?alt=media&token=b4383ad9-2979-4252-955f-3f80ba458b19",li:"https://www.linkedin.com/in/joseph-arredondo-8a836a1b1/"},
 ]

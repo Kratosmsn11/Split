@@ -78,7 +78,7 @@ export function getUserInfo(){
 }
 
 
-export function setUserData(data){
+export function setUsersData(data){
     this.userData= data;
 }
 

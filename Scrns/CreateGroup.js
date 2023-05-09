@@ -216,12 +216,17 @@ export default function App() {
   return (
     <SafeAreaView>
 
+
+      <TouchableOpacity onPress={() => finish()} style={{zIndex:1}}>
+        <ContinueButton/>
+      </TouchableOpacity>
+
+
       {!searching &&
       <Logo/>
       }
-      <TouchableOpacity onPress={() => finish()}>
-        <ContinueButton/>
-      </TouchableOpacity>
+
+
     <View>
     {searching &&
       <View style={styles.bg}>
@@ -285,6 +290,8 @@ export default function App() {
     </View>
     }
 
+
+
     {!searching &&
     
       <View style={{left:35,top:100}}>
@@ -343,8 +350,11 @@ export default function App() {
     }
 
     </View>
+
     <BottomLayer/>
       <BottomBar/>
+
+
     </SafeAreaView>
   );
 }

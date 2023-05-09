@@ -11,7 +11,7 @@ import { Alert } from "react-native";
 import app from "..//Firebase";
 
 const Login = ({ navigation }) => {
-  const [name, setname] = useState("eye");
+  const [name, setname] = useState("eye-slash");
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
 
@@ -21,7 +21,9 @@ const Login = ({ navigation }) => {
     } else {
       signInWithEmailAndPassword(getAuth(app), email, password).then(
         (response) => {
-          navigation.navigate("Home");
+          setemail("");
+          setpassword("");
+          navigation.navigate("Sidebar");
         }
       );
     }

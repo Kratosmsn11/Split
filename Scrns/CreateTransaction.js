@@ -1,13 +1,14 @@
 import * as React from 'react';
 import {useState,useEffect} from 'react';
-import {Text,View,StyleSheet,SafeAreaView,TouchableOpacity,FlatList,TextInput,Alert,Modal,Pressable,Image,TouchableWithoutFeedback,Swipeable,ActivityIndicator} from 'react-native';
+import {Text,View,StyleSheet,SafeAreaView,TouchableOpacity,FlatList,TextInput,Alert,Modal,Pressable,Image,TouchableWithoutFeedback,ActivityIndicator} from 'react-native';
 import { BottomSheet } from 'react-native-btr';
 import { useNavigation } from '@react-navigation/native';
 import { AddButton, BottomBar, BottomLayer, Logo,ContinueButton } from '../components/Svgs';
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import { getTransactionTotal, getUserSpending, setTransactionTotal, setUserSpending, getUsers, getImageURI,getImageURL,getReceiptURL } from '../AppData';
+import { getTransactionTotal, getUserSpending, setTransactionTotal, setUserSpending, getUsers, getImageURI,getImageURL,getReceiptURL, setUsersData } from '../AppData';
 import { getReceiptData } from '../backendFiles/firebaseFunctions';
 import { ScrollView } from 'react-native-gesture-handler';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 const Create = () => {
     const navigation = useNavigation();
 
@@ -19,6 +20,7 @@ const Create = () => {
     // ];
 
     const [userData,setUserData] = useState("");
+    const [currentUsers,setCurrentUsers] = useState("");
     const [canContinue,setCanContinue] = useState(false);
     
     const udata = [
@@ -28,36 +30,36 @@ const Create = () => {
     ];
     //function is called whenever user clicks on a user profile image to assign an item, either the user is
     //assigned or removed from the items user list
-    function UserClick(itemId, userId) {
+    function UserClick(itemId, userId,index) {
       console.log(itemId);
       console.log(userId);
       //the items id is passed in and is used to find the item
-      var item = itemData.find(data=>data.id==itemId);
-      //save the items user list
+      var item = currentItem;
+      console.log(item);
+      // //save the items user list
       var itemUsers = item.users;
-      //attempt to locate the user as part of the items user list
-      var userFound = itemUsers.find(user=>user.id ===userId);
-      //if the user is not part of the items user list it should be added
+      console.log(itemUsers);
+      // //attempt to locate the user as part of the items user list
+      var userFound = itemUsers.find(user=>user.id === userId);
+      // //if the user is not part of the items user list it should be added
       if(userFound==undefined){
         //the user is found via the userId passed in
-        var user = userData.find(item => item.id === userId);
-        //the index is saved so it can be used to add to the user object that will be added to the items user list
-        var userIndex = userData.findIndex(item => item.id === userId);
-        //next the items index is found so the right item gets the user pushed to it's list
+        var user = userData[index];
         var itemIndex = itemData.findIndex(data => data.id === itemId);
         //the user is pushed along side it's index for assigning of expenses
         itemData[itemIndex].users.push(user);
         //the item data's state is changed to reflect the changes
         setItemData(itemData);
-        let item = itemData.find(data=>data.id==itemId);
+        let item = itemData[itemIndex];
         setCurrentItem(item);
+        setCurrentUsers(item.users);
         SetRefresh(!refesh);
       }
       //if the user is part of the items user list it should be removed
       else{
         //the item and user indexes are found using the values passed in
         var itemIndex = itemData.findIndex(data=>data.id === itemId);
-        var userIndex = itemUsers.findIndex(user=>user.id === userId);
+        var userIndex = index;
         //the items user list gets the user removed using splicing with the index found
         itemData[itemIndex].users.splice(userIndex,1);
         //item's data state is changed
@@ -66,29 +68,9 @@ const Create = () => {
         setCurrentItem(item);
         SetRefresh(!refesh);
       }
-      console.log(itemData[itemIndex].users);
-      updateData();
-      SetRefresh(!refesh);
-    }
-    
-    //used when removing an item from a transaction, uses id passed to locate and remove item from list of items
-    function DeleteItem(id) {
-      if(itemData.length==1){
-        setTotal(0);
-      }
-      //index is found using id
-      var itemIndex = itemData.findIndex(e => e.id == id);
-      //using splice the item is removed
-      itemData.splice(itemIndex,1);
-      // the item count is also set using the new length of the data
-      setItemCount(itemData.length);
-      if(itemData.length>0){
-        let total = itemData.map(item => item.price).reduce((prev, next) => parseFloat(prev) + parseFloat(next));
-        setTotal(total.toFixed(2));
-      }
-      //the state is changed for items, this will update the flatlist
-      setItemData(itemData);
-      updateData();
+      // console.log(itemData[itemIndex].users);
+      // updateData();
+      // SetRefresh(!refesh);
     }
     
     function AddAllUsers(itemId) {
@@ -151,6 +133,7 @@ const Create = () => {
         setUserSpending(userSpending);
         console.log(getUserSpending());
         setTransactionTotal(total);
+        setUsersData(userData);
         console.log(getTransactionTotal());
         navigation.navigate("PayingTransaction");
     }
@@ -163,7 +146,7 @@ const Create = () => {
     }
 
     function AddItem(){
-      let item = {name:"",price:0.00,id:itemData.length,users:[]};
+      let item = {name:"",price:"",id:itemData.length,users:[]};
       itemData[itemData.length] = item;
       setItemData(itemData);
       setCurrentItem(item);
@@ -215,8 +198,40 @@ const Create = () => {
 
 
     function AddIndex(){
-      // var usersInGroup = getUsers();
-      var usersInGroup = [{name:"Joseph",color:'red'},{name:"Joseph",color:'red'},{name:"Joseph",color:'red'},{name:"Joseph",color:'red'}]
+      var usersInGroup = getUsers();
+      // var usersInGroup = [{
+      //   "color": "#7e78cf",
+      //   "email": "abraham@gmail.com",
+      //   "groups":{
+      //     "2VOh25VWeWwQNnuPtloP": true,
+      //     "eU2gXJL4VQle1MXHvi8u": true,
+      //     "xixKTent0lEFpjESKazl": true,
+      //   },
+      //   "id": "2qNCq7dHeJRA1uXTz6nr",
+      //   "index": 0,
+      //   "name": "Abraham",
+      //   "password": "password",
+      //   "phone": "567-7890",
+      //   "picture": "none",
+      //   "uid": "2qNCq7dHeJRA1uXTz6nr",
+      // },
+      //  {
+      //   "color": "#fab6d9",
+      //   "email": "joseph1234@gmail.com",
+      //   "groups":{
+      //     "MbJi6ZCsX0Iq9YziMbcz": true,
+      //     "Pe2EQxUypwTp0MJLpkbe": true,
+      //     "xixKTent0lEFpjESKazl": true,
+      //   },
+      //   "id": "No3n3K6b7EhzHhQIxU81I2Mibvg1",
+      //   "index": 1,
+      //   "name": "Joseph123",
+      //   "password": "password",
+      //   "phone": "123-123-67",
+      //   "picture": "https://www.freepnglogos.com/uploads/camera-logo-png/black-camera-logo-icon-download-4.png",
+      //   "uid": "No3n3K6b7EhzHhQIxU81I2Mibvg1",
+      // },]
+
       for(var x = 0;x<usersInGroup.length;x++){
         usersInGroup[x].index = x;
       }
@@ -232,26 +247,6 @@ const Create = () => {
       setTransactionModalVisible(false);
     }
 
-    const renderRightActions = () => {
-      return (
-        <View
-          style={{
-            margin: 0,
-            alignContent: 'center',
-            justifyContent: 'center',
-            width: 70,
-          }}>
-
-          <TouchableOpacity style={{alignItems:'center',alignContent:'center',alignSelf:'center',justifyContent:'center',backgroundColor:'red',width:60,height:30}}>
-            <FontAwesome5
-                  name={"trash-alt"}
-                  color={"white"}
-                  size={20}
-            />
-          </TouchableOpacity>
-        </View>
-      );
-    };
     
     const Item = ({ item }) => (
 
@@ -291,6 +286,105 @@ const Create = () => {
 
     );
 
+    let row = [];
+    let prevOpenedRow;
+    const renderItem = ({ item, index }, onClick) => {
+      //
+      const closeRow = (index) => {
+        console.log('closerow');
+        if (prevOpenedRow && prevOpenedRow !== row[index]) {
+          prevOpenedRow.close();
+        }
+        prevOpenedRow = row[index];
+      };
+  
+      const renderRightActions = (progress, dragX, onClick) => {
+        return (
+          <View
+            style={{
+              alignContent: 'center',
+              justifyContent: 'center',
+              bottom:10,
+
+            }}>
+  
+            <TouchableOpacity onPress={() => DeleteItem(index)} style={{alignItems:'center',alignContent:'center',alignSelf:'center',justifyContent:'center',backgroundColor:'red',width:60,height:40}}>
+              <FontAwesome5
+                    name={"trash-alt"}
+                    color={"white"}
+                    size={20}
+              />
+            </TouchableOpacity>
+          </View>
+        );
+      };
+  
+      return (
+        <Swipeable
+          renderRightActions={(progress, dragX) =>
+            renderRightActions(progress, dragX, onClick)
+          }
+          onSwipeableOpen={() => closeRow(index)}
+          ref={(ref) => (row[index] = ref)}
+          rightOpenValue={-100}>
+      <View style={{flexDirection:"row"}}>
+        <TouchableOpacity onPress={() => EditItem(item)}>
+            <View style={styles.wrapper}>
+                <View style={{flexDirection:"row"}}>
+                    <View style={{flex:1}}>
+                        <Text style={styles.itemName}>{item.name}</Text>
+                    </View>
+                    <View style={{flex:1}}>
+                        <Text style={styles.itemPrice}>${item.price}</Text>
+                    </View>
+                </View>
+        </View>
+    
+            {/* <FlatList
+              data={item.users}
+              extraData={refesh}
+              renderItem={({ item }) => <View><Image style = {styles.smallImage} source={{uri: item.uri}}/></View>}
+              contentContainerStyle={{
+                flexDirection:'row',
+                flexWrap:'numColumns'
+              }}
+            /> */}
+          {/* </View> */}
+        </TouchableOpacity>
+        {/* <TouchableOpacity style={styles.deleteButton} onPress={() => DeleteItem(item.id)}>
+          <FontAwesome5
+              name={"minus"}
+              color={"#9E9E9E"}
+              size={18}
+          />
+        </TouchableOpacity> */}
+      </View>
+        </Swipeable>
+      );
+    };
+  
+
+    //used when removing an item from a transaction, uses id passed to locate and remove item from list of items
+    function DeleteItem(index) {
+      if(itemData.length==1){
+        setTotal(0);
+      }
+      //index is found using id
+      var itemIndex = index;
+      //using splice the item is removed
+      itemData.splice(itemIndex,1);
+      // the item count is also set using the new length of the data
+      setItemCount(itemData.length);
+      if(itemData.length>0){
+        let total = itemData.map(item => item.price).reduce((prev, next) => parseFloat(prev) + parseFloat(next));
+        setTotal(total.toFixed(2));
+      }
+      //the state is changed for items, this will update the flatlist
+      setItemData(itemData);
+      updateData();
+    }
+        
+
     const [itemData,setItemData] = useState([]);
     const [newName,setName] = useState([]);
     const [newPrice,setPrice] = useState([]);
@@ -302,19 +396,19 @@ const Create = () => {
     const [isLoading,setisLoading] = useState(true);
 
     async function callGetReceiptData(){
-      // const data = await getReceiptData();
+      const data = await getReceiptData();
 
-      // setItemData(data.items);
-      // setItemCount(data.items.length)
-      // let total = 0;
-      // if(data.items.length>0){
-      //   total = data.items.map(item => item.price).reduce((prev, next) => prev + next);
-      // }
-      // setTotal(total);
-      // setUserData(AddIndex());
-      // SetRefresh(!refesh);
-      // console.log(userData);
-      // setisLoading(false);
+      setItemData(data.items);
+      setItemCount(data.items.length)
+      let total = 0;
+      if(data.items.length>0){
+        total = data.items.map(item => item.price).reduce((prev, next) => prev + next);
+      }
+      setTotal(total);
+      setUserData(AddIndex());
+      SetRefresh(!refesh);
+      console.log(userData);
+      setisLoading(false);
     }
 
     useEffect(() => {
@@ -382,7 +476,15 @@ const Create = () => {
           ) : (
               <Text></Text>
           )}
-          <FlatList data={itemData} extraData ={itemData}renderItem={({ item }) => <Item item={item} />} />
+          <FlatList data={itemData} extraData ={itemData}
+          
+          renderItem={(item,index) =>
+            renderItem(item, () => {
+              DeleteItem(index);
+            })
+          }
+
+          />
       </View>
 
       <View style={styles.extraInfoContainer}>
@@ -404,7 +506,7 @@ const Create = () => {
           <View style={styles.modalOverlay} />
         </TouchableWithoutFeedback> */}
         <View style={styles.centeredView}>
-        <TouchableOpacity style={{justifyContent: 'center',alignSelf:'flex-start',left:35,bottom:60}} onPress ={()=>ClickAway()}>
+        <TouchableOpacity style={{justifyContent: 'center',alignSelf:'flex-start',left:35,bottom:30}} onPress ={()=>ClickAway()}>
           <Text style={{fontSize: 20, fontWeight: 'bold',textAlign:'center',color:'#00AEFF'}}>Cancel</Text>
         </TouchableOpacity>
           <View style={styles.modalView}>
@@ -431,22 +533,21 @@ const Create = () => {
                 </TouchableOpacity> */}
               </View>
             </View>
-              <View style={{width:130,height:40,alignContent:'flex-end',alignSelf:'flex-end',alignItems:'flex-end',bottom:30,flex:1}}>                  
+              {/* <View style={{width:130,height:40,alignContent:'flex-end',alignSelf:'flex-end',alignItems:'flex-end',bottom:30,flex:1}}>                  
                   <FlatList
-                    data={udata}
+                    data={currentUsers}
                     extraData={refesh}
-                    renderItem={({ item }) => <View style = {{marginHorizontal:5}}>
+                    renderItem={({ item,index }) => <View style = {{marginHorizontal:5}}>
                       
-                      {/* <Image style = {styles.smallImage} source={{uri: item.picture}}/> */}
+                      <Image style = {styles.smallImage} source={{uri: item.picture}}/>
                     <View style={{
-                        width:25,
-                        height:25,
-                        borderRadius:25,
+                        width:2500,
+                        height:2500,
+                        borderRadius:2500,
                         marginHorizontal:10,
                         backgroundColor:item.color,
                         alignContent:'center',
                         justifyContent:'center',
-                        flex:1,
                       }}>
 
                       <Text style={{
@@ -461,14 +562,56 @@ const Create = () => {
                     flexDirection:'row',
                     }}
                   />
-              </View>
+              </View> */}
+                          <View style={{width:300,height:60,alignContent:'flex-end'}}>
+            <FlatList
+              contentContainerStyle={{
+                alignSelf:'flex-end',
+                justifyContent:'center',
+                flexDirection:'row',
+              }}
+              data={currentItem.users}
+              extraData={refesh}
+              renderItem={({user,index}) => <View><View><TouchableOpacity><View>
+                
+                {userData[index].picture != "none" &&
+                  <Image style = {styles.image} source={{uri: userData[index].picture}}/>
+                } 
+                
+                {userData[index].picture == "none" &&
+                <View style={{
+                  width:40,
+                  height:40,
+                  borderRadius:40,
+                  marginHorizontal:10,
+                  backgroundColor:userData[index].color,
+                  alignSelf:'flex-end',
+                  alignContent:'center',
+                  justifyContent:'center',
+                }}>
+
+                <Text style={{
+                  fontSize:18,
+                  color:'white',
+                  textAlign:'center'
+                }}>{userData[index].name[0].toUpperCase()}</Text>
+                </View>
+              }
+                <Text style={{
+                alignSelf: 'center',
+                color:'#4F555A',
+                fontWeight:'bold'
+              }}>{userData[index].picture.name}</Text></View></TouchableOpacity></View></View>}
+      
+            />
+            </View>
 
 
               <View style={{justifyContent:'center',bottom:5}}> 
                   <Text style={{fontSize:22,fontWeight:'bold',left:10}}>Name</Text>
-                <TextInput placeholder ="Name"  placeholderTextColor='#9E9E9E' color='#4F555A' defaultValue={newName} style ={styles.input} onChangeText={newText => setName(newText)}></TextInput>
+                <TextInput placeholder ="Name"  placeholderTextColor='#9E9E9E' color='#4F555A' defaultValue={currentItem.name} style ={styles.input} onChangeText={newText => setName(newText)}></TextInput>
                 <Text style={{fontSize:22,fontWeight:'bold',left:10}}>Price</Text>
-                <TextInput placeholder = "0.00" placeholderTextColor='#9E9E9E' color='#4F555A' style ={styles.input} defaultValue={newPrice.toString()} onChangeText={newText => setPrice(newText)}></TextInput>
+                <TextInput placeholder = "0.00" placeholderTextColor='#9E9E9E' color='#4F555A' style ={styles.input} defaultValue={''} onChangeText={newText => setPrice(newText)} keyboardType='numeric'></TextInput>
               </View>
 
               <Text style={{fontSize:22,fontWeight:'bold',left:10}}>Group Members</Text>
@@ -488,9 +631,7 @@ const Create = () => {
               }}
               data={userData}
               extraData={refesh}
-              renderItem={({user,index}) => <View><View><TouchableOpacity onPress={()=>UserClick(currentItem.id,userData[index].id)}><View>
-                
-                
+              renderItem={({user,index}) => <View><View><TouchableOpacity onPress={()=>UserClick(currentItem.id,userData[index].id,index)}><View>
                 {/* <Image style = {styles.image} source={{uri: userData[index].picture}}/> */}
                 <View style={{
                   width:80,
@@ -622,23 +763,22 @@ const styles = StyleSheet.create({
     width:300,
     margin: 12,
     borderRadius:8,
-    borderWidth:5,
+    borderWidth:1,
     borderColor:'#EAF0F7',
     backgroundColor:'#EAF0F7',
     alignSelf:'center',
-    borderWidth:20,
+    borderWidth:15,
     fontSize:23
   },
   image:{
-    width:80,
-    height:80,
-    borderRadius:80,
+    width:40,
+    height:40,
+    borderRadius:40,
   },
   smallImage:{
-    flex: 1,
-    width:30,
-    height:30,
-    borderRadius:30,
+    width:300,
+    height:300,
+    borderRadius:300,
   },
   subheading: {
     textAlign: 'center',

@@ -60,7 +60,7 @@ import { randomNumber } from "../backendFiles/firebaseFunctions";
                 phone: phone,
                 password: password,
                 uid: res?.user?.uid,
-                picture: defaultProfileImage,
+                picture: "none",
                 color:randomNumber(),
                 groups: {}
               })

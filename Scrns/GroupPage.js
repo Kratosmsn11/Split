@@ -5,12 +5,14 @@ import * as Clipboard from 'expo-clipboard';
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import { GetGroupDebts, GetGroupTransactions, getGroupUsers, randomNumber } from "../backendFiles/firebaseFunctions";
 import { getGroupInfo, setGroupInfo, getGroupId,setUsers, setGroupDebtsAll, setGroupTransactionsAll } from "../AppData";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation,useIsFocused} from "@react-navigation/native";
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import CustomSidebar from './CustomSidebar'
 import BottomSheet , {BottomSheetView} from "@gorhom/bottom-sheet";
+import {firebase} from '../config/firebase';
   const GroupDetail = () => {
     const navigation = useNavigation();
+    const isFocused = useIsFocused();
     const [isShow, setisShow] = useState(false);
     const [isLoading, setisLoading] = useState(false);
     const [items, setitem] = useState(undefined);
@@ -26,8 +28,9 @@ import BottomSheet , {BottomSheetView} from "@gorhom/bottom-sheet";
     const [gData,setgData] = useState("");
     const [groupMembers,setGroupMembers] = useState("");
     var groupId = getGroupInfo().id;
+    console.log(groupId);
     // const [groupInfo,setGroupInfo] = useState("");
-    const userData= [{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"}]
+    // const userData= [{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"}]
 
     async function deleteGroup(){
 
@@ -73,11 +76,13 @@ import BottomSheet , {BottomSheetView} from "@gorhom/bottom-sheet";
       getTransactions();
       getGroupData();
     }  
-    useEffect(() => {
-      navigation.addListener('focus', async () =>{
-        getData();
-      })
-    })
+    // useEffect(() => {
+    //   navigation.addListener('focus', async () =>{
+    //     getData();
+    //   })
+    // })
+
+    useEffect(() => {isFocused && getData() },[isFocused]);
 
     const Transaction = ({transaction}) => (
         <View style = {styles.flexContainer}>
@@ -114,7 +119,8 @@ import BottomSheet , {BottomSheetView} from "@gorhom/bottom-sheet";
                         width:25,
                         height:25,
                         borderRadius:25,
-                        marginHorizontal:10,
+                        marginHorizontal:5,
+                        marginVertical:5,
                         backgroundColor:debt.owerColor,
                         alignContent:'center',
                         justifyContent:'center',
@@ -141,7 +147,7 @@ import BottomSheet , {BottomSheetView} from "@gorhom/bottom-sheet";
                         width:25,
                         height:25,
                         borderRadius:25,
-                        marginHorizontal:10,
+                        marginHorizontal:5,
                         backgroundColor:debt.lenderColor,
                         alignContent:'center',
                         justifyContent:'center',
@@ -156,7 +162,7 @@ import BottomSheet , {BottomSheetView} from "@gorhom/bottom-sheet";
 
             <Text style={{color:'#4F555A'}}>  {debt.lenderName}</Text>
             <View style={{flex: 1}}>
-                <Text style={{textAlign: 'right',right:30,color:'#4F555A'}}>${debt.total}</Text>
+                <Text style={{textAlign: 'right',right:30,color:'#4F555A',fontWeight:'bold'}}>${debt.total}</Text>
             </View>
         </View>
     );
@@ -193,7 +199,7 @@ import BottomSheet , {BottomSheetView} from "@gorhom/bottom-sheet";
             {/* <TouchableOpacity onPress={() => navigation.goBack()}>
               <LeftArrow style={{ right: 100 }} />
             </TouchableOpacity> */}
-          <TouchableOpacity  onPress ={()=>setModalVisible(true)} style={{height:50,width:200}}>
+          <TouchableOpacity  onPress ={()=>setModalVisible(true)} style={{height:50,width:200,zIndex:1}}>
             <Text style={styles.heading}>{gData.name}</Text>
           </TouchableOpacity>
           <View style={styles.MyGroupSpace}>
@@ -292,13 +298,13 @@ import BottomSheet , {BottomSheetView} from "@gorhom/bottom-sheet";
           
           <Text style = {styles.passcodeHeader}>Passcode</Text>
           <TouchableOpacity onPress ={()=>copyToClipboard()}>
-            <Text style = {styles.passcodeText}>{gData.passcode}128mdwi</Text>
+            <Text style = {styles.passcodeText}>{gData.passcode}</Text>
           </TouchableOpacity>
 
           <View style={{justifyContent:'left',right:10,height:430,bottom:30}}>
 
          <FlatList
-          data={userData}
+          data={groupMembers}
           renderItem={({ item, index }) => {
             return (
               <View style = {{}}>
@@ -318,7 +324,7 @@ import BottomSheet , {BottomSheetView} from "@gorhom/bottom-sheet";
               height:50,
               borderRadius:50,
               marginHorizontal:10,
-              backgroundColor:randomNumber(),
+              backgroundColor:item.color,
               alignContent:'center',
               justifyContent:'center',
             }}>
@@ -332,7 +338,11 @@ import BottomSheet , {BottomSheetView} from "@gorhom/bottom-sheet";
           }
                 <View style={styles.userContainer}>
                   <Text style={styles.text}>{item.name}</Text>
+                  {gData.authorId==firebase.auth().currentUser.uid &&
+                  <Text style={styles.text}>Owner</Text>
+                  }
                   <Text style={styles.secondaryText}>{item.email}</Text>
+
                 </View>
           
               </TouchableOpacity>
@@ -413,9 +423,9 @@ import BottomSheet , {BottomSheetView} from "@gorhom/bottom-sheet";
     smallImage:{
       alignSelf:'center',
       justifyContent:'center',
-      width:30,
-      height:30,
-      borderRadius:30,
+      width:50,
+      height:50,
+      borderRadius:50,
       marginHorizontal:10,
     },
     centeredView: {

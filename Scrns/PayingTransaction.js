@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Text, View, StyleSheet,FlatList,TextInput,TouchableOpacity,Alert,SafeAreaView,Image} from 'react-native';
+import { Text, View, StyleSheet,FlatList,TextInput,TouchableOpacity,Alert,SafeAreaView,Image,KeyboardAvoidingView} from 'react-native';
 import {useState,useEffect} from 'react';
 import { Logo,BottomBar,BottomLayer,ContinueButton,LeftArrow} from '../components/Svgs';
 import { useNavigation } from '@react-navigation/native';
 import { createTransaction } from '../backendFiles/firebaseFunctions';
 import { calculateDebts } from '../backendFiles/SplittingAlgorithm';
-import { getTransactionTotal, getUserSpending, getUsers, getUsersIds,getGroupId, getTransactionName, getTransactionDescription} from '../AppData';
+import { getTransactionTotal, getUserSpending, getUsers, getUsersIds,getGroupId, getTransactionName, getTransactionDescription, getUserData} from '../AppData';
 export default function App() {
   const navigation = useNavigation();
   //the list that will contain each user's input
@@ -17,11 +17,13 @@ export default function App() {
   var payment = parseFloat(getTransactionTotal());
 
   //   var userData = [
-  //   { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg', name: 'Jane', id: 20055 },
-  //   { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-2.jpg', name: 'Chloe', id: 20056 },
-  //   { uri: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-8.jpg', name: 'Bob', id: 20057 },
+  //   { picture: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg', name: 'Jane', id: 20055 },
+  //   { picture: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-2.jpg', name: 'Chloe', id: 20056 },
+  //   { picture: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-8.jpg', name: 'Bob', id: 20057 },
+  //   { picture: 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-8.jpg', name: 'Bobby', id: 20058 },
   // ];
-  var userData = getUsers();
+  var userData = getUserData();
+  // var usersIds=[20055,20056,20057];
   var usersIds = getUsersIds();
   var defaultPaying = Array(userData.length).fill(undefined);
   const [valid, setValid] = useState(false);
@@ -30,7 +32,7 @@ export default function App() {
     setInputs(defaultPaying);
     
     // console.log(getTransactionTotal());
-    // setGroupTotal(getTransactionTotal());
+    setGroupTotal(getTransactionTotal());
     setUserSpending(getUserSpending());
     // console.log(spending);
   }, [])
@@ -45,10 +47,10 @@ export default function App() {
         inputs[x]=parseFloat(inputs[x]);
       }
     }
-    // if(!valid){
-    //   Alert.alert("Payment must equal total!");
-    //   return;
-    // }
+    if(!valid){
+      Alert.alert("Payment must equal total!");
+      return;
+    }
     console.log(inputs);
     console.log(spending);
     console.log(usersIds);
@@ -99,12 +101,19 @@ export default function App() {
     <BottomLayer/>
         <BottomBar/>
 
-    <View><LeftArrow/></View>
+    <View style={{zIndex:1}}><LeftArrow/></View>
 
         <TouchableOpacity onPress={() => submitPayments()}>
             <ContinueButton/>
         </TouchableOpacity>
-    <Text style={styles.title}>Payments</Text>
+    {/* <Text style={styles.title}>Payments</Text> */}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+
+    <Text style={styles.total}>Total: ${payment}</Text>
+      <Text style={[styles.invalid, (valid ? styles.valid : null)]}>${total.toFixed(2)}</Text>
 
     <View style = {styles.inputsContainer}>
       <FlatList
@@ -114,31 +123,53 @@ export default function App() {
           return (
             <View
               style={{
-                alignSelf: 'center',
-                flex:1,
+                alignSelf: 'flex-start',
                 flexDirection:'row',
+                marginVertical:10,
+                right:40,
               }}
             >
               <View>
-                {/* <Image style = {styles.smallImage} source={{uri: userData[index].picture}}></Image> */}
+                {userData[index].picture!="none" &&
+                  <Image style = {styles.smallImage} source={{uri: userData[index].picture}}></Image>
+                }
+
+                
+                
+                
+                {userData[index].picture=="none" &&
                 <View style={{
-                    width:50,
-                    height:50,
-                    borderRadius:50,
-                    marginHorizontal:10,
-                    backgroundColor:userData[index].color,
-                    alignContent:'center',
-                    justifyContent:'center',
+                  width:80,
+                  height:80,
+                  borderRadius:80,
+                  marginHorizontal:50,
+                  alignSelf: 'flex-start',
+                  justifyContent: 'center', //Centered horizontally
+                  backgroundColor:userData[index].color,
+
                   }}>
 
                   <Text style={{
-                    fontSize:18,
+                    fontSize:30,
                     color:'white',
                     textAlign:'center'
-                  }}>{userData[index].name[0].toUpperCase()}</Text>
+                  }}>{userData[index].name[0]}</Text>
                 </View>
+        }
+        <Text style={{fontSize:20,fontWeight:'bold',textAlign:'center'}}>{userData[index].name.substring(0,7)}</Text>
+
+        
               </View>
+
+              <Text style={{
+                    fontSize:20,
+                    color:'black',
+                    alignSelf:'flex-start',
+                    fontWeight:'bold'
+                  }}>${spending[index]}</Text>
+              
               <View style = {styles.textView}>
+
               <TextInput
                 placeholderTextColor="#4F555A"
                 style = {styles.input}
@@ -172,13 +203,12 @@ export default function App() {
       </View>
 
       <View style = {styles.container}>
-      <Text style={styles.total}>Total ${payment}</Text>
-      <Text style={[styles.invalid, (valid ? styles.valid : null)]}>${total.toFixed(2)}</Text>
 
       <TouchableOpacity onPress={()=>submitPayments()}>
 
       </TouchableOpacity>
       </View>
+      </KeyboardAvoidingView>
 
     
     </SafeAreaView>
@@ -193,8 +223,9 @@ const styles = StyleSheet.create({
     resizeMode:'center'
   },
   inputsContainer:{
-    top:0,
-    height:230,
+    top:20,
+    height:370,
+    left:30,
   },
   title: {
     left:70,
@@ -205,6 +236,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   total:{
+    marginTop:70,
     textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
@@ -239,33 +271,35 @@ const styles = StyleSheet.create({
     color:'#6BEBFF'
   },
   input: {
-    height: 40,
-    width:200,
-    margin: 12,
-    padding: 10,
-    fontSize:16,
+    height: 100,
+    width:100,
+    fontSize:20,
+    alignSelf:'flex-start',
     color:'#4F555A',
   },
   smallImage:{
-    width:50,
-    height:50,
-    borderRadius:50,
-    alignSelf: 'center',
+    width:80,
+    height:80,
+    borderRadius:80,
+    marginHorizontal:50,
+    alignSelf: 'flex-start',
     justifyContent: 'center', //Centered horizontally
     alignItems: 'center', //Centered vertically
   },
   textView: {
-    left:10,
-    alignItems: 'center',
-    flexDirection:'row',
+    top:30,
+    right:70,
+    alignItems: 'flex-start',
+    alignSelf:'flex-start',
     justifyContent:'center',
     borderRadius:8,
     backgroundColor: '#EAF0F7',
-    height:40,
+    height:55,
     width:200,
-    padding: 0,
   },
   bg:{
 
-  }
+  },
+  container: {
+  },
 });

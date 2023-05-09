@@ -4,42 +4,56 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {Logo,BottomLayer,BottomBar,AddButton, ContinueButton, CheckmarkIcon, LeftArrow} from "../components/Svgs";
 import { useState,useEffect } from 'react';
 import * as ImagePicker from 'expo-image-picker';
-import { updateUserProfile, getUserData } from '../backendFiles/firebaseFunctions';
-import { getUserInfo } from '../AppData';
+import { updateUserProfile} from '../backendFiles/firebaseFunctions';
+import { getUserInfo,getUserData } from '../AppData';
 import { manipulateAsync } from "expo-image-manipulator";
-
+import {firebase} from "../config/firebase";
+import { useNavigation } from '@react-navigation/native';
 export default function App() {
   const[name,setUsername] = useState("");
   const[email,setEmail] = useState("");
   const[password,setPassword] = useState("");
   const[phone,setPhone] = useState("");
   const[change,setChanged] = useState(false);
-  const[currentPicture,setPicture] = useState("");
+  const[currentPicture,setPicture] = useState("none");
   const[user,setUser] = useState("");
   const [isOwner,setIsOwner] = useState(false);
 
-  async function getData(){
-    setUser(await getUserData("No3n3K6b7EhzHhQIxU81I2Mibvg1"));
+  const navigation = useNavigation();
+  const id = firebase.auth().currentUser.uid;
+
+
+  // setData();
+
+  function setData(){
+    // const id = "No3n3K6b7EhzHhQIxU81I2Mibvg1";
+    const data = getUserData();
+    console.log(data);
+
+    
+    
+    setUser(data);
+    setPicture(user.picture);
+    console.log(user);
     console.log(user.id);
-    setIsOwner(user.id == "No3n3K6b7EhzHhQIxU81I2Mibvg1");
-    console.log(currentPicture);
+    setIsOwner(user.id == id);
     setUsername(user.name);
     setEmail(user.email);
     setPassword(user.password);
-    if(user==undefined){
+    setPhone(user.phone);
+    setPicture(getUserData().picture);
+    if(user.picture=="none" || user.picture==undefined){
     setPicture("none");
     }
     else{
       setPicture(user.picture);
     }
-
-    setPhone(user.phone);
   }
+
+
   useEffect(() => {
-    // const user ={username:"Joseph123",email:"joarredondo@csumb.edu",password:"password"};
-    getData();
-    getData();
-    getData();
+    setData();
+    
   }, [])
 
   function checkChange(){
@@ -116,7 +130,7 @@ export default function App() {
                     height:100,
                     borderRadius:100,
                     marginHorizontal:10,
-                    backgroundColor:'#FF0404',
+                    backgroundColor:user.color,
                     alignContent:'center',
                     alignSelf:'center',
                     justifyContent:'center',
@@ -127,7 +141,12 @@ export default function App() {
                     shadowRadius: 4,
                 }}>
                 <View style ={{justifyContent:'center',alignSelf:'center'}}>
-                <FontAwesome5 name={'user'}  size={75} color={'white'}/>
+                {/* <FontAwesome5 name={'user'}  size={75} color={'white'}/> */}
+                <Text style={{
+                        fontSize:55,
+                        color:'white',
+                        textAlign:'center'
+                      }}>{name}</Text>
             
                 </View>
             
@@ -140,7 +159,7 @@ export default function App() {
                     shadowOpacity: 0.4,
                     shadowRadius: 4,}}>
                     
-                    <Image source={currentPicture ? {uri: currentPicture } : null} style={styles.image}></Image>
+                    <Image source={{uri: currentPicture}} style={styles.image}></Image>
                     </View>
                     
                     }

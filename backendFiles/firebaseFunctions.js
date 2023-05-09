@@ -22,7 +22,7 @@ const auth = getAuth();
 // I get all the debts associated with the groupId, and order the documents by the total in descending order.
 export async function GetGroupDebts(groupId){
     var debtList = [];
-    const q = query(debtCollection, where("groupId", "==", groupId), orderBy("total","desc"));
+    const q = query(debtCollection, where("groupId", "==", groupId));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach(async (doc) => {
         //have the users data stored, can find their name based on the id retrieved
@@ -180,6 +180,7 @@ export async function GetGroupData(groupId){
     const q = (doc(db, "user", authId));
     const user= await getDoc(q);
     const data = ({...user.data(), id: user.id})
+    console.log(data);
     return data;
   }
 
