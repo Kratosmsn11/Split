@@ -35,8 +35,8 @@ import {firebase} from "../config/firebase";
     };
   
     async function getGroupData(){
-      // const userId = firebase.auth().currentUser.uid;
-      const userId = "No3n3K6b7EhzHhQIxU81I2Mibvg1";
+      const userId = firebase.auth().currentUser.uid;
+      // const userId = "No3n3K6b7EhzHhQIxU81I2Mibvg1";
       setUserId(userId);
       const groups = await getGroups(userId);
       console.log(groups);

@@ -91,7 +91,7 @@ const TransactionModal = ({}) => (
         
         <Text style={{color:'#4F555A',}}>{currentItem.description}
         </Text>
-        <Image source={{uri:"https://i.pinimg.com/736x/b1/14/da/b114da448d67cd47e22ef6b092dede46.jpg"}} style={styles.receiptImage}></Image>
+        <Image source={{uri:currentItem.receipt}} style={styles.receiptImage} resizeMode='contain'></Image>
         <View  style={{backgroundColor:'#EAF0F7',alignContent:'center',justifyContent:'center',alignItems:'center',width:130,top:40,height:60}}>
           <Text style={{fontWeight:'bold',fontSize:30,alignSelf:'center',justifyContent:'center'}}>${currentItem.total}</Text>
         </View>

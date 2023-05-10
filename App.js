@@ -32,7 +32,7 @@ export default function App() {
   <StatusBar barStyle={"dark-content"} backgroundColor="white"/>
     <View style={{height:Dimensions.get("window").height}}>
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login"
+      <Stack.Navigator initialRouteName="AllDebts"
         screenOptions={{
           headerShown: false,gestureEnabled:false}
           

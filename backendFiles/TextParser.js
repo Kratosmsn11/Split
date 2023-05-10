@@ -46,6 +46,7 @@ export function extractData(data){
                             var item = {
                                 "name": itemName,
                                 "price": price,
+                                "id": x,
                                 "users": []
                             }
                             receiptData.items.push(item);
@@ -64,6 +65,10 @@ export function extractData(data){
     //finding the real total
     if(difference(total,itemTotalPrice)<0.1 && tax !=-1){
         total = total + tax;
+    }
+
+    for(var x = 0; x < receiptData.items.length;x++){
+        receiptData.items[x].id = x;
     }
 
     total = itemTotalPrice;

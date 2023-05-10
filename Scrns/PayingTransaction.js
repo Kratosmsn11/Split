@@ -34,6 +34,7 @@ export default function App() {
     // console.log(getTransactionTotal());
     setGroupTotal(getTransactionTotal());
     setUserSpending(getUserSpending());
+    
     // console.log(spending);
   }, [])
 
@@ -157,16 +158,16 @@ export default function App() {
                 </View>
         }
         <Text style={{fontSize:20,fontWeight:'bold',textAlign:'center'}}>{userData[index].name.substring(0,7)}</Text>
+        <Text style={{
+                    fontSize:19,
+                    color:'black',
+                    alignSelf:'center',
+                  }}>${spending[index]}</Text>
 
         
               </View>
 
-              <Text style={{
-                    fontSize:20,
-                    color:'black',
-                    alignSelf:'flex-start',
-                    fontWeight:'bold'
-                  }}>${spending[index]}</Text>
+
               
               <View style = {styles.textView}>
 
@@ -272,8 +273,9 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 100,
-    width:100,
-    fontSize:20,
+    width:170,
+    left:10,
+    fontSize:25,
     alignSelf:'flex-start',
     color:'#4F555A',
   },
@@ -287,14 +289,14 @@ const styles = StyleSheet.create({
     alignItems: 'center', //Centered vertically
   },
   textView: {
-    top:30,
-    right:70,
+    top:15,
+    right:40,
     alignItems: 'flex-start',
     alignSelf:'flex-start',
     justifyContent:'center',
     borderRadius:8,
     backgroundColor: '#EAF0F7',
-    height:55,
+    height:70,
     width:200,
   },
   bg:{

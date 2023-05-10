@@ -9,6 +9,7 @@ import { getTransactionTotal, getUserSpending, setTransactionTotal, setUserSpend
 import { getReceiptData } from '../backendFiles/firebaseFunctions';
 import { ScrollView } from 'react-native-gesture-handler';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { extractData } from '../backendFiles/TextParser';
 const Create = () => {
     const navigation = useNavigation();
 
@@ -198,39 +199,39 @@ const Create = () => {
 
 
     function AddIndex(){
-      var usersInGroup = getUsers();
-      // var usersInGroup = [{
-      //   "color": "#7e78cf",
-      //   "email": "abraham@gmail.com",
-      //   "groups":{
-      //     "2VOh25VWeWwQNnuPtloP": true,
-      //     "eU2gXJL4VQle1MXHvi8u": true,
-      //     "xixKTent0lEFpjESKazl": true,
-      //   },
-      //   "id": "2qNCq7dHeJRA1uXTz6nr",
-      //   "index": 0,
-      //   "name": "Abraham",
-      //   "password": "password",
-      //   "phone": "567-7890",
-      //   "picture": "none",
-      //   "uid": "2qNCq7dHeJRA1uXTz6nr",
-      // },
-      //  {
-      //   "color": "#fab6d9",
-      //   "email": "joseph1234@gmail.com",
-      //   "groups":{
-      //     "MbJi6ZCsX0Iq9YziMbcz": true,
-      //     "Pe2EQxUypwTp0MJLpkbe": true,
-      //     "xixKTent0lEFpjESKazl": true,
-      //   },
-      //   "id": "No3n3K6b7EhzHhQIxU81I2Mibvg1",
-      //   "index": 1,
-      //   "name": "Joseph123",
-      //   "password": "password",
-      //   "phone": "123-123-67",
-      //   "picture": "https://www.freepnglogos.com/uploads/camera-logo-png/black-camera-logo-icon-download-4.png",
-      //   "uid": "No3n3K6b7EhzHhQIxU81I2Mibvg1",
-      // },]
+      // var usersInGroup = getUsers();
+      var usersInGroup = [{
+        "color": "#7e78cf",
+        "email": "abraham@gmail.com",
+        "groups":{
+          "2VOh25VWeWwQNnuPtloP": true,
+          "eU2gXJL4VQle1MXHvi8u": true,
+          "xixKTent0lEFpjESKazl": true,
+        },
+        "id": "2qNCq7dHeJRA1uXTz6nr",
+        "index": 0,
+        "name": "Abraham",
+        "password": "password",
+        "phone": "567-7890",
+        "picture": "none",
+        "uid": "2qNCq7dHeJRA1uXTz6nr",
+      },
+       {
+        "color": "#fab6d9",
+        "email": "joseph1234@gmail.com",
+        "groups":{
+          "MbJi6ZCsX0Iq9YziMbcz": true,
+          "Pe2EQxUypwTp0MJLpkbe": true,
+          "xixKTent0lEFpjESKazl": true,
+        },
+        "id": "No3n3K6b7EhzHhQIxU81I2Mibvg1",
+        "index": 1,
+        "name": "Joseph123",
+        "password": "password",
+        "phone": "123-123-67",
+        "picture": "https://www.freepnglogos.com/uploads/camera-logo-png/black-camera-logo-icon-download-4.png",
+        "uid": "No3n3K6b7EhzHhQIxU81I2Mibvg1",
+      },]
 
       for(var x = 0;x<usersInGroup.length;x++){
         usersInGroup[x].index = x;
@@ -328,7 +329,7 @@ const Create = () => {
           ref={(ref) => (row[index] = ref)}
           rightOpenValue={-100}>
       <View style={{flexDirection:"row"}}>
-        <TouchableOpacity onPress={() => EditItem(item)}>
+        <Pressable onLongPress={() => EditItem(item)} delayLongPress={100}>
             <View style={styles.wrapper}>
                 <View style={{flexDirection:"row"}}>
                     <View style={{flex:1}}>
@@ -350,7 +351,7 @@ const Create = () => {
               }}
             /> */}
           {/* </View> */}
-        </TouchableOpacity>
+        </Pressable>
         {/* <TouchableOpacity style={styles.deleteButton} onPress={() => DeleteItem(item.id)}>
           <FontAwesome5
               name={"minus"}
@@ -373,6 +374,11 @@ const Create = () => {
       var itemIndex = index;
       //using splice the item is removed
       itemData.splice(itemIndex,1);
+
+      for(var x = 0;x<itemData.length;x++){
+        itemData[x].id = x;
+      }
+
       // the item count is also set using the new length of the data
       setItemCount(itemData.length);
       if(itemData.length>0){
@@ -418,8 +424,12 @@ const Create = () => {
       if(data == undefined){
         data = [];
         data.items =[];
-        setItemData(data.items);
-        setItemCount(data.items.length)
+        // setItemData(data.items);
+        // setItemCount(data.items.length)
+        const f  = ["Burger KING #14730", "4859 Gerrardstown Rd.", "Inwood, WV 25423",  "304-229-7992","ORDER 69", "Drive THRU", "DBL WHOPPER CHS 5.99", "No picles","Heavy mayo","BISC EGG CHS 2.59","LG COFFEE 1.79", "SUBTOTAL 10.37", "6.0% TAX","0.62","TOTAL 10.99", "CREDIT CARD 10.99","CHANGE 0.00","TOTAL CHARGE 10.99", "Visa","AcctNum: XXXXXXXXXX9028","Auth: 165997","RefNum: 010269","Merchant Id: 456163014990"]
+        const d = extractData(f);
+        setItemData(d.items);
+        setItemCount(d.items.length);
         setTotal(0);
         setUserData(AddIndex());
         SetRefresh(!refesh);
@@ -480,7 +490,7 @@ const Create = () => {
           
           renderItem={(item,index) =>
             renderItem(item, () => {
-              DeleteItem(index);
+              // DeleteItem(index);
             })
           }
 
@@ -574,17 +584,17 @@ const Create = () => {
               extraData={refesh}
               renderItem={({user,index}) => <View><View><TouchableOpacity><View>
                 
-                {userData[index].picture != "none" &&
-                  <Image style = {styles.image} source={{uri: userData[index].picture}}/>
+                {currentItem.users[index].picture != "none" &&
+                  <Image style = {styles.image} source={{uri: currentItem.users[index].picture}}/>
                 } 
                 
-                {userData[index].picture == "none" &&
+                {currentItem.users[index].picture == "none" &&
                 <View style={{
                   width:40,
                   height:40,
                   borderRadius:40,
                   marginHorizontal:10,
-                  backgroundColor:userData[index].color,
+                  backgroundColor:currentItem.users[index].color,
                   alignSelf:'flex-end',
                   alignContent:'center',
                   justifyContent:'center',
@@ -594,14 +604,10 @@ const Create = () => {
                   fontSize:18,
                   color:'white',
                   textAlign:'center'
-                }}>{userData[index].name[0].toUpperCase()}</Text>
+                }}>{currentItem.users[index].name[0].toUpperCase()}</Text>
                 </View>
               }
-                <Text style={{
-                alignSelf: 'center',
-                color:'#4F555A',
-                fontWeight:'bold'
-              }}>{userData[index].picture.name}</Text></View></TouchableOpacity></View></View>}
+              </View></TouchableOpacity></View></View>}
       
             />
             </View>
@@ -611,7 +617,7 @@ const Create = () => {
                   <Text style={{fontSize:22,fontWeight:'bold',left:10}}>Name</Text>
                 <TextInput placeholder ="Name"  placeholderTextColor='#9E9E9E' color='#4F555A' defaultValue={currentItem.name} style ={styles.input} onChangeText={newText => setName(newText)}></TextInput>
                 <Text style={{fontSize:22,fontWeight:'bold',left:10}}>Price</Text>
-                <TextInput placeholder = "0.00" placeholderTextColor='#9E9E9E' color='#4F555A' style ={styles.input} defaultValue={''} onChangeText={newText => setPrice(newText)} keyboardType='numeric'></TextInput>
+                <TextInput placeholder = "0.00" placeholderTextColor='#9E9E9E' color='#4F555A' style ={styles.input} defaultValue={(currentItem.price==undefined ? '' :currentItem.price.toString())} onChangeText={newText => setPrice(newText)} keyboardType='numeric'></TextInput>
               </View>
 
               <Text style={{fontSize:22,fontWeight:'bold',left:10}}>Group Members</Text>

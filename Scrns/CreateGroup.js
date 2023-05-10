@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, TextInput,FlatList,SafeAreaView,TouchableOpacit
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {useState,useEffect} from 'react';
 import {Logo,BottomLayer,BottomBar,AddButton, ContinueButton} from "../components/Svgs";
-import { generateRandomPasscode, getAllUsers } from '../backendFiles/firebaseFunctions';
+import { generateRandomPasscode, getAllUsers, randomNumber } from '../backendFiles/firebaseFunctions';
 import { createGroup } from '../backendFiles/firebaseFunctions';
 import { useNavigation } from '@react-navigation/native';
 import { getUserId } from '../AppData';
@@ -15,66 +15,15 @@ export default function App() {
   const [passcode,setPasscode] = useState([]);
   const image = 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg';
   const dummyData = [
-  {name:"jOhnP18",color:'blue',id:2,email:'huvafo_nane21@outlook.com'},
-  {name:"iEntriAt",color:'red',id:3,email:'dozocik-oko94@mail.com'},
-  {name:"XiCingEO",color:'green',id:4,email:'sarefa-tepi47@hotmail.com'},
-  {name:"IumEtrON",color:'orange',id:5,email:'juyez_ohuma36@outlook.com'},
-  {name:"laTerbUi",color:'purple',id:6,email:'celega_heya92@gmail.com'},
-  {name:"jOhnP18",color:'blue',id:7,email:'huvafo_nane21@outlook.com'},
-  {name:"iEntriAt",color:'red',id:8,email:'dozocik-oko94@mail.com'},
-  {name:"XiCingEO",color:'green',id:9,email:'sarefa-tepi47@hotmail.com'},
-  {name:"IumEtrON",color:'orange',id:10,email:'juyez_ohuma36@outlook.com'},
-  {name:"laTerbUi",color:'purple',id:11,email:'celega_heya92@gmail.com'},
-  {name:"jOhnP18",color:'blue',id:12,email:'huvafo_nane21@outlook.com'},
-  {name:"iEntriAt",color:'red',id:13,email:'dozocik-oko94@mail.com'},
-  {name:"XiCingEO",color:'green',id:14,email:'sarefa-tepi47@hotmail.com'},
-  {name:"IumEtrON",color:'orange',id:15,email:'juyez_ohuma36@outlook.com'},
-  {name:"laTerbUi",color:'purple',id:16,email:'celega_heya92@gmail.com'},
-  {name:"jOhnP18",color:'blue',id:17,email:'huvafo_nane21@outlook.com'},
-  {name:"iEntriAt",color:'red',id:18,email:'dozocik-oko94@mail.com'},
-  {name:"XiCingEO",color:'green',id:19,email:'sarefa-tepi47@hotmail.com'},
-  {name:"IumEtrON",color:'orange',id:20,email:'juyez_ohuma36@outlook.com'},
-  {name:"laTerbUi",color:'purple',id:21,email:'celega_heya92@gmail.com'},
-  {name:"jOhnP18",color:'blue',id:22,email:'huvafo_nane21@outlook.com'},
-  {name:"iEntriAt",color:'red',id:23,email:'dozocik-oko94@mail.com'},
-  {name:"XiCingEO",color:'green',id:24,email:'sarefa-tepi47@hotmail.com'},
-  {name:"IumEtrON",color:'orange',id:25,email:'juyez_ohuma36@outlook.com'},
-  {name:"laTerbUi",color:'purple',id:26,email:'celega_heya92@gmail.com'},
-  {name:"jOhnP18",color:'blue',id:27,email:'huvafo_nane21@outlook.com'},
-  {name:"iEntriAt",color:'red',id:28,email:'dozocik-oko94@mail.com'},
-  {name:"XiCingEO",color:'green',id:29,email:'sarefa-tepi47@hotmail.com'},
-  {name:"IumEtrON",color:'orange',id:30,email:'juyez_ohuma36@outlook.com'},
-  {name:"laTerbUi",color:'purple',id:31,email:'celega_heya92@gmail.com'},
-  {name:"jOhnP18",color:'blue',id:32,email:'huvafo_nane21@outlook.com'},
-  {name:"iEntriAt",color:'red',id:33,email:'dozocik-oko94@mail.com'},
-  {name:"XiCingEO",color:'pink',id:34,email:'sarefa-tepi47@hotmail.com'},
-  {name:"IumEtrON",color:'brown',id:35,email:'juyez_ohuma36@outlook.com'},
-  {name:"laTerbUi",color:'purple',id:36,email:'celega_heya92@gmail.com'},
-  {name:"jOhnP18",color:'blue',id:37,email:'huvafo_nane21@outlook.com'},
-  {name:"iEntriAt",color:'pink',id:38,email:'dozocik-oko94@mail.com'},
-  {name:"XiCingEO",color:'green',id:39,email:'sarefa-tepi47@hotmail.com'},
-  {name:"IumEtrON",color:'orange',id:40,email:'juyez_ohuma36@outlook.com'},
-  {name:"laTerbUi",color:'purple',id:41,email:'celega_heya92@gmail.com'},
-  {name:"jOhnP18",color:'blue',id:42,email:'huvafo_nane21@outlook.com'},
-  {name:"iEntriAt",color:'red',id:43,email:'dozocik-oko94@mail.com'},
-  {name:"XiCingEO",color:'green',id:44,email:'sarefa-tepi47@hotmail.com'},
-  {name:"IumEtrON",color:'orange',id:45,email:'juyez_ohuma36@outlook.com'},
-  {name:"laTerbUi",color:'purple',id:46,email:'celega_heya92@gmail.com'},
-  {name:"jOhnP18",color:'pink',id:47,email:'huvafo_nane21@outlook.com'},
-  {name:"iEntriAt",color:'red',id:48,email:'dozocik-oko94@mail.com'},
-  {name:"XiCingEO",color:'green',id:49,email:'sarefa-tepi47@hotmail.com'},
-  {name:"IumEtrON",color:'orange',id:50,email:'juyez_ohuma36@outlook.com'},
-  {name:"laTerbUi",color:'purple',id:51,email:'celega_heya92@gmail.com'},
-  {name:"jOhnP18",color:'pink',id:52,email:'huvafo_nane21@outlook.com'},
-  {name:"iEntriAt",color:'red',id:53,email:'dozocik-oko94@mail.com'},
-  {name:"XiCingEO",color:'green',id:54,email:'sarefa-tepi47@hotmail.com'},
-  {name:"IumEtrON",color:'orange',id:55,email:'juyez_ohuma36@outlook.com'},
-  {name:"laTerbUi",color:'purple',id:56,email:'celega_heya92@gmail.com'},
-  {name:"jOhnP18",color:'blue',id:57,email:'huvafo_nane21@outlook.com'},
-  {name:"iEntriAt",color:'red',id:58,email:'dozocik-oko94@mail.com'},
-  {name:"XiCingEO",color:'brown',id:59,email:'sarefa-tepi47@hotmail.com'},
-  {name:"IumEtrON",color:'orange',id:60,email:'juyez_ohuma36@outlook.com'},
-  {name:"laTerbUi",color:'purple',id:61,email:'celega_heya92@gmail.com'}];
+  {name:"jOhnP18",color:randomNumber(),id:2,email:'huvafo_nane21@outlook.com'},
+  {name:"iEntriAt",color:randomNumber(),id:3,email:'dozocik-oko94@mail.com'},
+  {name:"XiCingEO",color:randomNumber(),id:4,email:'sarefa-tepi47@hotmail.com'},
+  {name:"IumEtrON",color:randomNumber(),id:5,email:'juyez_ohuma36@outlook.com'},
+  {name:"laTerbUi",color:randomNumber(),id:6,email:'celega_heya92@gmail.com'},
+  {name:"aAonq",color:randomNumber(),id:7,email:'huvafo_nane21@outlook.com'},
+  {name:"bcHs89",color:randomNumber(),id:8,email:'dozocik-oko94@mail.com'},
+  {name:"qdIn23",color:randomNumber(),id:9,email:'sarefa-tepi47@hotmail.com'},
+  ]
   const [users,setUsers] = useState([]);
 
   const [userData,setUserData] = useState([]);
@@ -183,7 +132,7 @@ export default function App() {
 
     createGroup(ids,getUserId(),groupName,passcode);
 
-    navigation.navigate("Home");
+    navigation.replace("Home");
   }
 
   
@@ -254,8 +203,8 @@ export default function App() {
               <View>
               
               <TouchableOpacity style={{flex:1, flexDirection: 'row',paddingVertical:10,}} onPress ={()=>assignUserData(item)}>
+              {item.picture==undefined || item.picture=="none" &&
                 <View style={{justifyContent:'center',}}>
-                  {/* <Image style={styles.smallImage} source={{uri: item.picture}}/> */}
                   <View style={{
                     width:60,
                     height:60,
@@ -273,6 +222,11 @@ export default function App() {
                   }}>{item.name[0].toUpperCase()}</Text>
                 </View>
                 </View>
+                }
+                {item.picture!=undefined && item.picture!="none" &&
+                    <Image style={styles.smallImage} source={{uri: item.picture}}/>
+                }
+
                 <View style={styles.userContainer}>
                   <Text style={styles.text}>{item.name}</Text>
                   <Text style={styles.secondaryText}>{item.email}</Text>

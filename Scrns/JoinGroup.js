@@ -7,11 +7,11 @@ import { useNavigation } from '@react-navigation/native';
 export default function App() {
   const navigation = useNavigation();
   const [passcode,setPasscode] = useState("");
-  const passcodeLength = 5;
+  const passcodeLength = 6;
   const userId = "No3n3K6b7EhzHhQIxU81I2Mibvg1";
   async function Join(){
     console.log(passcode);
-    if(passcode.length != passcodeLength){
+    if(passcode.length > passcodeLength){
         Alert.alert("Passcode invalid!");
     }
     else{

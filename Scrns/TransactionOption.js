@@ -58,23 +58,32 @@ const AddExpense = () => {
     });
 
     if (!result.canceled) {
-      setPicture(result.assets[0].uri);
-
-      const manipResult = await manipulateAsync(
-        currentPicture,
-        [{ resize: { width: 1024, height: 1024 } }],
-        { format: "jpeg", base64: true }
-      );
-      // setPicture(manipResult.uri);
-      // setImageURI(currentPicture);
-      // console.log(currentPicture);
-      const url = await uploadImageAsync(manipResult.uri);
-      console.log(url);
-      setReceiptURL(url);
-
-      navigation.navigate("CreateTransaction");
+      try {
+        setPicture(result.assets[0].uri);
+        const manipResult = await manipulateAsync(
+          currentPicture,
+          [{ resize: { width: 1024, height: 1024 } }],
+          { format: "jpeg", base64: true }
+        )
+        const url = await uploadImageAsync(await manipResult.uri);
+        console.log(url);
+        setReceiptURL(url);
+        navigation.navigate("CreateTransaction");
+      } 
+      catch(err) {
+        throw new Error(`Something failed`);
+      } 
     }
   };
+
+  async function ImagePicked(){
+
+  }
+
+  function AddManually(){
+    setReceiptURL(undefined);
+    navigation.navigate("CreateTransaction");
+  }
 
 
   // async function uploadImageAsync(uri) {
@@ -114,7 +123,7 @@ const AddExpense = () => {
         <View style={styles.MyGroupSpace}>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("CreateTransaction");
+              AddManually();
             }}
             style={{
               height: 50,

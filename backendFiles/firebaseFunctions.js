@@ -88,7 +88,7 @@ export async function GetGroupData(groupId){
 
     var data = {
       name:transactionName,
-      total:newTotal,
+      total:transactionTotal,
       groupId:groupId,
       receipt:receiptURL,
       description:transactionDescription,
@@ -314,23 +314,23 @@ export async function GetGroupData(groupId){
       } else {
         //this is the users group list
         console.log(userDoc.data());
-        // groups = userDoc.data()['groups'];
-        // //adding the group
-        // groups[groupId]=true;
-        // //updating the users document
-        // updateDoc(userRef,{
-        //   groups
-        // })
+        groups = userDoc.data()['groups'];
+        //adding the group
+        groups[groupId]=true;
+        //updating the users document
+        updateDoc(userRef,{
+          groups
+        })
       }
-      //Adding the user to the group's list
-      //getting a reference to the group
-      // const groupRef = doc(groupCollection,groupId);
-      // //adding the user to the group
-      // users[userId]=true;
-      // //updating the document
-      // const response = await updateDoc(groupRef,{
-      //   users
-      // })
+      // Adding the user to the group's list
+      // getting a reference to the group
+      const groupRef = doc(groupCollection,groupId);
+      //adding the user to the group
+      users[userId]=true;
+      //updating the document
+      const response = await updateDoc(groupRef,{
+        users
+      })
       console.log("Added to the group!");
       return 1;
     //no documents

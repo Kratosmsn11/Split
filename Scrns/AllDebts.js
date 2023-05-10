@@ -13,7 +13,8 @@ const AllDebts = () => {
   const [paymentModal, setPaymentModalVisible] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState("0.00");
   const [debt, setDebt] = useState("");
-  var dummyData = [{owerName:"Joseph",lenderName:"Joshua",total:5.55},{owerName:"Joseph",lenderName:"Vighnesh",total:10.17},{owerName:"Joseph",lenderName:"Joshua",total:5.55},{owerName:"Joseph",lenderName:"Vighnesh",total:10.17},{owerName:"Joseph",lenderName:"Joshua",total:5.55},{owerName:"Joseph",lenderName:"Vighnesh",total:10.17}]
+  const presetName = "Joseph";
+  var dummyData = [{owerName:"Joseph",lenderName:"Joshua",total:5.55},{owerName:"Juan",lenderName:"Vighnesh",total:10.17},{owerName:"Jack",lenderName:"Joshua",total:5.55},{owerName:"Joseph",lenderName:"Vighnesh",total:10.17},{owerName:"Joseph",lenderName:"Joshua",total:5.55},{owerName:"John",lenderName:"Vighnesh",total:10.17}]
 
   useEffect(() => {
     getData();
@@ -21,68 +22,68 @@ const AllDebts = () => {
 
   const getData = async () =>{
     setGroupDebts(GetGroupDebtsAll());
+    setGroupDebts(dummyData);
+    // setGroupDebts(dummyData);
     console.log(GetGroupDebtsAll());
   }
 
   const Debt = ({debt,index}) => (
-
-
-
-    
     <View style = {styles.flexContainer}>
-      
-
     <View style={{
-                width:25,
-                height:25,
-                borderRadius:25,
+                width:65,
+                height:65,
+                borderRadius:65,
                 marginHorizontal:10,
                 backgroundColor:randomNumber(),
                 alignContent:'center',
                 justifyContent:'center',
+                marginRight:30,
               }}>
 
               <Text style={{
-                fontSize:10,
+                fontSize:30,
+                top:10,
                 color:'white',
-                textAlign:'center'
-              }}>F</Text>
+                textAlign:'center',
+                justifyContent:'center',
+              }}>{debt.owerName[0]}</Text>
+          <Text style={{top:30,textAlign:'center',fontWeight:'400',fontSize:21,width:100,right:20}}>{debt.owerName}</Text>
     </View>
 
 
-    <Text> John   </Text>
     <FontAwesome5Icon
           name={"arrow-right"}
-          color={"#9E9E9E"}
-          size={18}
+          color={'black'}
+          size={28}
     />
     <Text>  </Text>
     {/* <Image source={{uri: debt.lenderPicture}} style={styles.image}></Image> */}
 
     <View style={{
-                width:25,
-                height:25,
-                borderRadius:25,
+                marginLeft:30,
+                width:65,
+                height:65,
+                borderRadius:65,
                 marginHorizontal:10,
-                marginVertical:30,
                 backgroundColor:randomNumber(),
                 alignContent:'center',
                 justifyContent:'center',
               }}>
 
               <Text style={{
-                fontSize:10,
+                fontSize:30,
+                top:10,
                 color:'white',
-                textAlign:'center'
-              }}>J</Text>
+                textAlign:'center',
+                justifyContent:'center',
+              }}>{debt.lenderName[0]}</Text>
+          <Text style={{top:30,textAlign:'center',fontWeight:'400',fontSize:21,width:100,right:20}}>{debt.lenderName}</Text>
     </View>
 
-    <Text style={{color:'#4F555A'}}>  Joseph</Text>
-    <View style={{flex: 1}}>
-        <Text style={{color:'#4F555A',left:20,fontWeight:'bold'}}>$7.88</Text>
-    </View>
-    <TouchableOpacity style={styles.button}><Text style={styles.pay}>Pay</Text></TouchableOpacity>
+
+
 </View>
+
     // <View style = {{flexDirection:'row'}}>
     //     <Text style={{color:'#4F555A'}}>nnj</Text>
     //     <View>
@@ -95,17 +96,18 @@ const AllDebts = () => {
 
   
   return (
-    <SafeAreaView style = {styles.align}>
+    <SafeAreaView>
       <Logo/>
       <BottomLayer/>
       <BottomBar/>
+      <TouchableOpacity><AddButton></AddButton></TouchableOpacity>
       <View style = {styles.align}>
 
 
 
         <FlatList
         style = {styles.list}
-        data={dummyData}
+        data={groupDebts}
         renderItem={({item,index}) => 
         <View>
         <View>
@@ -114,8 +116,21 @@ const AllDebts = () => {
         }
         </View>
         
-        
+        <View style={{backgroundColor:'#EAF0F7',height:240,width:350,marginVertical:10,alignSelf:'center',borderRadius:10}}>
+        <Text style={{color:'#4F555A',left:0,fontWeight:'bold',textAlign:'center',fontSize:35,marginTop:5}}>${item.total}</Text>
+  
         <Debt debt={item} index={index}/>
+
+        {presetName == item.owerName &&
+          <TouchableOpacity style={styles.button}>
+                <FontAwesome5Icon
+                      name={"dollar-sign"}
+                      color={"white"}
+                      size={28}
+                />
+          </TouchableOpacity>
+        }
+        </View>
         </View>
       
       }
@@ -131,8 +146,14 @@ const AllDebts = () => {
 };
 
 const styles = StyleSheet.create({
+  align:{
+    top:50,
+    height:550,
+  },
   heading:{
     fontSize:25,
+    left:30,
+    fontWeight:'bold',
   },
   subheadings:{
     fontSize:20,
@@ -141,13 +162,17 @@ const styles = StyleSheet.create({
     textAlign:'center',
   },
   button:{
-    width:50,
-    height:25,
-    backgroundColor:'#76FFAD',
+    width:90,
+    height:50,
+    marginTop:20,
+    backgroundColor:'#47E100',
     borderWidth:4,
-    borderColor:'#76FFAD',
+    borderColor:'#47E100',
     borderRadius:5,
-    right:30
+    alignSelf:'center',
+    justifyContent:'center',
+    alignContent:'center',
+    alignItems:'center',
   },
   item: {
     backgroundColor: '#D9D9D9',
@@ -162,11 +187,10 @@ const styles = StyleSheet.create({
     textAlign:'center'
   },
   flexContainer:{
-    left:10,
     alignItems: "center",
-    flex:1,
-    marginVertical:0,
+    justifyContent:'center',
     flexDirection: "row",
+    height:100,
 },
 
 });
