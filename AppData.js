@@ -15,12 +15,21 @@ var userSpending = [];
 var total;
 var transactionName;
 var transactionDescription;
+var pid = {}
 export function setUserId(id){
     this.userId = id
 }
 
 export function getUserId(){
     return this.userId;
+}
+
+export function setCurrentProfileView(id){
+    this.pid = id;
+}
+
+export function getCurrentProfileView(){
+    return this.pid;
 }
 
 export function setGroupId(id){

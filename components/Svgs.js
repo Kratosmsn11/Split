@@ -11,6 +11,9 @@ import {
   import { SvgXml } from "react-native-svg";
   import { useNavigation } from '@react-navigation/native';
   import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
+  import { setCurrentProfileView } from "../AppData";
+  import {firebase} from '../config/firebase'
+  import { getUserData } from "../backendFiles/firebaseFunctions";
   const logo = `
   <svg width="80" height="46" viewBox="0 0 80 46" fill="none" xmlns="http://www.w3.org/2000/svg">
   <g filter="url(#filter0_d_8_32)">
@@ -179,10 +182,16 @@ export function AddButton() {
     )
 }
 
+
+
 export function ProfileImage() {
     const navigation = useNavigation();
+    async function clickProfile(){
+        setCurrentProfileView(await getUserData(firebase.auth().currentUser.uid));
+        navigation.navigate("UserProfile");
+    }
     return(
-        <TouchableOpacity onPress={()=>navigation.navigate("Profile")}>
+        <TouchableOpacity onPress={()=>clickProfile()}>
             <SvgXml xml = {profile} width='30' height = '30'/>
         </TouchableOpacity>
         
@@ -221,6 +230,10 @@ export function CameraIcon() {
 
 export function BottomBar(){
     const navigation = useNavigation();
+    async function clickProfile(){
+        setCurrentProfileView(await getUserData(firebase.auth().currentUser.uid));
+        navigation.navigate("UserProfile");
+    }
     return(
         <View style = {styles.icons}>
             <View>
@@ -232,7 +245,7 @@ export function BottomBar(){
                 </TouchableOpacity>
             </View>
             <View>
-                <TouchableOpacity onPress={()=>navigation.navigate("UserProfile")}>
+                <TouchableOpacity onPress={()=>clickProfile()}>
                 <View style={{alignSelf:'center'}}>
                     <SvgXml xml = {profile} width='50' height = '50'/>
                 </View>

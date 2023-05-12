@@ -3,14 +3,16 @@ import React, { useEffect, useState,useCallback,useRef } from "react";
 import {Logo,BottomLayer,LeftArrow,ProfileImage,User,OrderLight,CameraIcon, HomeIcon, AddButton, BottomBar} from '../components/Svgs';
 import * as Clipboard from 'expo-clipboard';
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
-import { GetGroupDebts, GetGroupTransactions, getGroupUsers, randomNumber } from "../backendFiles/firebaseFunctions";
-import { getGroupInfo, setGroupInfo, getGroupId,setUsers, setGroupDebtsAll, setGroupTransactionsAll } from "../AppData";
-import { useNavigation,useIsFocused} from "@react-navigation/native";
+import { GetGroupDebts, GetGroupTransactions, getGroupUsers, randomNumber,GetGroupData, getUserData } from "../backendFiles/firebaseFunctions";
+import { getGroupInfo, setGroupInfo, getGroupId,setUsers, setGroupDebtsAll, setGroupTransactionsAll,getUsers, setCurrentProfileView, setUsersData } from "../AppData";
+import { useNavigation,useIsFocused,useFocusEffect} from "@react-navigation/native";
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import CustomSidebar from './CustomSidebar'
 import BottomSheet , {BottomSheetView} from "@gorhom/bottom-sheet";
 import {firebase} from '../config/firebase';
-  const GroupDetail = () => {
+
+
+  const GroupDetail = (props) => {
     const navigation = useNavigation();
     const isFocused = useIsFocused();
     const [isShow, setisShow] = useState(false);
@@ -30,7 +32,7 @@ import {firebase} from '../config/firebase';
     var groupId = getGroupInfo().id;
     console.log(groupId);
     // const [groupInfo,setGroupInfo] = useState("");
-    // const userData= [{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"},{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none"}]
+    const userData= [{name:"Joseph",email:"joarredondo@csumb.edu",picture:"none",color:'red'}]
 
     async function deleteGroup(){
 
@@ -53,7 +55,7 @@ import {firebase} from '../config/firebase';
     };
 
     const getGroupData = async () => {
-      const group = getGroupInfo();
+      const group = await GetGroupData(getGroupId());
       console.log(group);
       setgData(group);
       setTotal(group.total);
@@ -71,6 +73,8 @@ import {firebase} from '../config/firebase';
 
     function getData(){
       // navigation.Add
+      setUsers(userData);
+      setGroupMembers(userData);
       getGroupMembers();
       getDebts();
       getTransactions();
@@ -82,28 +86,47 @@ import {firebase} from '../config/firebase';
     //   })
     // })
 
-    useEffect(() => {isFocused && getData() },[isFocused]);
+    // useEffect(() => {isFocused && getData() },[isFocused]);
+    useFocusEffect(
+      React.useCallback(() => {
+        let isActive = true
+  
+        const fetchList = () => {
+            getData();
+        }
+  
+        fetchList()
+  
+        return () => {
+          isActive = false
+        }
+      }, []),
+    )
 
     const Transaction = ({transaction}) => (
         <View style = {styles.flexContainer}>
-            {/* <Image source={{uri: transaction.highestPayerPicture}} style={styles.image}></Image> */}
-            <View style={{
-                        width:25,
-                        height:25,
-                        borderRadius:25,
-                        marginHorizontal:10,
-                        marginVertical:5,
-                        backgroundColor:transaction.highestPayerColor,
-                        alignContent:'center',
-                        justifyContent:'center',
-                      }}>
+            {transaction.highestPayerPicture != 'none' &&
+              <Image source={{uri: transaction.highestPayerPicture}} style={styles.image}></Image>
+            }
+            {transaction.highestPayerPicture == 'none' &&
+              <View style={{
+                          width:25,
+                          height:25,
+                          borderRadius:25,
+                          marginHorizontal:5,
+                          marginVertical:5,
+                          backgroundColor:transaction.highestPayerColor,
+                          alignContent:'center',
+                          justifyContent:'center',
+                        }}>
 
-                      <Text style={{
-                        fontSize:10,
-                        color:'white',
-                        textAlign:'center'
-                      }}>{transaction.highestPayerName[0].toUpperCase()}</Text>
-            </View>
+                        <Text style={{
+                          fontSize:10,
+                          color:'white',
+                          textAlign:'center'
+                        }}>{transaction.highestPayerName[0].toUpperCase()}</Text>
+              </View>
+            }
             <Text style={{color:'#4F555A'}}>{transaction.name}</Text>
             <View style={{flex: 1}}>
                 <Text style={{textAlign: 'right',right:30,color:'#4F555A',fontWeight:'bold'}}>${transaction.total}</Text>
@@ -113,13 +136,17 @@ import {firebase} from '../config/firebase';
   
     const Debt = ({debt}) => (
         <View style = {styles.flexContainer}>
-            {/* <Image source={{uri: debt.owerPicture}} style={styles.image}></Image> */}
+           {debt.owerPicture != 'none' &&
+            <Image source={{uri: debt.owerPicture}} style={styles.image}></Image>
+           }
+
+            {debt.owerPicture == 'none' &&
 
             <View style={{
                         width:25,
                         height:25,
                         borderRadius:25,
-                        marginHorizontal:5,
+                        marginHorizontal:2,
                         marginVertical:5,
                         backgroundColor:debt.owerColor,
                         alignContent:'center',
@@ -132,22 +159,28 @@ import {firebase} from '../config/firebase';
                         textAlign:'center'
                       }}>{debt.owerName[0].toUpperCase()}</Text>
             </View>
+            }
 
 
-            <Text>  {debt.owerName}    </Text>
+            <Text style={{color:'#4F555A'}}>  {debt.owerName}    </Text>
             <FontAwesome5Icon
                   name={"arrow-right"}
                   color={"#9E9E9E"}
                   size={18}
             />
             <Text>  </Text>
-            {/* <Image source={{uri: debt.lenderPicture}} style={styles.image}></Image> */}
+            {debt.lenderPicture != 'none' &&
+            <Image source={{uri: debt.lenderPicture}} style={styles.image}></Image>
+           }
+
+            {debt.lenderPicture == 'none' &&
 
             <View style={{
                         width:25,
                         height:25,
                         borderRadius:25,
-                        marginHorizontal:5,
+                        marginHorizontal:2,
+                        marginVertical:5,
                         backgroundColor:debt.lenderColor,
                         alignContent:'center',
                         justifyContent:'center',
@@ -159,6 +192,8 @@ import {firebase} from '../config/firebase';
                         textAlign:'center'
                       }}>{debt.lenderName[0].toUpperCase()}</Text>
             </View>
+            }
+
 
             <Text style={{color:'#4F555A'}}>  {debt.lenderName}</Text>
             <View style={{flex: 1}}>
@@ -183,8 +218,11 @@ import {firebase} from '../config/firebase';
       // }
     };
 
-    function memberProfile(){
+    async function memberProfile(id){
       setModalVisible(!modalVisible);
+      console.log("Id:" + id);
+      setCurrentProfileView(await getUserData(id));
+      
       navigation.navigate("UserProfile");
     }
 
@@ -231,6 +269,7 @@ import {firebase} from '../config/firebase';
             <Text style={{ ...styles.myGroup, fontSize: 22,left:0, marginTop: 0 }}>
               Settle Debts
             </Text>
+            <TouchableOpacity onPress={() => navigation.navigate("AllDebts")}>
             <View
               style={{
                 height: 120,
@@ -253,6 +292,7 @@ import {firebase} from '../config/firebase';
             />
 
             </View>
+            </TouchableOpacity>
   
             <Text style={{ ...styles.myGroup, fontSize: 22,left:0, marginTop: 5 }}>
               Total Expense
@@ -309,7 +349,7 @@ import {firebase} from '../config/firebase';
             return (
               <View style = {{}}>
               
-              <TouchableOpacity style={{flex:1, flexDirection: 'row',paddingVertical:10,}} onPress ={()=>memberProfile()}>
+              <TouchableOpacity style={{flex:1, flexDirection: 'row',paddingVertical:10,}} onPress ={()=>memberProfile(item.id)}>
 
                 {item.picture!="none" &&
                  <View style={{justifyContent:'center',}}>
@@ -403,9 +443,11 @@ import {firebase} from '../config/firebase';
     },
     image:{
         justifyContent:'center',
-        width:40,
-        height:40,
-        borderRadius:40,
+        width:25,
+        height:25,
+        borderRadius:25,
+        marginHorizontal:5,
+        marginVertical:5,
     },
     flexContainer:{
         left:10,

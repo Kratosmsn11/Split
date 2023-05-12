@@ -27,12 +27,13 @@ const AllTransactions = () => {
 
   const Transaction = ({transaction,index}) => (
     <View style = {styles.flexContainer}>
+    {transaction.highestPayerPicture=="none" &&
     <View style={{
                 width:55,
                 height:55,
                 borderRadius:55,
                 marginHorizontal:10,
-                backgroundColor:randomNumber(),
+                backgroundColor:transaction.highestPayerColor,
                 alignContent:'center',
                 justifyContent:'center',
               }}>
@@ -41,11 +42,20 @@ const AllTransactions = () => {
                 fontSize:30,
                 color:'white',
                 textAlign:'center'
-              }}>F</Text>
+              }}>{transaction.highestPayerName[0]}</Text>
     </View>
+    }
+
+    {transaction.highestPayerPicture!="none" &&
+
+        <Image source={{uri: transaction.highestPayerPicture}} style={styles.image}></Image>
+
+    }
+
+
     <View style={{}}>
     <Text style={{color:'#4F555A'}}>{transaction.name}</Text>
-        <Text style={{color:'#4F555A',left:50,fontWeight:'bold',fontSize:20}}>{transaction.total}</Text>
+        <Text style={{color:'#4F555A',left:50,fontWeight:'bold',fontSize:20}}>${parseFloat(transaction.total).toFixed(2)}</Text>
     </View>
 </View>
 
@@ -70,13 +80,23 @@ function convertDate(time) {
 
 const TransactionModal = ({}) => (
   <Modal
-  animationType="fade"
-  transparent={true}
+  animationType="slide"
   visible={modalVisible}
+  presentationStyle='fullScreen'
   onRequestClose={() => {
     Alert.alert('Modal has been closed.');
     setModalVisible(false);
   }}>
+
+<TouchableOpacity onPress ={()=>setModalVisible(!modalVisible)}>
+          <View style={{justifyContent:'center',alignContent:'center',alignItems:'center',alignSelf:'center',top:30,right:140,width:200,height:100}}>
+        <FontAwesome5Icon
+                  name={"angle-down"}
+                  color={"#9E9E9E"}
+                  size={40}
+        />
+        </View>
+        </TouchableOpacity>
 
   <TouchableWithoutFeedback onPress={() => ClickAway()}>
     <View style={styles.modalOverlay} />
@@ -85,15 +105,23 @@ const TransactionModal = ({}) => (
     <View style={styles.modalView}>
       <View style = {styles.modalContent}>
 
-      <Text style={{textAlign:'right',alignSelf:'flex-end',fontWeight:'bold'}}>{currentItem.date}</Text>
-        <Text style={{fontWeight:'bold',fontSize:17}}>{currentItem.name}</Text>
+      <Text style={{textAlign:'right',alignSelf:'flex-end',fontWeight:'bold',color:'#4F555A'}}>{currentItem.date}</Text>
+        <Text style={{fontWeight:'bold',fontSize:17,marginBottom:20}}>{currentItem.name}</Text>
        
-        
-        <Text style={{color:'#4F555A',}}>{currentItem.description}
-        </Text>
-        <Image source={{uri:currentItem.receipt}} style={styles.receiptImage} resizeMode='contain'></Image>
-        <View  style={{backgroundColor:'#EAF0F7',alignContent:'center',justifyContent:'center',alignItems:'center',width:130,top:40,height:60}}>
-          <Text style={{fontWeight:'bold',fontSize:30,alignSelf:'center',justifyContent:'center'}}>${currentItem.total}</Text>
+        <View style={{height:80,width:300,backgroundColor:'#EAF0F7',alignSelf:'flex-start',marginBottom:50,padding:20}}>
+          <Text style={{color:'#4F555A',left:0,top:0}}>{currentItem.description =="" ? "No description added.":currentItem.description}</Text>
+        </View>
+        {currentItem.receipt != "Manual transaction" &&
+          <Image source={{uri:currentItem.receipt}} style={styles.receiptImage} resizeMode='stretch'></Image>
+        }
+
+        {currentItem.receipt == "Manual transaction" &&
+          <View style={styles.emptyImage}>
+            <Text style={{width:200,color:'#4F555A',textAlign:'center'}}>No receipt. Transaction was created manually.</Text>
+          </View>
+        }
+        <View  style={{backgroundColor:'#EAF0F7',alignContent:'center',justifyContent:'center',alignItems:'center',width:130,top:40,height:60,borderRadius:10}}>
+          <Text style={{fontWeight:'bold',fontSize:30,alignSelf:'center',justifyContent:'center'}}>${parseFloat(currentItem.total).toFixed(2)}</Text>
         </View>
         
 
@@ -150,8 +178,16 @@ const TransactionModal = ({}) => (
 
 const styles = StyleSheet.create({
   receiptImage:{
-    height:250,
-    width:150,
+    height:400,
+    width:300,
+  },
+  emptyImage:{
+    height:400,
+    backgroundColor:'#EAF0F7',
+    width:300,
+    justifyContent:'center',
+    alignItems:'center',
+    alignContent:'center'
   },
   heading:{
     fontSize:20,
@@ -201,12 +237,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
 },
 modalOverlay: {
-  position: 'absolute',
-  top: 0,
-  bottom: 0,
-  left: 0,
-  right: 0,
-  backgroundColor: 'rgba(0,0,0,0.5)'
+  // position: 'absolute',
+  // top: 0,
+  // bottom: 0,
+  // left: 0,
+  // right: 0,
+  marginBottom:-70,
+  backgroundColor: 'white'
 },
 modalText: {
   marginBottom: 15,
@@ -223,19 +260,19 @@ modalView: {
 
   justifyContent:'center',
   alignSelf:'center',
-  width:330,
-  height:470,
-  backgroundColor: 'white',
-  borderRadius: 20,
   alignItems: 'center',
-  shadowColor: '#000',
-  shadowOffset: {
-    width: 0,
-    height: 2,
-  },
-  shadowOpacity: 0.25,
-  shadowRadius: 4,
-  elevation: 5,
+  // width:330,
+  // height:470,
+  // backgroundColor: 'white',
+  // borderRadius: 20,
+  // shadowColor: '#000',
+  // shadowOffset: {
+  //   width: 0,
+  //   height: 2,
+  // },
+  // shadowOpacity: 0.25,
+  // shadowRadius: 4,
+  // elevation: 5,
 },
 
 centeredView: {
@@ -244,6 +281,14 @@ centeredView: {
   marginTop: 200,
   height:400,
 },
+image:{
+  width:55,
+  height:55,
+  borderRadius:55,
+  marginHorizontal:10,
+  alignContent:'center',
+  justifyContent:'center',
+}
 
 });
 

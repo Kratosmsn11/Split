@@ -23,15 +23,20 @@ const auth = getAuth();
 export async function GetGroupDebts(groupId){
     var debtList = [];
     const q = query(debtCollection, where("groupId", "==", groupId));
+    const users = await getGroupUsers(groupId);
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach(async (doc) => {
         //have the users data stored, can find their name based on the id retrieved
-        var owerName = getUsers().find(user => user.id === doc.data()['owerId']).name;
-        var lenderName = getUsers().find(user => user.id === doc.data()['lenderId']).name;
-        var owerColor= getUsers().find(user => user.id === doc.data()['owerId']).color;
-        var lenderColor = getUsers().find(user => user.id === doc.data()['lenderId']).color;
+        var owerName = users.find(user => user.id === doc.data()['owerId']).name;
+        var lenderName = users.find(user => user.id === doc.data()['lenderId']).name;
+        var owerColor= users.find(user => user.id === doc.data()['owerId']).color;
+        var lenderColor = users.find(user => user.id === doc.data()['lenderId']).color;
+        var owerPicture= users.find(user => user.id === doc.data()['owerId']).picture;
+        var lenderPicture = users.find(user => user.id === doc.data()['lenderId']).picture;
+        var owerNumber= users.find(user => user.id === doc.data()['owerId']).phone;
+        var lenderNumber = users.find(user => user.id === doc.data()['lenderId']).phone;
         
-        debtList.push({...doc.data(),id:doc.id, owerName:owerName, lenderName:lenderName, owerColor:owerColor,lenderColor:lenderColor});
+        debtList.push({...doc.data(),id:doc.id, owerName:owerName, lenderName:lenderName, owerColor:owerColor,lenderColor:lenderColor,owerPicture:owerPicture,lenderPicture:lenderPicture,owerNumber:owerNumber,lenderNumber:lenderNumber});
     });
     return debtList;
 }
@@ -58,15 +63,27 @@ export async function GetGroupData(groupId){
     // console.log("Firebase:" + groupId);
     const q = query(transactionCollection, where("groupId", "==", groupId));
     const querySnapshot = await getDocs(q);
+    const users = await getGroupUsers(groupId);
     // console.log(querySnapshot);
     querySnapshot.forEach((doc) => {
         console.log(doc.id, " => ", doc.data());
-        var highestPayerColor = getUsers().find(user => user.id === doc.data()['highestPayer']).color;
-        var highestPayerName = getUsers().find(user => user.id === doc.data()['highestPayer']).name;
-        transactionList.push({...doc.data(), highestPayerName:highestPayerName, highestPayerColor:highestPayerColor});
+        var highestPayerColor = users.find(user => user.id === doc.data()['highestPayer']).color;
+        var highestPayerName = users.find(user => user.id === doc.data()['highestPayer']).name;
+        var highestPayerPicture = users.find(user => user.id === doc.data()['highestPayer']).picture;
+        transactionList.push({...doc.data(), highestPayerName:highestPayerName, highestPayerColor:highestPayerColor,highestPayerPicture:highestPayerPicture});
     });
     return transactionList;
   }
+
+
+  export async function payDebt(debtId){
+    //reference to the debt
+    const debtRef = doc(debtCollection, debtId);
+    //the document
+    const debt = await deleteDoc(debtRef);
+  }
+
+
   export async function createTransaction(transactionName,transactionDescription,transactionTotal,groupId,debts,highestPayer){
     //Update the total expense in the group document
     const groupRef = doc(groupCollection,groupId);
@@ -201,6 +218,7 @@ export async function GetGroupData(groupId){
       //so transactions can be accessed
       groupData.push({...groupDoc.data(), id: groupDoc.id});
     }
+    groupData.sort((a, b) => a.name - b.name);
     return groupData;
   }
   export async function getGroupUsers(groupId) {

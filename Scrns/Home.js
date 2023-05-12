@@ -39,6 +39,7 @@ import {firebase} from "../config/firebase";
       // const userId = "No3n3K6b7EhzHhQIxU81I2Mibvg1";
       setUserId(userId);
       const groups = await getGroups(userId);
+      groups.sort((a, b) => a.name - b.name);
       console.log(groups);
       setGroupsData(groups);
       await setUsersData(await getUserData(userId));

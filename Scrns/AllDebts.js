@@ -1,20 +1,24 @@
 import React ,{useState,useEffect} from 'react';
-import {Text, TouchableOpacity, View,FlatList,StyleSheet,Modal,Pressable,TextInput,Alert} from 'react-native';
+import {Text, TouchableOpacity, View,FlatList,StyleSheet,Modal,Pressable,TextInput,Alert,Image} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import {GetGroupData, GetGroupTransactions,GetGroupDebts, randomNumber} from '../backendFiles/firebaseFunctions';
+import {GetGroupData, GetGroupTransactions,GetGroupDebts, randomNumber,payDebt} from '../backendFiles/firebaseFunctions';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {getGroupId,getGroupInfo,setGroupId,getUserInfo, GetGroupDebtsAll} from '../AppData';
+import {getGroupId,getGroupInfo,setGroupId,getUserInfo, GetGroupDebtsAll,setGroupDebtsAll} from '../AppData';
 import { useFocusEffect } from '@react-navigation/native';
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
-import {Logo,BottomBar,BottomLayer, AddButton} from "../components/Svgs";
+import {Logo,BottomBar,BottomLayer, AddButton, LeftArrow} from "../components/Svgs";
+import {firebase} from "../config/firebase";
+import * as SMS from 'expo-sms';
+
 const AllDebts = () => {
   const navigation = useNavigation();
   const [groupDebts,setGroupDebts] = useState("");
   const [paymentModal, setPaymentModalVisible] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState("0.00");
   const [debt, setDebt] = useState("");
-  const presetName = "Joseph";
-  var dummyData = [{owerName:"Joseph",lenderName:"Joshua",total:5.55},{owerName:"Juan",lenderName:"Vighnesh",total:10.17},{owerName:"Jack",lenderName:"Joshua",total:5.55},{owerName:"Joseph",lenderName:"Vighnesh",total:10.17},{owerName:"Joseph",lenderName:"Joshua",total:5.55},{owerName:"John",lenderName:"Vighnesh",total:10.17}]
+  const [smsAvailable, setSmsAvailable] = useState(false);
+  const userId = firebase.auth().currentUser.uid;
+  var dummyData = [{owerName:"Joseph",lenderName:"Joshua",total:5.55},{owerName:"Joshua",lenderName:"Vighnesh",total:10.17},{owerName:"Jack",lenderName:"Joshua",total:5.55},{owerName:"Joseph",lenderName:"Vighnesh",total:10.17},{owerName:"Joseph",lenderName:"Joshua",total:5.55},{owerName:"John",lenderName:"Vighnesh",total:10.17}]
 
   useEffect(() => {
     getData();
@@ -22,33 +26,64 @@ const AllDebts = () => {
 
   const getData = async () =>{
     setGroupDebts(GetGroupDebtsAll());
-    setGroupDebts(dummyData);
-    // setGroupDebts(dummyData);
     console.log(GetGroupDebtsAll());
+    SMS.isAvailableAsync().then(setSmsAvailable);
+  }
+
+  async function settleDebt(debt){
+    const message = debt.owerName + " has settled the debt of $" + debt.total;
+    if(smsAvailable){
+      const result = await SMS.sendSMSAsync(
+        [debt.lenderNumber],
+        message,
+      );
+      // console.log(result.result);
+      if(result.result == 'sent'){
+        console.log("Message sent");
+        payDebt(debt.id);
+        var newDebts = groupDebts.filter(function (item) {
+          return item.id != debt.id;
+        });
+        setGroupDebts(newDebts);
+        setGroupDebtsAll(newDebts);
+      }
+    }
+    else{
+    }
+
+
   }
 
   const Debt = ({debt,index}) => (
     <View style = {styles.flexContainer}>
-    <View style={{
-                width:65,
-                height:65,
-                borderRadius:65,
-                marginHorizontal:10,
-                backgroundColor:randomNumber(),
-                alignContent:'center',
-                justifyContent:'center',
-                marginRight:30,
-              }}>
+    {debt.owerPicture =="none" &&
+      <View style={{
+                  width:65,
+                  height:65,
+                  borderRadius:65,
+                  marginHorizontal:10,
+                  backgroundColor:debt.owerColor,
+                  alignContent:'center',
+                  justifyContent:'center',
+                  marginRight:30,
+                }}>
 
-              <Text style={{
-                fontSize:30,
-                top:10,
-                color:'white',
-                textAlign:'center',
-                justifyContent:'center',
-              }}>{debt.owerName[0]}</Text>
-          <Text style={{top:30,textAlign:'center',fontWeight:'400',fontSize:21,width:100,right:20}}>{debt.owerName}</Text>
-    </View>
+                <Text style={{
+                  fontSize:30,
+                  top:10,
+                  color:'white',
+                  textAlign:'center',
+                  justifyContent:'center',
+                }}>{debt.owerName[0]}</Text>
+            <Text style={{top:30,textAlign:'center',fontWeight:'400',fontSize:21,width:100,right:20}}>{debt.owerName.substring(0,7)}</Text>
+      </View>
+    }
+    {debt.owerPicture !="none" &&
+      <View>
+      <Image source={{uri: debt.owerPicture}} style={styles.image}></Image>
+      <Text style={{top:10,textAlign:'center',fontWeight:'400',fontSize:21,width:100,right:10}}>{debt.owerName.substring(0,7)}</Text>
+      </View>
+  }
 
 
     <FontAwesome5Icon
@@ -58,14 +93,14 @@ const AllDebts = () => {
     />
     <Text>  </Text>
     {/* <Image source={{uri: debt.lenderPicture}} style={styles.image}></Image> */}
-
+    {debt.lenderPicture =="none" &&
     <View style={{
                 marginLeft:30,
                 width:65,
                 height:65,
                 borderRadius:65,
                 marginHorizontal:10,
-                backgroundColor:randomNumber(),
+                backgroundColor:debt.lenderColor,
                 alignContent:'center',
                 justifyContent:'center',
               }}>
@@ -77,8 +112,16 @@ const AllDebts = () => {
                 textAlign:'center',
                 justifyContent:'center',
               }}>{debt.lenderName[0]}</Text>
-          <Text style={{top:30,textAlign:'center',fontWeight:'400',fontSize:21,width:100,right:20}}>{debt.lenderName}</Text>
+          <Text style={{top:30,textAlign:'center',fontWeight:'400',fontSize:21,width:100,right:20}}>{debt.lenderName.substring(0,7)}</Text>
     </View>
+    }
+
+    {debt.lenderPicture !="none" &&
+      <View>
+      <Image source={{uri: debt.lenderPicture}} style={styles.image}></Image>
+      <Text style={{top:10,textAlign:'center',fontWeight:'400',fontSize:21,width:100,right:10}}>{debt.lenderName.substring(0,7)}</Text>
+      </View>
+  }
 
 
 
@@ -100,6 +143,10 @@ const AllDebts = () => {
       <Logo/>
       <BottomLayer/>
       <BottomBar/>
+      <View>
+      <LeftArrow></LeftArrow>
+      </View>
+      
       <TouchableOpacity><AddButton></AddButton></TouchableOpacity>
       <View style = {styles.align}>
 
@@ -121,8 +168,8 @@ const AllDebts = () => {
   
         <Debt debt={item} index={index}/>
 
-        {presetName == item.owerName &&
-          <TouchableOpacity style={styles.button}>
+        {userId == item.owerId &&
+          <TouchableOpacity style={styles.button} onPress={()=>{settleDebt(item)}}>
                 <FontAwesome5Icon
                       name={"dollar-sign"}
                       color={"white"}
@@ -192,6 +239,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height:100,
 },
+image:{
+  width:65,
+  height:65,
+  borderRadius:65,
+  marginHorizontal:10,
+  marginTop:20,
+  alignContent:'center',
+  justifyContent:'center',
+  marginRight:30,
+}
 
 });
 

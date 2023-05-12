@@ -26,6 +26,8 @@ export default function App() {
     }
     setTransactionName(name);
     setTransactionDescription(description);
+    setName("");
+    setDescription("");
     navigation.navigate("TransactionOption")
   }
 

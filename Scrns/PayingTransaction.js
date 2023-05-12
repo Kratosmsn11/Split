@@ -2,12 +2,13 @@ import * as React from 'react';
 import { Text, View, StyleSheet,FlatList,TextInput,TouchableOpacity,Alert,SafeAreaView,Image,KeyboardAvoidingView} from 'react-native';
 import {useState,useEffect} from 'react';
 import { Logo,BottomBar,BottomLayer,ContinueButton,LeftArrow} from '../components/Svgs';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation,useIsFocused } from '@react-navigation/native';
 import { createTransaction } from '../backendFiles/firebaseFunctions';
 import { calculateDebts } from '../backendFiles/SplittingAlgorithm';
 import { getTransactionTotal, getUserSpending, getUsers, getUsersIds,getGroupId, getTransactionName, getTransactionDescription, getUserData} from '../AppData';
 export default function App() {
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
   //the list that will contain each user's input
   const [inputs, setInputs] = useState([]);
   const [total, setTotal] = useState(0.00);
@@ -28,15 +29,16 @@ export default function App() {
   var defaultPaying = Array(userData.length).fill(undefined);
   const [valid, setValid] = useState(false);
 
-  useEffect(() => {
+  function setData(){
     setInputs(defaultPaying);
-    
     // console.log(getTransactionTotal());
     setGroupTotal(getTransactionTotal());
     setUserSpending(getUserSpending());
-    
-    // console.log(spending);
-  }, [])
+
+  }
+
+
+  useEffect(() => {isFocused && setData()},[isFocused]);
 
 
   function submitPayments(){
@@ -61,7 +63,7 @@ export default function App() {
     var transactionName = getTransactionName();
     var transactionDescription = getTransactionDescription();
     createTransaction(transactionName,transactionDescription,payment,getGroupId(),debts,highestPayer);
-    navigation.navigate("GroupPage");
+    navigation.replace("GroupPage");
   }
 
   //reseting to the original values
@@ -162,7 +164,7 @@ export default function App() {
                     fontSize:19,
                     color:'black',
                     alignSelf:'center',
-                  }}>${spending[index]}</Text>
+                  }}>${parseFloat(spending[index]).toFixed(2)}</Text>
 
         
               </View>

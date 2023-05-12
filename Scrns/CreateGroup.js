@@ -15,14 +15,14 @@ export default function App() {
   const [passcode,setPasscode] = useState([]);
   const image = 'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/profile-photos-4.jpg';
   const dummyData = [
-  {name:"jOhnP18",color:randomNumber(),id:2,email:'huvafo_nane21@outlook.com'},
-  {name:"iEntriAt",color:randomNumber(),id:3,email:'dozocik-oko94@mail.com'},
-  {name:"XiCingEO",color:randomNumber(),id:4,email:'sarefa-tepi47@hotmail.com'},
-  {name:"IumEtrON",color:randomNumber(),id:5,email:'juyez_ohuma36@outlook.com'},
-  {name:"laTerbUi",color:randomNumber(),id:6,email:'celega_heya92@gmail.com'},
-  {name:"aAonq",color:randomNumber(),id:7,email:'huvafo_nane21@outlook.com'},
-  {name:"bcHs89",color:randomNumber(),id:8,email:'dozocik-oko94@mail.com'},
-  {name:"qdIn23",color:randomNumber(),id:9,email:'sarefa-tepi47@hotmail.com'},
+  {name:"jOhnP18",color:randomNumber(),id:2,email:'huvafo_nane21@outlook.com',picture:'https://pbs.twimg.com/profile_images/1592134607926972416/yHCOnkwe_400x400.jpg'},
+  {name:"iEntriAt",color:randomNumber(),id:3,email:'dozocik-oko94@mail.com',picture:'none'},
+  {name:"XiCingEO",color:randomNumber(),id:4,email:'sarefa-tepi47@hotmail.com',picture:'none'},
+  {name:"IumEtrON",color:randomNumber(),id:5,email:'juyez_ohuma36@outlook.com',picture:"https://www.localgrapher.com/wp-content/uploads/2019/06/Depositphotos_222091632_l-2015-1-400x400.jpg"},
+  {name:"laTerbUi",color:randomNumber(),id:6,email:'celega_heya92@gmail.com',picture:"https://www.bobsonehourphoto.com/wp-content/uploads/2018/11/professional-headshots.jpg"},
+  {name:"aAonq",color:randomNumber(),id:7,email:'huvafo_nane21@outlook.com',picture:'none'},
+  {name:"bcHs89",color:randomNumber(),id:8,email:'dozocik-oko94@mail.com',picture:'https://pbs.twimg.com/profile_images/1576982151265927169/hgx_6u1V_400x400.jpg'},
+  {name:"qdIn23",color:randomNumber(),id:9,email:'sarefa-tepi47@hotmail.com',picture:'https://www.libraryjournal.com/binaries/content/gallery/Jlibrary/lj-sponsored-images/penguinrandomhouse_credit_nina-subin_aup1_400_rev.jpg'},
   ]
   const [users,setUsers] = useState([]);
 
@@ -375,6 +375,7 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     width:60,
     height:60,
+    marginHorizontal:10,
     borderRadius:560,
   },
   line:{

@@ -199,39 +199,39 @@ const Create = () => {
 
 
     function AddIndex(){
-      // var usersInGroup = getUsers();
-      var usersInGroup = [{
-        "color": "#7e78cf",
-        "email": "abraham@gmail.com",
-        "groups":{
-          "2VOh25VWeWwQNnuPtloP": true,
-          "eU2gXJL4VQle1MXHvi8u": true,
-          "xixKTent0lEFpjESKazl": true,
-        },
-        "id": "2qNCq7dHeJRA1uXTz6nr",
-        "index": 0,
-        "name": "Abraham",
-        "password": "password",
-        "phone": "567-7890",
-        "picture": "none",
-        "uid": "2qNCq7dHeJRA1uXTz6nr",
-      },
-       {
-        "color": "#fab6d9",
-        "email": "joseph1234@gmail.com",
-        "groups":{
-          "MbJi6ZCsX0Iq9YziMbcz": true,
-          "Pe2EQxUypwTp0MJLpkbe": true,
-          "xixKTent0lEFpjESKazl": true,
-        },
-        "id": "No3n3K6b7EhzHhQIxU81I2Mibvg1",
-        "index": 1,
-        "name": "Joseph123",
-        "password": "password",
-        "phone": "123-123-67",
-        "picture": "https://www.freepnglogos.com/uploads/camera-logo-png/black-camera-logo-icon-download-4.png",
-        "uid": "No3n3K6b7EhzHhQIxU81I2Mibvg1",
-      },]
+      var usersInGroup = getUsers();
+      // var usersInGroup = [{
+      //   "color": "#7e78cf",
+      //   "email": "abraham@gmail.com",
+      //   "groups":{
+      //     "2VOh25VWeWwQNnuPtloP": true,
+      //     "eU2gXJL4VQle1MXHvi8u": true,
+      //     "xixKTent0lEFpjESKazl": true,
+      //   },
+      //   "id": "2qNCq7dHeJRA1uXTz6nr",
+      //   "index": 0,
+      //   "name": "Abraham",
+      //   "password": "password",
+      //   "phone": "567-7890",
+      //   "picture": "none",
+      //   "uid": "2qNCq7dHeJRA1uXTz6nr",
+      // },
+      //  {
+      //   "color": "#fab6d9",
+      //   "email": "joseph1234@gmail.com",
+      //   "groups":{
+      //     "MbJi6ZCsX0Iq9YziMbcz": true,
+      //     "Pe2EQxUypwTp0MJLpkbe": true,
+      //     "xixKTent0lEFpjESKazl": true,
+      //   },
+      //   "id": "No3n3K6b7EhzHhQIxU81I2Mibvg1",
+      //   "index": 1,
+      //   "name": "Joseph123",
+      //   "password": "password",
+      //   "phone": "123-123-67",
+      //   "picture": "https://www.freepnglogos.com/uploads/camera-logo-png/black-camera-logo-icon-download-4.png",
+      //   "uid": "No3n3K6b7EhzHhQIxU81I2Mibvg1",
+      // },]
 
       for(var x = 0;x<usersInGroup.length;x++){
         usersInGroup[x].index = x;
@@ -421,15 +421,16 @@ const Create = () => {
       setisLoading(true);
       var data;
       data = getReceiptURL();
+      console.log(data);
       if(data == undefined){
         data = [];
         data.items =[];
-        // setItemData(data.items);
-        // setItemCount(data.items.length)
-        const f  = ["Burger KING #14730", "4859 Gerrardstown Rd.", "Inwood, WV 25423",  "304-229-7992","ORDER 69", "Drive THRU", "DBL WHOPPER CHS 5.99", "No picles","Heavy mayo","BISC EGG CHS 2.59","LG COFFEE 1.79", "SUBTOTAL 10.37", "6.0% TAX","0.62","TOTAL 10.99", "CREDIT CARD 10.99","CHANGE 0.00","TOTAL CHARGE 10.99", "Visa","AcctNum: XXXXXXXXXX9028","Auth: 165997","RefNum: 010269","Merchant Id: 456163014990"]
-        const d = extractData(f);
-        setItemData(d.items);
-        setItemCount(d.items.length);
+        setItemData(data.items);
+        setItemCount(data.items.length)
+        // const f  = ["Burger KING #14730", "4859 Gerrardstown Rd.", "Inwood, WV 25423",  "304-229-7992","ORDER 69", "Drive THRU", "DBL WHOPPER CHS 5.99", "No picles","Heavy mayo","BISC EGG CHS 2.59","LG COFFEE 1.79", "SUBTOTAL 10.37", "6.0% TAX","0.62","TOTAL 10.99", "CREDIT CARD 10.99","CHANGE 0.00","TOTAL CHARGE 10.99", "Visa","AcctNum: XXXXXXXXXX9028","Auth: 165997","RefNum: 010269","Merchant Id: 456163014990"]
+        // const d = extractData(f);
+        // setItemData(d.items);
+        // setItemCount(d.items.length);
         setTotal(0);
         setUserData(AddIndex());
         SetRefresh(!refesh);

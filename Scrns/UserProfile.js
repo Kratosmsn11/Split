@@ -5,19 +5,21 @@ import {Logo,BottomLayer,BottomBar,AddButton, ContinueButton, CheckmarkIcon, Lef
 import { useState,useEffect } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { updateUserProfile} from '../backendFiles/firebaseFunctions';
-import { getUserInfo,getUserData } from '../AppData';
+import { getUserInfo,getUserData,getCurrentProfileView } from '../AppData';
 import { manipulateAsync } from "expo-image-manipulator";
 import {firebase} from "../config/firebase";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation,useFocusEffect } from '@react-navigation/native';
 export default function App() {
-  const[name,setUsername] = useState("");
-  const[email,setEmail] = useState("");
-  const[password,setPassword] = useState("");
-  const[phone,setPhone] = useState("");
+  const[name,setUsername] = useState("Name");
+  const[email,setEmail] = useState("email");
+  const[password,setPassword] = useState("password");
+  const[phone,setPhone] = useState("12345678");
   const[change,setChanged] = useState(false);
   const[currentPicture,setPicture] = useState("none");
-  const[user,setUser] = useState("");
+  const[color,setColor] = useState("red");
+  // const[user,setUser] = useState("");
   const [isOwner,setIsOwner] = useState(false);
+  const [prevData,setPrevData] = useState("");
 
   const navigation = useNavigation();
   const id = firebase.auth().currentUser.uid;
@@ -25,14 +27,22 @@ export default function App() {
 
   // setData();
 
-  function setData(){
+  async function setData(){
     // const id = "No3n3K6b7EhzHhQIxU81I2Mibvg1";
-    const data = getUserData();
-    console.log(data);
+    // const data = getUserData();
+    // console.log(data);
+    const id = firebase.auth().currentUser.uid;
+    // console.log(data);
+    var defaultData={name:"Default",email:"email@default",color:'red',picture:'none'}
+    setPicture("None");
+    setIsOwner(false);
+    setUsername("Default");
+    setEmail("default@gmail.com");
+    setPassword("password");
+    setPhone("12345678");
+    setColor("red");
 
-    
-    
-    setUser(data);
+    const user = await getCurrentProfileView();
     setPicture(user.picture);
     console.log(user);
     console.log(user.id);
@@ -41,7 +51,8 @@ export default function App() {
     setEmail(user.email);
     setPassword(user.password);
     setPhone(user.phone);
-    setPicture(getUserData().picture);
+    setColor(user.color);
+    setPrevData(user);
     if(user.picture=="none" || user.picture==undefined){
     setPicture("none");
     }
@@ -51,20 +62,27 @@ export default function App() {
   }
 
 
-  useEffect(() => {
-    setData();
-    
-  }, [])
+  useFocusEffect(
+    React.useCallback(() => {
+      let isActive = true
+
+      setData();
+
+      return () => {
+        isActive = false
+      }
+    }, []),
+  )
 
   function checkChange(){
     console.log("check");
-    if(user.name!=name || user.password!=password ||user.email!=email ||user.phone!=phone){
+    if(prevData.name!=name || prevData.password!=password ||prevData.email!=email ||prevData.phone!=phone){
       setChanged(true);
     }
-    else{
+    else if(prevData.name==name && prevData.password==password && prevData.email==email && prevData.phone==phone){
       setChanged(false);
     }
-    if(user.picture!=currentPicture){
+    if(prevData.picture!=currentPicture){
       setChanged(true);
     }
   }
@@ -94,10 +112,8 @@ export default function App() {
 
     if (!result.canceled) {
       setChanged(true);
-      setPicture(result.assets[0].uri);
-
       const manipResult = await manipulateAsync(
-        currentPicture,
+        result.assets[0].uri,
         [{ resize: { width: 512, height: 512 } }],
         { format: "jpeg", base64: true }
       );
@@ -130,7 +146,7 @@ export default function App() {
                     height:100,
                     borderRadius:100,
                     marginHorizontal:10,
-                    backgroundColor:user.color,
+                    backgroundColor:color,
                     alignContent:'center',
                     alignSelf:'center',
                     justifyContent:'center',
@@ -146,7 +162,7 @@ export default function App() {
                         fontSize:55,
                         color:'white',
                         textAlign:'center'
-                      }}>{name}</Text>
+                      }}>{name[0]}</Text>
             
                 </View>
             
@@ -170,7 +186,7 @@ export default function App() {
                 textShadowOffset: {width: 1, height: 1},
                 textShadowRadius: 15,}}
             
-            >{user.email}</Text>
+            >{email}</Text>
 
         <View style ={{alignSelf:'center',justifyContent:'center',alignContent:'center',bottom:50,top:0}}>
 
@@ -180,7 +196,7 @@ export default function App() {
             </View>
             <View  style ={{alignItems:'flex-end'}}>
                 <View style ={{justifyContent:'center',backgroundColor:'#D9D9D9',borderRadius:10,height:35,width:160,borderWidth:10,borderColor:'#D9D9D9'}}>
-                <TextInput style ={{}} onChangeText={(text) => { setUsername(text); checkChange(); } } defaultValue={user.name} editable={isOwner}>
+                <TextInput style ={{}} onChangeText={(text) => { setUsername(text); checkChange(); } } defaultValue={name} editable={isOwner}>
                 </TextInput>
                 </View>
             </View>
@@ -192,7 +208,7 @@ export default function App() {
             </View>
             <View  style ={{flex:1,alignItems:'flex-end'}}>
                 <View style ={{justifyContent:'center',backgroundColor:'#D9D9D9',borderRadius:10,height:35,width:160,borderWidth:10,borderColor:'#D9D9D9'}}>
-                <TextInput  onChangeText={(text) => { setEmail(text); checkChange(); } }  defaultValue={user.email} editable={isOwner}>
+                <TextInput  onChangeText={(text) => { setEmail(text); checkChange(); } }  defaultValue={email} editable={isOwner}>
                 </TextInput>
                 </View>
             </View>
@@ -205,7 +221,7 @@ export default function App() {
 
                 <View  style ={{flex:1,alignItems:'flex-end'}}>
                     <View style ={{justifyContent:'center',backgroundColor:'#D9D9D9',borderRadius:10,height:35,width:160,borderWidth:10,borderColor:'#D9D9D9'}}>
-                    <TextInput defaultValue={user.password} style ={{}} onChangeText={(text) => { setPassword(text); checkChange(); } } secureTextEntry={true} editable={isOwner}>
+                    <TextInput defaultValue={password} style ={{}} onChangeText={(text) => { setPassword(text); checkChange(); } } secureTextEntry={true} editable={isOwner}>
                     </TextInput>
                     </View>
                 </View>
@@ -218,7 +234,7 @@ export default function App() {
             </View>
             <View  style ={{flex:1,alignItems:'flex-end'}}>
                 <View style ={{justifyContent:'center',backgroundColor:'#D9D9D9',borderRadius:10,height:35,width:160,borderWidth:10,borderColor:'#D9D9D9'}}>
-                <TextInput defaultValue={user.phone} style ={{}} onChangeText={(text) => { setPhone(text); checkChange(); } } editable={isOwner}>
+                <TextInput defaultValue={phone} style ={{}} onChangeText={(text) => { setPhone(text); checkChange(); } } editable={isOwner}>
                 </TextInput>
                 </View>
             </View>

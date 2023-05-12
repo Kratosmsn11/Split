@@ -61,10 +61,11 @@ const AddExpense = () => {
       try {
         setPicture(result.assets[0].uri);
         const manipResult = await manipulateAsync(
-          currentPicture,
+          result.assets[0].uri,
           [{ resize: { width: 1024, height: 1024 } }],
           { format: "jpeg", base64: true }
         )
+        console.log(manipResult.uri);
         const url = await uploadImageAsync(await manipResult.uri);
         console.log(url);
         setReceiptURL(url);
@@ -84,27 +85,6 @@ const AddExpense = () => {
     setReceiptURL(undefined);
     navigation.navigate("CreateTransaction");
   }
-
-
-  // async function uploadImageAsync(uri) {
-  //   const blob = await new Promise((resolve, reject) => {
-  //     const xhr = new XMLHttpRequest();
-  //     xhr.onload = function () {
-  //       resolve(xhr.response);
-  //     };
-  //     xhr.onerror = function (e) {
-  //       console.log(e);
-  //       reject(new TypeError("Network request failed"));
-  //     };
-  //     xhr.responseType = "blob";
-  //     xhr.open("GET", uri, true);
-  //     xhr.send(null);
-  //   });
-  //   const fileRef = ref(getStorage(), uuid.v4());
-  //   const result = await uploadBytes(fileRef, blob);
-  //   blob.close();
-  //   return await getDownloadURL(fileRef);
-  // }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
