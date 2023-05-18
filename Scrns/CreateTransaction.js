@@ -638,29 +638,40 @@ const Create = () => {
               }}
               data={userData}
               extraData={refesh}
-              renderItem={({user,index}) => <View><View><TouchableOpacity onPress={()=>UserClick(currentItem.id,userData[index].id,index)}><View>
-                {/* <Image style = {styles.image} source={{uri: userData[index].picture}}/> */}
-                <View style={{
-                  width:80,
-                  height:80,
-                  borderRadius:80,
-                  marginHorizontal:10,
-                  backgroundColor:userData[index].color,
-                  alignContent:'center',
-                  justifyContent:'center',
-                }}>
+              renderItem={({user,index}) => <TouchableOpacity onPress={()=>UserClick(currentItem.id,userData[index].id,index)}>
 
-                <Text style={{
-                  fontSize:35,
-                  color:'white',
-                  textAlign:'center'
-                }}>{userData[index].name[0].toUpperCase()}</Text>
-                </View>
+                {userData[index].picture != "none" &&
+                <Image style = {styles.bigImage} source={{uri: userData[index].picture}}></Image>
+                }
+
+                
+                {userData[index].picture == "none" &&
+                  <View style={{
+                    width:80,
+                    height:80,
+                    borderRadius:80,
+                    marginHorizontal:10,
+                    backgroundColor:userData[index].color,
+                    alignContent:'center',
+                    justifyContent:'center',
+                  }}>
+
+                  <Text style={{
+                    fontSize:35,
+                    color:'white',
+                    textAlign:'center'
+                  }}>{userData[index].name[0].toUpperCase()}</Text>
+                  </View>
+                }
                 <Text style={{
                 alignSelf: 'center',
                 color:'#4F555A',
                 fontWeight:'bold'
-              }}>{userData[index].name}</Text></View></TouchableOpacity></View></View>}
+              }}>{userData[index].name}</Text>
+              
+              </TouchableOpacity>
+
+             }
             />
             </View>
             <TouchableOpacity style={{justifyContent: 'center',borderWidth:2,width:120,height:60,borderRadius:5,borderColor:'#4461F2',alignSelf:'center',top:100,backgroundColor:'#4461F2',alignItems:'center'}} onPress ={()=>MakeItemChanges()}>
@@ -786,6 +797,14 @@ const styles = StyleSheet.create({
     width:300,
     height:300,
     borderRadius:300,
+  },
+  bigImage:{
+    width:80,
+    height:80,
+    borderRadius:80,
+    marginHorizontal:10,
+    alignContent:'center',
+    justifyContent:'center',
   },
   subheading: {
     textAlign: 'center',

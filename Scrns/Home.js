@@ -1,5 +1,5 @@
 import {SafeAreaView,StyleSheet,View,Dimensions,Text,TouchableOpacity,ScrollView,Image,FlatList,Alert,ActivityIndicator,RefreshControl} from "react-native";
-import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation,useFocusEffect } from '@react-navigation/native';
 import React, { useEffect, useState,useRef } from "react";
 import { SvgXml } from "react-native-svg";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
@@ -46,7 +46,22 @@ import {firebase} from "../config/firebase";
       setallGroups(groups);
       setisLoading(false);
     }
-    useEffect(() => {isFocused && getGroupData() },[isFocused]);
+    // useEffect(() => {isFocused && getGroupData() },[isFocused]);
+    useFocusEffect(
+      React.useCallback(() => {
+        let isActive = true
+  
+        const fetchList = () => {
+            getGroupData();
+        }
+  
+        fetchList()
+  
+        return () => {
+          isActive = false
+        }
+      }, []),
+    )
 
     const onRefresh = React.useCallback(() => {
       setRefreshing(true);

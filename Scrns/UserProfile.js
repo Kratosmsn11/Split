@@ -89,13 +89,14 @@ export default function App() {
 
   function UpdateAccount(){
     console.log("Hello");
-    console.log(name+ password+ email);
+    console.log(name+ password+ email,+phone);
 
     data = {
       name:name,
       password:password,
       email:email,
       picture:currentPicture,
+      phone:phone
     }
     updateUserProfile(data);
   }

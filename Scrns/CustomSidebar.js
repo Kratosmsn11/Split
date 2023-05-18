@@ -20,7 +20,7 @@ import {
 } from '@react-navigation/drawer';
 
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation,useFocusEffect } from '@react-navigation/native';
 
 import firebase from 'firebase/compat';
 
@@ -90,10 +90,22 @@ const CustomSidebarMenu = (props) => {
   }
 
 
-  useEffect(() => {
-    setData();
+  // useEffect(() => {
+  //   setData();
     
-  }, [])
+  // }, [])
+
+  useFocusEffect(
+    React.useCallback(() => {
+      let isActive = true
+
+      setData();
+
+      return () => {
+        isActive = false
+      }
+    }, []),
+  )
 
   async function clickProfile(){
     setCurrentProfileView(await getUserData(firebase.auth().currentUser.uid));

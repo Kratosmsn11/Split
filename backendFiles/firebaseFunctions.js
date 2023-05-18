@@ -394,9 +394,6 @@ export async function GetGroupData(groupId){
       var password = data.password;
       var picture = data.picture;
       var phone = data.phone;
-      phone = "123-123-67"
-
-      // console.log(data);
 
       const userRef = doc(userCollection,userId);
       const docSnap = await getDoc(userRef);

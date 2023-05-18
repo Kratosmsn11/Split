@@ -1,4 +1,4 @@
-import {SafeAreaView,StyleSheet,View,Dimensions,Text,TouchableOpacity,ScrollView,Image,FlatList,TouchableWithoutFeedback,Modal,Alert} from "react-native";
+import {SafeAreaView,StyleSheet,View,Dimensions,Text,TouchableOpacity,ScrollView,Image,FlatList,TouchableWithoutFeedback,Modal,Alert, ActivityIndicator} from "react-native";
 import React, { useEffect, useState,useCallback,useRef } from "react";
 import {Logo,BottomLayer,LeftArrow,ProfileImage,User,OrderLight,CameraIcon, HomeIcon, AddButton, BottomBar} from '../components/Svgs';
 import * as Clipboard from 'expo-clipboard';
@@ -16,13 +16,16 @@ import {firebase} from '../config/firebase';
     const navigation = useNavigation();
     const isFocused = useIsFocused();
     const [isShow, setisShow] = useState(false);
-    const [isLoading, setisLoading] = useState(false);
+    const [debtsLoading, setDebtsLoading] = useState(true);
+    const [transactionsLoading, setTransactionsLoading] = useState(true);
+    const [totalLoading, setTotalLoading] = useState(true);
     const [items, setitem] = useState(undefined);
     const [member, setmember] = useState([]);
     const [TextReaded, setTextReaded] = useState("");
     const [total, setTotal] = useState("");
     const [debts, setDebts] = useState("");
     const [transactions, setTransactions] = useState("");
+    const [refresh,setRefresh] = useState(false);
 
     //hte max number of transactions and debts that will be shown
     const itemCount = 3;
@@ -41,24 +44,38 @@ import {firebase} from '../config/firebase';
     const getDebts = async () => {
       const debtData = await GetGroupDebts(groupId);
       console.log(debtData);
-      setDebts(debtData);
-      setGroupDebtsAll(debtData);
+      setDebts(await debtData);
+      setGroupDebtsAll(await debtData);
+      setDebtsLoading(false);
+      setRefresh(!refresh);
       // setDebts(dummyDebts);
     };
 
     const getTransactions = async () => {
       const transactionData = await GetGroupTransactions(groupId);
       console.log(transactionData);
-      setTransactions(transactionData);
-      setGroupTransactionsAll(transactionData);
+      setTransactions(await transactionData);
+      setGroupTransactionsAll(await transactionData);
+      setTransactionsLoading(false);
+      var total = 0;
+      for(var x = 0;x<transactionData.length;x++){
+        total+= transactionData[x].total;
+
+      }
+      setTotal(total.toFixed(2));
+      setTotalLoading(false);
+      setRefresh(!refresh);
+      setRefresh(!refresh);
       // setTransactions(dummyTransactions);
     };
 
     const getGroupData = async () => {
       const group = await GetGroupData(getGroupId());
       console.log(group);
-      setgData(group);
-      setTotal(group.total);
+      setgData(await group);
+      // setTotal(await group.total);
+      // setTotalLoading(false);
+      // setRefresh(!refresh);
       // console.log("Group" + group);
 
     };
@@ -68,6 +85,7 @@ import {firebase} from '../config/firebase';
       const users = await getGroupUsers(getGroupId());
       setUsers(users);
       setGroupMembers(users);
+      setRefresh(!refresh);
 
     };
 
@@ -87,21 +105,40 @@ import {firebase} from '../config/firebase';
     // })
 
     // useEffect(() => {isFocused && getData() },[isFocused]);
-    useFocusEffect(
-      React.useCallback(() => {
-        let isActive = true
+    // useFocusEffect(
+    //   React.useCallback(() => {
+    //     // let isActive = true
+
+    //     const fetchData = async () => {
+    //       setDebtsLoading(true);
+    //       setTransactionsLoading(true);
+    //       setTotalLoading(true);
+    //       getData();
+
+    //     };
+
+    //     fetchData();
   
-        const fetchList = () => {
-            getData();
-        }
+    //     // return () => {
+    //     //   isActive = false
+    //     // }
+    //   }, []),
+    // )
+
+    React.useEffect(() => {
+      const unsubscribe = navigation.addListener('focus', () => {
+        // alert('Screen is focused');
+        // The screen is focused
+        // Call any action
+          setDebtsLoading(true);
+          setTransactionsLoading(true);
+          setTotalLoading(true);
+          getData();
+      });
   
-        fetchList()
-  
-        return () => {
-          isActive = false
-        }
-      }, []),
-    )
+      // Return the function to unsubscribe from the event so it gets removed on unmount
+      return unsubscribe;
+    }, []);
 
     const Transaction = ({transaction}) => (
         <View style = {styles.flexContainer}>
@@ -129,7 +166,7 @@ import {firebase} from '../config/firebase';
             }
             <Text style={{color:'#4F555A'}}>{transaction.name}</Text>
             <View style={{flex: 1}}>
-                <Text style={{textAlign: 'right',right:30,color:'#4F555A',fontWeight:'bold'}}>${transaction.total}</Text>
+                <Text style={{textAlign: 'right',right:30,color:'#4F555A',fontWeight:'bold'}}>${parseFloat(transaction.total).toFixed(2)}</Text>
             </View>
         </View>
     );
@@ -162,7 +199,7 @@ import {firebase} from '../config/firebase';
             }
 
 
-            <Text style={{color:'#4F555A'}}>  {debt.owerName}    </Text>
+            <Text style={{color:'#4F555A'}}>  {debt.owerName.substring(0,8)}    </Text>
             <FontAwesome5Icon
                   name={"arrow-right"}
                   color={"#9E9E9E"}
@@ -195,7 +232,7 @@ import {firebase} from '../config/firebase';
             }
 
 
-            <Text style={{color:'#4F555A'}}>  {debt.lenderName}</Text>
+            <Text style={{color:'#4F555A'}}>  {debt.lenderName.substring(0,8)}</Text>
             <View style={{flex: 1}}>
                 <Text style={{textAlign: 'right',right:30,color:'#4F555A',fontWeight:'bold'}}>${debt.total}</Text>
             </View>
@@ -254,14 +291,27 @@ import {firebase} from '../config/firebase';
                 marginBottom:10,
               }}
             >
-                {transactions.length == 0 &&
+                {transactions.length == 0 && !transactionsLoading &&
                   <Text style ={styles.emptyData}>Your group has no transactions.</Text>
                 }
+                {transactionsLoading &&
+                  <View style={{justifyContent:'center',alignContent:'center',alignItems:'center',alignSelf:'center',top:0}}>
+                  <ActivityIndicator size="small" color="#4F555A" />
+                  </View>
+                }
+                {!transactionsLoading &&
                 <FlatList
                     style = {styles.list}
                     data={transactions.slice(0,itemCount)}
-                    renderItem={({item}) => <Transaction transaction={item}/>}
+                    extraData={refresh}
+                    renderItem={({item}) => 
+                    
+                    <Transaction transaction={item}/>
+                  
+                  
+                  }
                 /> 
+              }
 
             </View>
             </TouchableOpacity>
@@ -281,15 +331,33 @@ import {firebase} from '../config/firebase';
                 marginBottom:10,
               }}
             >
-                {debts.length == 0 &&
+                {/* {debts.length == 0 &&
+                  <Text style ={styles.emptyData}>Your group has no debts.</Text>
+                } */}
+
+                {debts.length == 0 && !debtsLoading &&
                   <Text style ={styles.emptyData}>Your group has no debts.</Text>
                 }
-
+                {debtsLoading &&
+                  <View style={{justifyContent:'center',alignContent:'center',alignItems:'center',alignSelf:'center',top:0}}>
+                  <ActivityIndicator size="small" color="#4F555A" />
+                  </View>
+                }
+            {!debtsLoading &&
             <FlatList
                 style = {styles.list}
                 data={debts.slice(0,itemCount)}
-                renderItem={({item}) => <Debt debt={item}/>}
+                extraData={refresh}
+                renderItem={({item}) => 
+                
+                
+                
+                <Debt debt={item}/>
+              
+              
+              }
             />
+              }
 
             </View>
             </TouchableOpacity>
@@ -307,9 +375,18 @@ import {firebase} from '../config/firebase';
                 justifyContent: "center",
               }}
             >
+              {totalLoading &&
+                  <View style={{justifyContent:'center',alignContent:'center',alignItems:'center',alignSelf:'center',top:0}}>
+                  <ActivityIndicator size="small" color="#4F555A" />
+                  </View>
+              }
+              {!totalLoading &&
+
+              
               <Text style={{ left: 20 }}>
-                ${total}
+                  ${total}
               </Text>
+              }
             </View>
           </View>
 
@@ -501,13 +578,13 @@ import {firebase} from '../config/firebase';
       color:'#4F555A',
     },
     passcodeHeader:{
-      bottom:70,
-      fontSize:13,
+      bottom:90,
+      fontSize:20,
       fontWeight:'bold',
     },
     passcodeText:{
-      bottom:70,
-      fontSize:20,
+      bottom:90,
+      fontSize:35,
       color:'#4F555A',
     },
     emptyData:{

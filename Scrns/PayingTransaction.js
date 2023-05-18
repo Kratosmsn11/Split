@@ -6,6 +6,7 @@ import { useNavigation,useIsFocused } from '@react-navigation/native';
 import { createTransaction } from '../backendFiles/firebaseFunctions';
 import { calculateDebts } from '../backendFiles/SplittingAlgorithm';
 import { getTransactionTotal, getUserSpending, getUsers, getUsersIds,getGroupId, getTransactionName, getTransactionDescription, getUserData} from '../AppData';
+import { set } from 'firebase/database';
 export default function App() {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
@@ -38,7 +39,19 @@ export default function App() {
   }
 
 
-  useEffect(() => {isFocused && setData()},[isFocused]);
+  // useEffect(() => {isFocused && setData()},[isFocused]);
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      // alert('Screen is focused');
+      // The screen is focused
+      // Call any action
+      setData();
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, []);
 
 
   function submitPayments(){
@@ -57,13 +70,17 @@ export default function App() {
     console.log(inputs);
     console.log(spending);
     console.log(usersIds);
-    var highestPayer = usersIds[spending.indexOf(Math.max(...spending))];
+    var highestPayer = usersIds[inputs.indexOf(Math.max(...inputs))];
     const debts = calculateDebts(spending,inputs,usersIds);
     console.log(debts);
     var transactionName = getTransactionName();
     var transactionDescription = getTransactionDescription();
     createTransaction(transactionName,transactionDescription,payment,getGroupId(),debts,highestPayer);
-    navigation.replace("GroupPage");
+    setTimeout(GoHome,2000);
+  }
+
+  function GoHome(){
+    navigation.navigate("GroupPage");
   }
 
   //reseting to the original values
@@ -115,7 +132,7 @@ export default function App() {
       style={styles.container}
     >
 
-    <Text style={styles.total}>Total: ${payment}</Text>
+    <Text style={styles.total}>Total: ${parseFloat(payment).toFixed(2)}</Text>
       <Text style={[styles.invalid, (valid ? styles.valid : null)]}>${total.toFixed(2)}</Text>
 
     <View style = {styles.inputsContainer}>

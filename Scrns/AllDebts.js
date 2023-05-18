@@ -31,7 +31,7 @@ const AllDebts = () => {
   }
 
   async function settleDebt(debt){
-    const message = debt.owerName + " has settled the debt of $" + debt.total;
+    const message = debt.owerName + " has settled their debt of $" + debt.total;
     if(smsAvailable){
       const result = await SMS.sendSMSAsync(
         [debt.lenderNumber],

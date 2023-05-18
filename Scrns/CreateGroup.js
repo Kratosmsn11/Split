@@ -131,8 +131,12 @@ export default function App() {
     // Alert.alert(mesage);
 
     createGroup(ids,getUserId(),groupName,passcode);
+    setTimeout(GoHome,2000);
+    
+  }
 
-    navigation.replace("Home");
+  function GoHome(){
+    navigation.navigate("Home");
   }
 
   
@@ -288,13 +292,13 @@ export default function App() {
                 </TouchableOpacity>
               </View>
               }
-              {index > 0 && users.length>1 &&
+              {/* {index > 0 && users.length>1 &&
               <View style={{justifyContent:'center',left:6,}}>
                 <TouchableOpacity onPress={()=>removeUser(index)}>
                 <FontAwesome5 name={'minus'} size={15} color={'#4F555A'} />
                 </TouchableOpacity>
               </View>
-              }
+              } */}
             </View>
           );
         }}

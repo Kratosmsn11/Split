@@ -108,7 +108,7 @@ const TransactionModal = ({}) => (
       <Text style={{textAlign:'right',alignSelf:'flex-end',fontWeight:'bold',color:'#4F555A'}}>{currentItem.date}</Text>
         <Text style={{fontWeight:'bold',fontSize:17,marginBottom:20}}>{currentItem.name}</Text>
        
-        <View style={{height:80,width:300,backgroundColor:'#EAF0F7',alignSelf:'flex-start',marginBottom:50,padding:20}}>
+        <View style={{height:80,width:300,backgroundColor:'#EAF0F7',alignSelf:'flex-start',marginBottom:50,padding:20,borderRadius:10}}>
           <Text style={{color:'#4F555A',left:0,top:0}}>{currentItem.description =="" ? "No description added.":currentItem.description}</Text>
         </View>
         {currentItem.receipt != "Manual transaction" &&
@@ -187,7 +187,8 @@ const styles = StyleSheet.create({
     width:300,
     justifyContent:'center',
     alignItems:'center',
-    alignContent:'center'
+    alignContent:'center',
+    borderRadius:10,
   },
   heading:{
     fontSize:20,
